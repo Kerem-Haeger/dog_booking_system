@@ -1,1 +1,1 @@
-web: gunicorn codestar.wsgi
+web: gunicorn booking_system.wsgi
