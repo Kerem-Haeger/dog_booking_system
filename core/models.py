@@ -53,7 +53,7 @@ class PetProfile(models.Model):
         choices=STATUS_CHOICES,
         default='pending'
     )
-    verified_at = models.DateTimeField(null=True, blank=True)  # Timestamp for verification
+    verified_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -101,7 +101,8 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('pet_profile', 'appointment_time')  # Prevent double-booking
+        # Prevent double-booking
+        unique_together = ('pet_profile', 'appointment_time')
 
     def __str__(self):
         return f"{self.pet_profile.name} - {self.service.name} at {self.appointment_time}"
@@ -109,11 +110,19 @@ class Appointment(models.Model):
 
 # Employee calendar (for tracking appointments per employee)
 class EmployeeCalendar(models.Model):
-    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
+    user_profile = models.ForeignKey(
+        UserProfile,
+        on_delete=models.CASCADE,
+        null=True
+        )
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
     scheduled_time = models.DateTimeField()
     available_time = models.BooleanField(default=True)
-    unavailability_reason = models.CharField(max_length=100, null=True, blank=True)  # Reason for unavailability
+    unavailability_reason = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+        )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -122,7 +131,11 @@ class EmployeeCalendar(models.Model):
 
 # Employee Time-Off Requests (pending approval for more than 1 hour)
 class TimeOffRequest(models.Model):
-    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
+    user_profile = models.ForeignKey(
+        UserProfile,
+        on_delete=models.CASCADE,
+        null=True
+        )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     approved = models.BooleanField(default=False)  # Approval status
@@ -149,7 +162,12 @@ class Voucher(models.Model):
     )  # Discount value, e.g., 10%
     expiry_date = models.DateField()  # Expiry date for the voucher
     is_redeemed = models.BooleanField(default=False)
-    used_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Track who redeemed it
+    used_by_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+        )  # Track who redeemed it
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

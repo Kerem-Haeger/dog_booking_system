@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
+from django.views import generic
+from .models import User, UserProfile
 
 # Create your views here.
-def core_app(request):
-    return HttpResponse("Welcome to our booking system!")
+class UserList(generic.ListView):
+    model = User
