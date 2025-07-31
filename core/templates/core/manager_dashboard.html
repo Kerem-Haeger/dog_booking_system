@@ -11,6 +11,14 @@
     <h1>Welcome, {{ user.username }}!</h1>
     <p>You are logged in as a <strong>{{ user.userprofile.role }}</strong>.</p>
     <a href="{% url 'logout' %}">Logout</a>
+
+    <h2>Management Actions</h2>
+
+    {% if pending_count > 0 %}
+    <p style="color: red;">🚨 You have new pet profiles to review:</p>
+    {% endif %}
+
+    <a href="{% url 'approve_pets' %}">Approve Pending Pets</a>
 </body>
 
 </html>

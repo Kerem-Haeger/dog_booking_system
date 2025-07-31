@@ -45,7 +45,12 @@ class PetProfile(models.Model):
     )
     name = models.CharField(max_length=100)
     breed = models.CharField(max_length=100)
-    size = models.CharField(max_length=10, choices=SIZE_CHOICES)
+    size = models.CharField(
+                            max_length=10,
+                            choices=SIZE_CHOICES,
+                            null=True,
+                            blank=True
+                            )
     grooming_preferences = models.TextField(null=True, blank=True)
     date_of_birth = models.DateField()
     profile_status = models.CharField(

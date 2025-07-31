@@ -1,7 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render, get_object_or_404
+from django.utils import timezone
 from .models import UserProfile, PetProfile
+from .forms import PetProfileForm, PetApprovalForm
 
 
 @login_required
@@ -44,4 +47,62 @@ def employee_dashboard(request):
 
 @login_required
 def manager_dashboard(request):
-    return render(request, 'core/manager_dashboard.html')
+    pending_count = PetProfile.objects.filter(profile_status='pending').count()
+    return render(request, 'core/manager_dashboard.html', {
+        'pending_count': pending_count
+    })
+
+
+def is_manager(user):
+    return (
+        user.is_authenticated and
+        hasattr(user, 'userprofile') and
+        user.userprofile.role == 'manager'
+    )
+
+
+@user_passes_test(is_manager)
+def approve_pets(request):
+    if not request.user.is_authenticated or not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
+        return redirect('login')
+
+    pending_pets = PetProfile.objects.filter(profile_status='pending')
+
+    if request.method == 'POST':
+        for pet in pending_pets:
+            form = PetApprovalForm(request.POST, prefix=str(pet.id))
+            if form.is_valid():
+                decision = form.cleaned_data['decision']
+                size = form.cleaned_data['size']
+
+                if decision == 'approve':
+                    pet.profile_status = 'approved'
+                    pet.size = size
+                    pet.verified_at = timezone.now()
+                elif decision == 'reject':
+                    pet.profile_status = 'rejected'
+
+                pet.save()
+
+        messages.success(request, "Pet profiles updated.")
+        return redirect('approve_pets')
+
+    pet_forms = [(pet, PetApprovalForm(prefix=str(pet.id))) for pet in pending_pets]
+    return render(request, 'core/approve_pets.html', {'pet_forms': pet_forms})
+
+
+@login_required
+def add_pet(request):
+    if request.method == 'POST':
+        form = PetProfileForm(request.POST)
+        if form.is_valid():
+            pet = form.save(commit=False)
+            pet.user = request.user
+            pet.profile_status = 'pending'  # default status
+            pet.save()
+            messages.success(request, "Pet profile submitted for approval!")
+            return redirect('client_dashboard')
+    else:
+        form = PetProfileForm()
+
+    return render(request, 'core/add_pet.html', {'form': form})

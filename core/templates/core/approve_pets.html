@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve a pet profile</title>
+</head>
+
+<body>
+    <h1>Approve Pending Pets</h1>
+
+    {% if pet_forms %}
+    <ul>
+        {% for pet, form in pet_forms %}
+        <li>
+            <strong>{{ pet.name }}</strong> ({{ pet.breed }})<br>
+            Owner: {{ pet.user.username }}<br>
+            Date of Birth: {{ pet.date_of_birth }}<br>
+
+            <form method="post" class="pet-approval-form" data-pet-id="{{ pet.id }}">
+                {% csrf_token %}
+                {{ form.size.label_tag }} {{ form.size }}
+                {{ form.decision }}
+
+                <input type="hidden" name="pet_id" value="{{ pet.id }}">
+
+                <br><br>
+                <button type="submit" name="{{ form.prefix }}-decision" value="approve" class="approve-btn" disabled>
+                    ✅ Approve
+                </button>
+                <button type="submit" name="{{ form.prefix }}-decision" value="reject">
+                    ❌ Reject
+                </button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No pending pet profiles.</p>
+    {% endif %}
+
+    <a href="{% url 'manager_dashboard' %}">⬅ Back to Dashboard</a>
+
+    <script>
+        document.querySelectorAll('.pet-approval-form').forEach(form => {
+            const sizeSelect = form.querySelector('select');
+            const approveBtn = form.querySelector('.approve-btn');
+
+            sizeSelect.addEventListener('change', () => {
+                approveBtn.disabled = !sizeSelect.value;
+            });
+        });
+    </script>
+</body>
+
+</html>
