@@ -1,22 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'core/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a pet</title>
-</head>
+{% block content %}
+<h1>Add a Pet</h1>
 
-<body>
-    <h1>Add a Pet</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-
-    <a href="{% url 'client_dashboard' %}">Back to Dashboard</a>
-</body>
-
-</html>
+<a href="{% url 'client_dashboard' %}">Back to Dashboard</a>
+{% endblock %}
