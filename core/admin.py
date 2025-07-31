@@ -12,7 +12,6 @@ from .models import (
 
 # Register models for the admin interface
 admin.site.register(UserProfile)
-admin.site.register(Service)
 admin.site.register(EmployeeCalendar)
 
 
@@ -69,3 +68,9 @@ class VoucherAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Voucher, VoucherAdmin)  # Register Voucher with the customized admin
+
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'duration', 'slot_interval', 'price')
+    list_filter = ('slot_interval',)

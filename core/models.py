@@ -72,6 +72,10 @@ class Service(models.Model):
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration = models.DurationField()  # Duration of the service
+    slot_interval = models.PositiveIntegerField(
+        default=30,
+        help_text="Interval between available start times (in minutes)."
+    )
 
     def __str__(self):
         return self.name

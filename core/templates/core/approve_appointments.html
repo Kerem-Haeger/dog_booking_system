@@ -6,23 +6,17 @@
 {% if appointment_forms %}
 <ul>
     {% for appointment, form in appointment_forms %}
-    <li>
-        <strong>{{ appointment.dog_profile.name }}</strong>
-        ({{ appointment.service_type }})<br>
-        Time: {{ appointment.appointment_time }}<br>
-        Client: {{ appointment.dog_profile.user.username }}
-
+    <div class="appointment-card">
+        <h3>{{ appointment.pet_profile.name }} - {{ appointment.service.name }}</h3>
+        <p><strong>Time:</strong> {{ appointment.appointment_time }}</p>
         <form method="post">
             {% csrf_token %}
-            {{ form.employee.label_tag }} {{ form.employee }}
-            {{ form.decision }}
-
+            {{ form.as_p }}
             <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-
-            <br><br>
-            <button type="submit">Submit Decision</button>
+            <button type="submit" name="decision" value="approve">Approve</button>
+            <button type="submit" name="decision" value="reject">Reject</button>
         </form>
-    </li>
+    </div>
     {% endfor %}
 </ul>
 {% else %}

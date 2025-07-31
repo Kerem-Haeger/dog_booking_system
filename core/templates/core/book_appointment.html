@@ -13,10 +13,75 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <p>
+        {{ form.pet_profile.label_tag }} {{ form.pet_profile }}
+    </p>
+    <p>
+        {{ form.service.label_tag }} {{ form.service }}
+    </p>
+    <p>
+        {{ form.appointment_time.label_tag }} {{ form.appointment_time }}
+    </p>
+    <p>
+        <label for="id_time_slot">Choose a Time Slot:</label>
+        <select id="id_time_slot" name="time_slot" disabled>
+            <option value="">Please select a pet, service, and date first</option>
+        </select>
+    </p>
+    <p>
+        {{ form.voucher_code.label_tag }} {{ form.voucher_code }}
+    </p>
+
     <button type="submit">📅 Book</button>
 </form>
 
 <br>
 <a href="{% url 'client_dashboard' %}">⬅ Back to Dashboard</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const serviceField = document.getElementById("id_service");
+        const dateField = document.getElementById("id_appointment_time");
+        const timeSlotSelect = document.getElementById("id_time_slot");
+
+        function loadAvailableSlots() {
+            const serviceId = serviceField.value;
+            const date = dateField.value;
+
+            if (!serviceId || !date) {
+                timeSlotSelect.disabled = true;
+                return;
+            }
+
+            fetch(`/ajax/available-slots/?service_id=${serviceId}&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    timeSlotSelect.innerHTML = ""; // clear existing options
+
+                    if (data.slots && data.slots.length > 0) {
+                        data.slots.forEach(slot => {
+                            const option = document.createElement("option");
+                            option.value = slot;
+                            option.textContent = slot;
+                            timeSlotSelect.appendChild(option);
+                        });
+                        timeSlotSelect.disabled = false;
+                    } else {
+                        const option = document.createElement("option");
+                        option.textContent = "No available slots";
+                        timeSlotSelect.appendChild(option);
+                        timeSlotSelect.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading slots:", error);
+                    timeSlotSelect.innerHTML = "<option>Error loading slots</option>";
+                    timeSlotSelect.disabled = true;
+                });
+        }
+
+        serviceField.addEventListener("change", loadAvailableSlots);
+        dateField.addEventListener("change", loadAvailableSlots);
+    });
+</script>
 {% endblock %}

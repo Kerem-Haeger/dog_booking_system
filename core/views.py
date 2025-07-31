@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
+from django.views.decorators.http import require_GET
+from datetime import datetime
 from .models import (
     User,
     UserProfile,
@@ -18,6 +20,7 @@ from .forms import (
     AppointmentForm,
     AppointmentApprovalForm,
     )
+from .utils import get_available_slots
 
 
 @login_required
@@ -48,8 +51,13 @@ def redirect_by_role(request):
 @login_required
 def client_dashboard(request):
     pets = PetProfile.objects.filter(user=request.user)
+    appointments = Appointment.objects.filter(
+        pet_profile__user=request.user
+    ).order_by('appointment_time')
+
     return render(request, 'core/client_dashboard.html', {
-        'pets': pets
+        'pets': pets,
+        'appointments': appointments,
     })
 
 
@@ -123,41 +131,39 @@ def add_pet(request):
 
 @login_required
 def book_appointment(request):
-    # Only clients should access this
     if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'client':
         return redirect('login')
 
     if request.method == 'POST':
+        print("Form submitted!")  # Debugging
         form = AppointmentForm(request.POST, user=request.user)
         if form.is_valid():
+            print("Form is valid!")  # Debug
             appointment = form.save(commit=False)
             service = appointment.service
-            voucher_code = form.cleaned_data.get('voucher_code')
-            final_price = service.price
-            voucher = None
+            time_slot_str = form.cleaned_data.get('time_slot')
+            appointment_date = form.cleaned_data.get('appointment_time')
 
-            if voucher_code:
-                try:
-                    voucher = Voucher.objects.get(code=voucher_code, is_redeemed=False)
-                    if voucher.expiry_date < timezone.now().date():
-                        messages.error(request, "Voucher has expired.")
-                    else:
-                        final_price = service.price * (1 - voucher.discount_percentage / 100)
-                        appointment.voucher = voucher
-                except Voucher.DoesNotExist:
-                    messages.error(request, "Invalid voucher code.")
+            # Combine date + time into full datetime
+            try:
+                time_obj = datetime.strptime(time_slot_str, "%H:%M").time()
+                combined_datetime = timezone.make_aware(
+                    datetime.combine(appointment_date, time_obj)
+                )
+                appointment.appointment_time = combined_datetime
+            except (ValueError, TypeError):
+                messages.error(request, "Invalid time slot.")
+                return render(request, 'core/book_appointment.html', {'form': form})
 
-            appointment.final_price = round(final_price, 2)
+            appointment.final_price = round(service.price, 2)
             appointment.status = 'pending'
             appointment.save()
 
-            if voucher:
-                voucher.is_redeemed = True
-                voucher.used_by_user = request.user
-                voucher.save()
-
-            messages.success(request, "Appointment booked and pending approval.")
+            formatted = appointment.appointment_time.strftime("%H:%M on %d/%m/%Y")
+            messages.success(request, f"Appointment booked for {formatted} and pending approval.")
             return redirect('client_dashboard')
+        else:
+            print("Form errors:", form.errors)
     else:
         form = AppointmentForm(user=request.user)
 
@@ -181,6 +187,7 @@ def approve_appointments(request):
                 appointment.employee = selected_employee
                 appointment.status = 'approved'
                 appointment.save()
+                messages.success(request, f"Appointment approved and assigned to {selected_employee.user.username}.")
 
                 # Add to employee calendar
                 EmployeeCalendar.objects.create(
@@ -193,6 +200,7 @@ def approve_appointments(request):
             elif decision == 'reject':
                 appointment.status = 'rejected'
                 appointment.save()
+                messages.warning(request, "Appointment was rejected.")
 
             return redirect('approve_appointments')
 
@@ -216,3 +224,21 @@ def approve_appointments(request):
     return render(request, 'core/approve_appointments.html', {
         'appointment_forms': appointment_forms
     })
+
+
+@require_GET
+def fetch_available_slots(request):
+    service_id = request.GET.get('service_id')
+    date_str = request.GET.get('date')  # expected format: 'YYYY-MM-DD'
+
+    if not service_id or not date_str:
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    try:
+        service = Service.objects.get(id=service_id)
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except (Service.DoesNotExist, ValueError):
+        return JsonResponse({'error': 'Invalid service or date'}, status=400)
+
+    slots = get_available_slots(service, date_obj)
+    return JsonResponse({'slots': slots})
