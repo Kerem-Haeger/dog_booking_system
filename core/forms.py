@@ -1,6 +1,13 @@
 from django import forms
 from django.utils import timezone
-from .models import PetProfile, Appointment, Service, Voucher
+from .models import (
+    User,
+    UserProfile,
+    PetProfile,
+    Appointment,
+    Service,
+    Voucher
+    )
 
 
 class PetProfileForm(forms.ModelForm):
@@ -54,3 +61,14 @@ class AppointmentForm(forms.ModelForm):
         if appt_time <= timezone.now():
             raise forms.ValidationError("Appointment must be in the future.")
         return appt_time
+
+
+class AppointmentApprovalForm(forms.Form):
+    employee = forms.ModelChoiceField(
+        queryset=UserProfile.objects.filter(role='employee'),
+        label="Assign to Employee"
+    )
+    decision = forms.ChoiceField(choices=[
+        ('approve', '✅ Approve'),
+        ('reject', '❌ Reject')
+    ])

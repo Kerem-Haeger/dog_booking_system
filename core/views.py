@@ -4,16 +4,19 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from .models import (
+    User,
     UserProfile,
     PetProfile,
     Appointment,
     Voucher,
     Service,
+    EmployeeCalendar,
     )
 from .forms import (
     PetProfileForm,
     PetApprovalForm,
     AppointmentForm,
+    AppointmentApprovalForm,
     )
 
 
@@ -159,3 +162,57 @@ def book_appointment(request):
         form = AppointmentForm(user=request.user)
 
     return render(request, 'core/book_appointment.html', {'form': form})
+
+
+@user_passes_test(is_manager)
+def approve_appointments(request):
+    pending_appointments = Appointment.objects.filter(status='pending')
+
+    if request.method == 'POST':
+        form = AppointmentApprovalForm(request.POST)
+        if form.is_valid():
+            appointment_id = request.POST.get('appointment_id')
+            decision = form.cleaned_data['decision']
+            selected_employee = form.cleaned_data['employee']
+
+            appointment = Appointment.objects.get(id=appointment_id)
+
+            if decision == 'approve':
+                appointment.employee = selected_employee
+                appointment.status = 'approved'
+                appointment.save()
+
+                # Add to employee calendar
+                EmployeeCalendar.objects.create(
+                    user_profile=selected_employee,
+                    appointment=appointment,
+                    scheduled_time=appointment.appointment_time,
+                    available_time=False  # now marked as unavailable
+                )
+
+            elif decision == 'reject':
+                appointment.status = 'rejected'
+                appointment.save()
+
+            return redirect('approve_appointments')
+
+    # Build form for each appointment with available employees
+    appointment_forms = []
+    for appointment in pending_appointments:
+        # Employees already scheduled at this time
+        busy_employee_ids = EmployeeCalendar.objects.filter(
+            scheduled_time=appointment.appointment_time
+        ).values_list('user_profile_id', flat=True)
+
+        # Only employees not scheduled at that time
+        available_employees = UserProfile.objects.filter(
+            role='employee'
+        ).exclude(id__in=busy_employee_ids)
+
+        form = AppointmentApprovalForm()
+        form.fields['employee'].queryset = available_employees
+        appointment_forms.append((appointment, form))
+
+    return render(request, 'core/approve_appointments.html', {
+        'appointment_forms': appointment_forms
+    })
