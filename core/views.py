@@ -3,8 +3,18 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-from .models import UserProfile, PetProfile
-from .forms import PetProfileForm, PetApprovalForm
+from .models import (
+    UserProfile,
+    PetProfile,
+    Appointment,
+    Voucher,
+    Service,
+    )
+from .forms import (
+    PetProfileForm,
+    PetApprovalForm,
+    AppointmentForm,
+    )
 
 
 @login_required
@@ -106,3 +116,46 @@ def add_pet(request):
         form = PetProfileForm()
 
     return render(request, 'core/add_pet.html', {'form': form})
+
+
+@login_required
+def book_appointment(request):
+    # Only clients should access this
+    if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'client':
+        return redirect('login')
+
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, user=request.user)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            service = appointment.service
+            voucher_code = form.cleaned_data.get('voucher_code')
+            final_price = service.price
+            voucher = None
+
+            if voucher_code:
+                try:
+                    voucher = Voucher.objects.get(code=voucher_code, is_redeemed=False)
+                    if voucher.expiry_date < timezone.now().date():
+                        messages.error(request, "Voucher has expired.")
+                    else:
+                        final_price = service.price * (1 - voucher.discount_percentage / 100)
+                        appointment.voucher = voucher
+                except Voucher.DoesNotExist:
+                    messages.error(request, "Invalid voucher code.")
+
+            appointment.final_price = round(final_price, 2)
+            appointment.status = 'pending'
+            appointment.save()
+
+            if voucher:
+                voucher.is_redeemed = True
+                voucher.used_by_user = request.user
+                voucher.save()
+
+            messages.success(request, "Appointment booked and pending approval.")
+            return redirect('client_dashboard')
+    else:
+        form = AppointmentForm(user=request.user)
+
+    return render(request, 'core/book_appointment.html', {'form': form})
