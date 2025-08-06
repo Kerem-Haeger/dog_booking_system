@@ -70,8 +70,10 @@ def employee_dashboard(request):
 @login_required
 def manager_dashboard(request):
     pending_count = PetProfile.objects.filter(profile_status='pending').count()
+    pending_appt_count = Appointment.objects.filter(status='pending').count()
     return render(request, 'core/manager_dashboard.html', {
-        'pending_count': pending_count
+        'pending_count': pending_count,
+        'pending_appt_count': pending_appt_count,
     })
 
 
@@ -262,3 +264,19 @@ def fetch_available_slots(request):
 
     return JsonResponse(all_slots, safe=False)
 
+
+@require_GET
+def get_service_price(request):
+    pet_id = request.GET.get('pet_id')
+    service_id = request.GET.get('service_id')
+
+    if not pet_id or not service_id:
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    try:
+        pet = PetProfile.objects.get(id=pet_id)
+        service = Service.objects.get(id=service_id)
+        price = service.get_price_for_size(pet.size)
+        return JsonResponse({'price': f"{price:.2f}"})
+    except (PetProfile.DoesNotExist, Service.DoesNotExist, ServicePrice.DoesNotExist):
+        return JsonResponse({'error': 'Unable to calculate price'}, status=404)

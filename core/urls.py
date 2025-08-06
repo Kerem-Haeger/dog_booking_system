@@ -12,4 +12,5 @@ urlpatterns = [
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
     path('manager/approve-appointments/', views.approve_appointments, name='approve_appointments'),
     path('manager/pets/pending/', views.approve_pets, name='approve_pets'),
+    path('ajax/get-service-price/', views.get_service_price, name='get_service_price'),
 ]

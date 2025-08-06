@@ -8,7 +8,11 @@
 <h2>Management Actions</h2>
 
 {% if pending_count > 0 %}
-<p style="color: red;">🚨 You have new pet profiles to review:</p>
+<p style="color: red;">🚨 You have {{ pending_count }} new pet profiles to review:</p>
+{% endif %}
+
+{% if pending_appt_count > 0 %}
+<p style="color: red;">📅 You have {{ pending_appt_count }} new appointment requests to review!</p>
 {% endif %}
 
 <ul>

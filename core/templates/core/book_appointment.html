@@ -20,6 +20,8 @@
         {{ form.service.label_tag }} {{ form.service }}
     </p>
 
+    <p id="price-display"><strong>Price:</strong> Please choose your pet and service first!</p>
+
     <div id="calendar" style="max-width: 700px; margin-top: 30px;"></div>
 
     {{ form.time_slot }}
@@ -80,5 +82,35 @@
         // Refetch slots when service changes
         serviceField.addEventListener("change", () => calendar.refetchEvents());
     });
+
+    const petField = document.getElementById("id_pet_profile");
+    const serviceField = document.getElementById("id_service");
+    const priceDisplay = document.getElementById("price-display");
+
+    function updatePrice() {
+        const petId = petField.value;
+        const serviceId = serviceField.value;
+
+        if (!petId || !serviceId) {
+            priceDisplay.innerHTML = "<strong>Price:</strong> Please choose your pet and service first!";
+            return;
+        }
+
+        fetch(`/ajax/get-service-price/?pet_id=${petId}&service_id=${serviceId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.price) {
+                    priceDisplay.innerHTML = `<strong>Price:</strong> £${data.price}`;
+                } else {
+                    priceDisplay.innerHTML = "<strong>Price:</strong> Not available for this selection.";
+                }
+            })
+            .catch(error => {
+                priceDisplay.innerHTML = "<strong>Price:</strong> Error fetching price.";
+            });
+    }
+
+    petField.addEventListener("change", updatePrice);
+    serviceField.addEventListener("change", updatePrice);
 </script>
 {% endblock %}
