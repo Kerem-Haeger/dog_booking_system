@@ -183,54 +183,54 @@ def approve_appointments(request):
     pending_appointments = Appointment.objects.filter(status='pending')
 
     if request.method == 'POST':
-        form = AppointmentApprovalForm(request.POST)
+        appointment_id = request.POST.get('appointment_id')
+        selected_appointment = get_object_or_404(Appointment, id=appointment_id)
+
+        form = AppointmentApprovalForm(request.POST, prefix=str(appointment_id))
         if form.is_valid():
-            appointment_id = request.POST.get('appointment_id')
             decision = form.cleaned_data['decision']
             selected_employee = form.cleaned_data['employee']
 
-            appointment = Appointment.objects.get(id=appointment_id)
-
             if decision == 'approve':
-                appointment.employee = selected_employee
-                appointment.status = 'approved'
-                appointment.save()
-                messages.success(request, f"Appointment approved and assigned to {selected_employee.user.username}.")
+                selected_appointment.employee = selected_employee
+                selected_appointment.status = 'approved'
+                selected_appointment.save()
 
-                # Add to employee calendar
                 EmployeeCalendar.objects.create(
                     user_profile=selected_employee,
-                    appointment=appointment,
-                    scheduled_time=appointment.appointment_time,
-                    available_time=False  # now marked as unavailable
+                    appointment=selected_appointment,
+                    scheduled_time=selected_appointment.appointment_time,
+                    available_time=False
                 )
 
+                messages.success(request, f"Appointment approved and assigned to {selected_employee.user.username}.")
             elif decision == 'reject':
-                appointment.status = 'rejected'
-                appointment.save()
+                selected_appointment.status = 'rejected'
+                selected_appointment.save()
                 messages.warning(request, "Appointment was rejected.")
 
             return redirect('approve_appointments')
 
-    # Build form for each appointment with available employees
+    # Build forms with unique prefixes
     appointment_forms = []
     for appointment in pending_appointments:
-        # Employees already scheduled at this time
         busy_employee_ids = EmployeeCalendar.objects.filter(
             scheduled_time=appointment.appointment_time
         ).values_list('user_profile_id', flat=True)
 
-        # Only employees not scheduled at that time
         available_employees = UserProfile.objects.filter(
             role='employee'
         ).exclude(id__in=busy_employee_ids)
 
-        form = AppointmentApprovalForm()
+        form = AppointmentApprovalForm(prefix=str(appointment.id))
         form.fields['employee'].queryset = available_employees
         appointment_forms.append((appointment, form))
 
-    return render(request, 'core/approve_appointments.html', {
-        'appointment_forms': appointment_forms
+    approved_appointments = Appointment.objects.filter(status='approved').order_by('-appointment_time')
+
+    return render(request, 'core/appointments_dashboard.html', {
+        'appointment_forms': appointment_forms,
+        'approved_appointments': approved_appointments,
     })
 
 

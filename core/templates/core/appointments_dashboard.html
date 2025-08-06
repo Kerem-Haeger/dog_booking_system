@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h1>Appointments Dashboard</h1>
+
+<h2>Pending Appointments</h2>
+{% if appointment_forms %}
+{% for appointment, form in appointment_forms %}
+<div class="appointment-card">
+    <h3>{{ appointment.pet_profile.name }} - {{ appointment.service.name }}</h3>
+    <p><strong>Time:</strong> {{ appointment.appointment_time }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+        <button type="submit" name="decision" value="approve">Approve</button>
+        <button type="submit" name="decision" value="reject">Reject</button>
+    </form>
+</div>
+{% endfor %}
+{% else %}
+<p>No pending appointments to review.</p>
+{% endif %}
+
+<hr>
+
+<h2>Approved Appointments</h2>
+{% if approved_appointments %}
+<ul>
+    {% for appt in approved_appointments %}
+    <li>
+        {{ appt.pet_profile.name }} - {{ appt.service.name }} at {{ appt.appointment_time }}
+        (Groomer: {{ appt.employee.user.username }})
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No approved appointments yet.</p>
+{% endif %}
+
+<a href="{% url 'manager_dashboard' %}">⬅ Back to Dashboard</a>
+{% endblock %}
