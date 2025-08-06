@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_GET
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import (
     User,
     UserProfile,
@@ -141,18 +141,18 @@ def book_appointment(request):
             print("Form is valid!")  # Debug
             appointment = form.save(commit=False)
             service = appointment.service
-            time_slot_str = form.cleaned_data.get('time_slot')
-            appointment_date = form.cleaned_data.get('appointment_time')
+            time_slot_str = form.cleaned_data.get('time_slot')  # ISO string, e.g. "2025-08-12T14:00:00Z"
 
-            # Combine date + time into full datetime
             try:
-                time_obj = datetime.strptime(time_slot_str, "%H:%M").time()
-                combined_datetime = timezone.make_aware(
-                    datetime.combine(appointment_date, time_obj)
-                )
+                # Strip Z (if present from toISOString()) to avoid format error
+                if time_slot_str.endswith("Z"):
+                    time_slot_str = time_slot_str.rstrip("Z")
+
+                # Parse and make timezone-aware
+                combined_datetime = timezone.make_aware(datetime.fromisoformat(time_slot_str))
                 appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
-                messages.error(request, "Invalid time slot.")
+                messages.error(request, "Invalid time slot format.")
                 return render(request, 'core/book_appointment.html', {'form': form})
 
             appointment.final_price = round(service.price, 2)
@@ -229,16 +229,30 @@ def approve_appointments(request):
 @require_GET
 def fetch_available_slots(request):
     service_id = request.GET.get('service_id')
-    date_str = request.GET.get('date')  # expected format: 'YYYY-MM-DD'
+    start_str = request.GET.get('start')
+    end_str = request.GET.get('end')
 
-    if not service_id or not date_str:
+    if not service_id or not start_str or not end_str:
         return JsonResponse({'error': 'Missing parameters'}, status=400)
 
     try:
         service = Service.objects.get(id=service_id)
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+        start_date = datetime.strptime(start_str[:10], "%Y-%m-%d").date()
+        end_date = datetime.strptime(end_str[:10], "%Y-%m-%d").date()
     except (Service.DoesNotExist, ValueError):
-        return JsonResponse({'error': 'Invalid service or date'}, status=400)
+        return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
-    slots = get_available_slots(service, date_obj)
-    return JsonResponse({'slots': slots})
+    all_slots = []
+    for date in (start_date + timedelta(n) for n in range((end_date - start_date).days + 1)):
+        time_strings = get_available_slots(service, date)
+        for time_str in time_strings:
+            start_dt = timezone.make_aware(datetime.strptime(f"{date} {time_str}", "%Y-%m-%d %H:%M"))
+            end_dt = start_dt + service.duration
+            all_slots.append({
+                "title": "Available",
+                "start": start_dt.isoformat(),
+                "end": end_dt.isoformat()
+            })
+
+    return JsonResponse(all_slots, safe=False)
+

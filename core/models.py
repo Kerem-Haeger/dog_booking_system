@@ -68,14 +68,22 @@ class PetProfile(models.Model):
 
 # Service model (simplified grooming services)
 class Service(models.Model):
-    name = models.CharField(max_length=100)  # E.g., Wash Only, Wash and Groom
+    name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    duration = models.DurationField()  # Duration of the service
+    duration = models.DurationField()
     slot_interval = models.PositiveIntegerField(
         default=30,
         help_text="Interval between available start times (in minutes)."
     )
+    allowed_start_times = models.CharField(
+        max_length=200,
+        help_text="Comma-separated start times (e.g., '09:00,11:30,14:00')",
+        default="09:00,11:30,14:00"
+    )
+
+    def get_allowed_times(self):
+        return [t.strip() for t in self.allowed_start_times.split(",")]
 
     def __str__(self):
         return self.name

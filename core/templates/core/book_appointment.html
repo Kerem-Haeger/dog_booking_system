@@ -19,15 +19,11 @@
     <p>
         {{ form.service.label_tag }} {{ form.service }}
     </p>
-    <p>
-        {{ form.appointment_time.label_tag }} {{ form.appointment_time }}
-    </p>
-    <p>
-        <label for="id_time_slot">Choose a Time Slot:</label>
-        <select id="id_time_slot" name="time_slot" disabled>
-            <option value="">Please select a pet, service, and date first</option>
-        </select>
-    </p>
+
+    <div id="calendar" style="max-width: 700px; margin-top: 30px;"></div>
+
+    {{ form.time_slot }}
+
     <p>
         {{ form.voucher_code.label_tag }} {{ form.voucher_code }}
     </p>
@@ -38,50 +34,51 @@
 <br>
 <a href="{% url 'client_dashboard' %}">⬅ Back to Dashboard</a>
 
+<!-- FullCalendar CDN -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const serviceField = document.getElementById("id_service");
-        const dateField = document.getElementById("id_appointment_time");
-        const timeSlotSelect = document.getElementById("id_time_slot");
+        const timeSlotInput = document.getElementById("id_time_slot");
 
-        function loadAvailableSlots() {
-            const serviceId = serviceField.value;
-            const date = dateField.value;
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            allDaySlot: false,
+            selectable: true,
+            slotMinTime: "09:00:00",
+            slotMaxTime: "18:01:00",
+            timeZone: 'UTC',
+            hiddenDays: [0], // Sundays closed!
+            events: function (info, successCallback, failureCallback) {
+                const serviceId = serviceField.value;
+                if (!serviceId) return;
 
-            if (!serviceId || !date) {
-                timeSlotSelect.disabled = true;
-                return;
+                fetch(
+                        `/ajax/available-slots/?service_id=${serviceId}&start=${info.startStr}&end=${info.endStr}`
+                    )
+                    .then(response => response.json())
+                    .then(data => {
+                        successCallback(data); // FullCalendar renders them
+                    })
+                    .catch(error => {
+                        console.error("Error loading slots:", error);
+                        failureCallback(error);
+                    });
+            },
+            eventClick: function (info) {
+                timeSlotInput.value = info.event.start.toISOString(); // full ISO datetime
+                calendar.getEvents().forEach(e => e.setProp('backgroundColor', '#3788d8'));
+                info.event.setProp('backgroundColor', 'green');
             }
+        });
 
-            fetch(`/ajax/available-slots/?service_id=${serviceId}&date=${date}`)
-                .then(response => response.json())
-                .then(data => {
-                    timeSlotSelect.innerHTML = ""; // clear existing options
+        calendar.render();
 
-                    if (data.slots && data.slots.length > 0) {
-                        data.slots.forEach(slot => {
-                            const option = document.createElement("option");
-                            option.value = slot;
-                            option.textContent = slot;
-                            timeSlotSelect.appendChild(option);
-                        });
-                        timeSlotSelect.disabled = false;
-                    } else {
-                        const option = document.createElement("option");
-                        option.textContent = "No available slots";
-                        timeSlotSelect.appendChild(option);
-                        timeSlotSelect.disabled = true;
-                    }
-                })
-                .catch(error => {
-                    console.error("Error loading slots:", error);
-                    timeSlotSelect.innerHTML = "<option>Error loading slots</option>";
-                    timeSlotSelect.disabled = true;
-                });
-        }
-
-        serviceField.addEventListener("change", loadAvailableSlots);
-        dateField.addEventListener("change", loadAvailableSlots);
+        // Refetch slots when service changes
+        serviceField.addEventListener("change", () => calendar.refetchEvents());
     });
 </script>
 {% endblock %}
