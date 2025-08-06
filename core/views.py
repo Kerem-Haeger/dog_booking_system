@@ -12,6 +12,7 @@ from .models import (
     Appointment,
     Voucher,
     Service,
+    ServicePrice,
     EmployeeCalendar,
     )
 from .forms import (
@@ -155,7 +156,12 @@ def book_appointment(request):
                 messages.error(request, "Invalid time slot format.")
                 return render(request, 'core/book_appointment.html', {'form': form})
 
-            appointment.final_price = round(service.price, 2)
+            try:
+                pet_size = appointment.pet_profile.size
+                appointment.final_price = service.get_price_for_size(pet_size)
+            except ServicePrice.DoesNotExist:
+                messages.error(request, f"No price found for {service.name} and {pet_size} dogs.")
+                return render(request, 'core/book_appointment.html', {'form': form})
             appointment.status = 'pending'
             appointment.save()
 

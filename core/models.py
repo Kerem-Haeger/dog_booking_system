@@ -70,7 +70,6 @@ class PetProfile(models.Model):
 class Service(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
     duration = models.DurationField()
     slot_interval = models.PositiveIntegerField(
         default=30,
@@ -87,6 +86,19 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_price_for_size(self, size):
+        return self.prices.get(size=size).price
+
+
+# Model for pricing
+class ServicePrice(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="prices")
+    size = models.CharField(choices=[('small', 'Small'), ('medium', 'Medium'), ('large', 'Large')], max_length=10)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+
+    class Meta:
+        unique_together = ('service', 'size')
 
 
 # Appointment model (for booking)

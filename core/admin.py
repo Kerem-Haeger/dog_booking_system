@@ -3,6 +3,7 @@ from .models import (
     UserProfile,
     PetProfile,
     Service,
+    ServicePrice,
     Appointment,
     EmployeeCalendar,
     TimeOffRequest,
@@ -13,6 +14,7 @@ from .models import (
 # Register models for the admin interface
 admin.site.register(UserProfile)
 admin.site.register(EmployeeCalendar)
+admin.site.register(ServicePrice)
 
 
 # Customizing the PetProfile admin interface
@@ -72,5 +74,5 @@ admin.site.register(Voucher, VoucherAdmin)  # Register Voucher with the customiz
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'duration', 'slot_interval', 'price')
+    list_display = ('name', 'duration', 'slot_interval')
     list_filter = ('slot_interval',)
