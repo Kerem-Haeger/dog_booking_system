@@ -183,6 +183,11 @@ def approve_appointments(request):
         status='approved'
     ).order_by('appointment_time')
 
+    # Get rejected appointments for separate display
+    rejected_appointments = Appointment.objects.filter(
+        status='rejected'
+    ).order_by('-appointment_time')  # Most recent first
+
     # Get all employees for the filter dropdown
     all_employees = UserProfile.objects.filter(
         role='employee'
@@ -191,5 +196,6 @@ def approve_appointments(request):
     return render(request, 'core/appointments_dashboard.html', {
         'appointment_forms': appointment_forms,
         'approved_appointments': approved_appointments,
+        'rejected_appointments': rejected_appointments,
         'all_employees': all_employees,
     })

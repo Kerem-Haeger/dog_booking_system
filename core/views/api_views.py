@@ -125,10 +125,12 @@ def get_calendar_events(request):
             'end_received': end_str
         }, status=400)
 
-    # Base query for appointments in the date range
+    # Base query for appointments in the date range - exclude rejected appointments
     appointments = Appointment.objects.filter(
         appointment_time__gte=start_date,
         appointment_time__lte=end_date
+    ).exclude(
+        status__in=['rejected', 'canceled']  # Don't show rejected/canceled on calendar
     ).select_related('pet_profile__user', 'service', 'employee__user')
 
     print(f"DEBUG: Found {appointments.count()} appointments in date range")
@@ -163,9 +165,22 @@ def get_calendar_events(request):
         elif appointment.status == 'completed':
             bg_color = '#6c757d'  # Gray
             border_color = '#6c757d'
-        else:  # canceled, rejected
+        else:  # This shouldn't happen since we exclude rejected/canceled
             bg_color = '#dc3545'  # Red
             border_color = '#dc3545'
+
+        # Apply faded colors for past appointments only
+        if is_past:
+            # Convert colors to more transparent versions
+            if appointment.status == 'approved':
+                bg_color = '#28a74580'  # Green with transparency
+                border_color = '#28a74580'
+            elif appointment.status == 'pending':
+                bg_color = '#ffc10780'  # Yellow with transparency
+                border_color = '#ffc10780'
+            elif appointment.status == 'completed':
+                bg_color = '#6c757d80'  # Gray with transparency
+                border_color = '#6c757d80'
 
         # Create employee name
         if appointment.employee:
@@ -196,8 +211,7 @@ def get_calendar_events(request):
                 'client': (appointment.pet_profile.user.get_full_name() or
                            appointment.pet_profile.user.username),
                 'appointment_id': appointment.id,
-                'is_past': is_past,
-                'is_rejected': appointment.status in ['rejected', 'canceled']
+                'is_past': is_past
             }
         })
 
