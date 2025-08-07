@@ -32,13 +32,25 @@ def fetch_available_slots(request):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
     all_slots = []
+    today = timezone.now().date()
+    current_time = timezone.now()
+    
     date_range = (end_date - start_date).days + 1
     for date in (start_date + timedelta(n) for n in range(date_range)):
+        # Only process dates that are today or in the future
+        if date < today:
+            continue
+            
         time_strings = get_available_slots(service, date)
         for time_str in time_strings:
             start_dt = timezone.make_aware(
                 datetime.strptime(f"{date} {time_str}", "%Y-%m-%d %H:%M")
             )
+            
+            # If it's today, only show slots that are in the future
+            if date == today and start_dt <= current_time:
+                continue
+                
             end_dt = start_dt + service.duration
             all_slots.append({
                 "title": "Available",

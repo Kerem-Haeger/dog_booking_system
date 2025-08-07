@@ -13,7 +13,7 @@ def add_class(field, css_class):
     """
     if not css_class:
         return field
-    
+
     # Handle BoundField (form fields in templates)
     if isinstance(field, BoundField):
         widget = field.field.widget
@@ -23,7 +23,7 @@ def add_class(field, css_class):
                 widget.attrs['class'] = f"{existing_classes} {css_class}"
             else:
                 widget.attrs['class'] = css_class
-    
+
     # Handle direct widget access
     elif hasattr(field, 'widget') and isinstance(field.widget, Widget):
         existing_classes = field.widget.attrs.get('class', '')
@@ -31,5 +31,5 @@ def add_class(field, css_class):
             field.widget.attrs['class'] = f"{existing_classes} {css_class}"
         else:
             field.widget.attrs['class'] = css_class
-    
+
     return field

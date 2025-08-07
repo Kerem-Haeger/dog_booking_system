@@ -43,7 +43,7 @@ def client_dashboard(request):
             appointment.status not in ['cancelled', 'rejected']
         )
 
-    return render(request, 'core/client_dashboard_new.html', {
+    return render(request, 'core/client_dashboard.html', {
         'pets': pets,
         'upcoming_appointments': upcoming_appointments,
         'past_appointments': past_appointments,
@@ -96,6 +96,16 @@ def book_appointment(request):
                 combined_datetime = timezone.make_aware(
                     datetime.fromisoformat(time_slot_str)
                 )
+                
+                # Additional security check: ensure appointment is in the future
+                if combined_datetime <= timezone.now():
+                    messages.error(
+                        request, 
+                        "Appointments can only be booked for future dates and times."
+                    )
+                    return render(request, 'core/book_appointment.html',
+                                  {'form': form})
+                
                 appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
                 messages.error(request, "Invalid time slot format.")

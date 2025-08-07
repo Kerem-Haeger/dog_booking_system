@@ -82,15 +82,15 @@ class AuditLogAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'target_user__username', 'action']
     readonly_fields = ('timestamp', 'ip_address', 'details')
     ordering = ['-timestamp']
-    
+
     def has_add_permission(self, request):
         # Prevent manual creation of audit logs
         return False
-    
+
     def has_change_permission(self, request, obj=None):
         # Prevent editing of audit logs
         return False
-    
+
     def has_delete_permission(self, request, obj=None):
         # Only superusers can delete audit logs
         return request.user.is_superuser

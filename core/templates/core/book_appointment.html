@@ -82,6 +82,9 @@
             slotMaxTime: "18:01:00",
             timeZone: 'UTC',
             hiddenDays: [0], // Sundays closed!
+            validRange: {
+                start: new Date() // Prevent navigation to past dates
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',

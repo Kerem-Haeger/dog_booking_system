@@ -9,112 +9,266 @@
 {% endblock %}
 
 {% block content %}
-<h1>My Dashboard</h1>
-
-<div class="dashboard-grid">
-    <div class="dashboard-section">
-        <h2>My Pets</h2>
-        {% if pets %}
-        <div class="pet-list">
-            {% for pet in pets %}
-            <div class="pet-item">
-                <div class="pet-name">{{ pet.name }}</div>
-                <div class="pet-details">({{ pet.breed }}, {{ pet.size }})</div>
-                <div class="pet-details">Status:
-                    <span class="pet-status {{ pet.profile_status }}">{{ pet.profile_status|title }}</span>
-                </div>
-            </div>
-            {% endfor %}
+<div class="client-dashboard">
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1>My Dashboard</h1>
+            <p class="welcome-text">Welcome back! Here's what's coming up for your pets.</p>
         </div>
-        {% else %}
-        <p class="text-muted">You haven't added any pets yet.</p>
+
+        <!-- Upcoming Appointments (Primary Focus) -->
+        <div class="appointments-primary">
+            <div class="section-header">
+                <h2>🕒 Upcoming Appointments</h2>
+                {% if upcoming_appointments %}
+                <span class="appointment-count">{{ upcoming_appointments|length }}</span>
+                {% endif %}
+            </div>
+
+            {% if upcoming_appointments %}
+            <div class="appointments-slider">
+                {% for appt in upcoming_appointments %}
+                <div class="appointment-card compact {% if forloop.first %}active{% endif %}">
+                    <div class="appointment-time">
+                        <div class="date">{{ appt.appointment_time|date:"M j" }}</div>
+                        <div class="time">{{ appt.appointment_time|time:"H:i" }}</div>
+                        <div class="day">{{ appt.appointment_time|date:"D" }}</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="pet-service">
+                            <strong>{{ appt.pet_profile.name }}</strong> - {{ appt.service.name }}
+                        </div>
+                        <div class="status-line">
+                            <span class="status-badge {{ appt.status }}">{{ appt.status|title }}</span>
+                            {% if appt.assigned_employee %}
+                            <span class="employee">with
+                                {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}</span>
+                            {% endif %}
+                        </div>
+                        {% if appt.status == 'approved' and appt.can_cancel %}
+                        <div class="appointment-actions">
+                            <a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-small">Cancel</a>
+                        </div>
+                        {% elif appt.status == 'approved' and not appt.can_cancel %}
+                        <div class="appointment-actions">
+                            <span class="cancel-warning-text">Cannot cancel within 24h</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if upcoming_appointments|length > 1 %}
+            <div class="slider-controls">
+                <button class="slider-prev" onclick="slideAppointments(-1)">‹</button>
+                <div class="slider-dots">
+                    {% for appt in upcoming_appointments %}
+                    <span class="dot {% if forloop.first %}active{% endif %}" onclick="showAppointment({{ forloop.counter0 }})"></span>
+                    {% endfor %}
+                </div>
+                <button class="slider-next" onclick="slideAppointments(1)">›</button>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-appointments">
+                <p>No upcoming appointments</p>
+                <a href="{% url 'book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Past Appointments (Collapsed by default) -->
+        {% if past_appointments %}
+        <div class="past-appointments-section">
+            <button class="section-toggle" onclick="togglePastAppointments()">
+                <span>📋 Past Appointments ({{ past_appointments|length }})</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="past-appointments-content" style="display: none;">
+                {% for appt in past_appointments|slice:":5" %}
+                <div class="appointment-card past compact">
+                    <div class="appointment-time small">
+                        {{ appt.appointment_time|date:"M j" }}
+                    </div>
+                    <div class="appointment-info">
+                        <div class="pet-service">{{ appt.pet_profile.name }} - {{ appt.service.name }}</div>
+                        <div class="status-line">
+                            {% if appt.status == 'approved' or appt.status == 'completed' %}
+                            <span class="completed-message">Thanks for your business! 🐾</span>
+                            {% else %}
+                            {{ appt.status|title }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if past_appointments|length > 5 %}
+                <div class="show-more">
+                    <button class="btn-link">Show {{ past_appointments|length|add:"-5" }} more...</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
         {% endif %}
 
-        <div style="margin-top: 1rem;">
-            <a href="{% url 'add_pet' %}" class="btn btn-primary">Add a Pet</a>
+        <!-- Rejected Appointments (Collapsed by default) -->
+        {% if rejected_appointments %}
+        <div class="rejected-appointments-section">
+            <button class="section-toggle" onclick="toggleRejectedAppointments()">
+                <span>❌ Rejected Appointments ({{ rejected_appointments|length }})</span>
+                <span class="toggle-icon-rejected">▼</span>
+            </button>
+            <div class="rejected-appointments-content" style="display: none;">
+                {% for appt in rejected_appointments|slice:":5" %}
+                <div class="appointment-card rejected compact">
+                    <div class="appointment-time small rejected">
+                        {{ appt.appointment_time|date:"M j" }}
+                    </div>
+                    <div class="appointment-info">
+                        <div class="pet-service">{{ appt.pet_profile.name }} - {{ appt.service.name }}</div>
+                        <div class="status-line">
+                            <span class="status-badge rejected">Rejected</span>
+                            <span class="rejection-note">Reason will be shown here in future</span>
+                        </div>
+                        <div class="appointment-detail">
+                            <small class="requested-time">Requested: {{ appt.appointment_time|date:"D, M j, Y" }} at
+                                {{ appt.appointment_time|time:"H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if rejected_appointments|length > 5 %}
+                <div class="show-more">
+                    <button class="btn-link">Show {{ rejected_appointments|length|add:"-5" }} more...</button>
+                </div>
+                {% endif %}
+            </div>
         </div>
+        {% endif %}
     </div>
 
-    <div class="dashboard-section">
-        <h2>Quick Actions</h2>
-        <div class="quick-actions">
-            <a href="{% url 'book_appointment' %}" class="action-link">
-                <span class="action-icon">📅</span>
-                <span class="action-title">Book a New Appointment</span>
-                <div class="action-description">Schedule grooming for your pets</div>
-            </a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Quick Actions (Priority) -->
+        <div class="sidebar-card priority">
+            <h3>⚡ Quick Actions</h3>
+            <div class="quick-actions-compact">
+                <a href="{% url 'book_appointment' %}" class="action-button primary">
+                    <span class="icon">📅</span>
+                    <span class="text">Book Appointment</span>
+                </a>
+                <a href="{% url 'add_pet' %}" class="action-button secondary">
+                    <span class="icon">🐕</span>
+                    <span class="text">Add Pet</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- My Pets -->
+        <div class="sidebar-card">
+            <h3>🐾 My Pets</h3>
+            {% if pets %}
+            <div class="pets-compact">
+                {% for pet in pets %}
+                <div class="pet-item-compact">
+                    <div class="pet-info">
+                        <div class="pet-name">{{ pet.name }}</div>
+                        <div class="pet-breed">{{ pet.breed }}</div>
+                    </div>
+                    <div class="pet-status-badge {{ pet.profile_status }}">
+                        {{ pet.profile_status|title }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-text">No pets added yet</p>
+            <a href="{% url 'add_pet' %}" class="btn-link">Add your first pet →</a>
+            {% endif %}
         </div>
     </div>
 </div>
 
-<div style="margin-top: 3rem;">
-    <h2>My Appointments</h2>
+{% endblock %}
 
-    <h3 style="color: #007bff; margin-top: 2rem;">Upcoming Appointments</h3>
-    {% if upcoming_appointments %}
-    <div class="appointments-list">
-        {% for appt in upcoming_appointments %}
-        <div class="appointment-item upcoming">
-            <div class="appointment-status">
-                <strong>{{ appt.appointment_time|date:"D, M j, Y" }} at
-                    {{ appt.appointment_time|time:"H:i" }}</strong><br>
-                Pet: {{ appt.pet_profile.name }}<br>
-                Service: {{ appt.service.name }}<br>
-                Status:
-                <span class="
-                    {% if appt.status == 'approved' %}text-success
-                    {% elif appt.status == 'pending' %}text-warning
-                    {% elif appt.status == 'rejected' %}text-danger
-                    {% elif appt.status == 'cancelled' %}text-muted
-                    {% else %}text-muted
-                    {% endif %}
-                ">
-                    {{ appt.status|title }}
-                </span>
-                {% if appt.assigned_employee %}
-                <br>Assigned to:
-                {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}
-                {% endif %}
+{% block extra_js %}
+<script src="{% static 'core/js/base.js' %}"></script>
+<script>
+    let currentAppointment = 0;
+    const totalAppointments = {{ upcoming_appointments|length }};
 
-                <!-- Cancellation Option - Only for approved appointments -->
-                {% if appt.status == 'approved' %}
-                {% if appt.can_cancel %}
-                <br><a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-neutral">Cancel</a>
-                {% else %}
-                <br><button class="btn-cancel-disabled" disabled
-                    title="Cannot cancel within 24 hours - Contact business directly">Cancel</button>
-                {% endif %}
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <p class="text-muted">No upcoming appointments.</p>
-    {% endif %}
+    function slideAppointments(direction) {
+        const cards = document.querySelectorAll('.appointment-card.compact');
+        const dots = document.querySelectorAll('.slider-dots .dot');
 
-    <h3 style="color: #6c757d; margin-top: 2rem;">Past Appointments</h3>
-    {% if past_appointments %}
-    <div class="appointments-list past-appointments">
-        {% for appt in past_appointments %}
-        <div class="appointment-item past">
-            <div class="appointment-status-past">
-                <strong>{{ appt.appointment_time|date:"D, M j, Y" }} at
-                    {{ appt.appointment_time|time:"H:i" }}</strong><br>
-                Pet: {{ appt.pet_profile.name }}<br>
-                Service: {{ appt.service.name }}<br>
-                Status: {{ appt.status|title }}
-                {% if appt.assigned_employee %}
-                <br>Assigned to:
-                {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <p class="text-muted">No past appointments.</p>
-    {% endif %}
-</div>
+        // Remove active class from current
+        if (cards[currentAppointment]) {
+            cards[currentAppointment].classList.remove('active');
+            if (dots[currentAppointment]) {
+                dots[currentAppointment].classList.remove('active');
+            }
+        }
 
+        // Calculate new index
+        currentAppointment += direction;
+        if (currentAppointment >= totalAppointments) currentAppointment = 0;
+        if (currentAppointment < 0) currentAppointment = totalAppointments - 1;
+
+        // Add active class to new
+        if (cards[currentAppointment]) {
+            cards[currentAppointment].classList.add('active');
+            if (dots[currentAppointment]) {
+                dots[currentAppointment].classList.add('active');
+            }
+        }
+    }
+
+    function showAppointment(index) {
+        const cards = document.querySelectorAll('.appointment-card.compact');
+        const dots = document.querySelectorAll('.slider-dots .dot');
+
+        // Remove active from all
+        cards.forEach(card => card.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Add active to selected
+        currentAppointment = index;
+        if (cards[index]) {
+            cards[index].classList.add('active');
+            dots[index].classList.add('active');
+        }
+    }
+
+    function togglePastAppointments() {
+        const content = document.querySelector('.past-appointments-content');
+        const icon = document.querySelector('.toggle-icon');
+
+        if (content && icon) {
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            }
+        }
+    }
+
+    function toggleRejectedAppointments() {
+        const content = document.querySelector('.rejected-appointments-content');
+        const icon = document.querySelector('.toggle-icon-rejected');
+
+        if (content && icon) {
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            }
+        }
+    }
+</script>
 {% endblock %}

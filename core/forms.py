@@ -113,6 +113,12 @@ class AppointmentForm(forms.ModelForm):
                     datetime.fromisoformat(time_slot)
                 )
                 
+                # Check if appointment is in the future
+                if combined_datetime <= timezone.now():
+                    raise forms.ValidationError(
+                        "Appointments can only be booked for future dates and times."
+                    )
+                
                 # Check daily appointment limit (max 2 per day)
                 same_day_count = Appointment.objects.filter(
                     pet_profile__user=pet_profile.user,
