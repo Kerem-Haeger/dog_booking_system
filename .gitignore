@@ -1,2 +1,9 @@
 .venv/
 env.py
+staticfiles/
+__pycache__/
+*.pyc
+*.pyo
+*.sqlite3
+.DS_Store
+Thumbs.db
