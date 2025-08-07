@@ -181,6 +181,12 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.pet_profile.name} - {self.service.name} at {self.appointment_time}"
+    
+    def get_end_time(self):
+        """Calculate the end time of this appointment based on service duration"""
+        if self.service and self.service.duration:
+            return self.appointment_time + self.service.duration
+        return self.appointment_time  # Fallback if no duration is set
 
 
 # Employee calendar (for tracking appointments per employee)

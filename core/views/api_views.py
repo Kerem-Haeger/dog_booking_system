@@ -410,17 +410,30 @@ def get_available_employees(request):
         appointment = get_object_or_404(Appointment, id=appointment_id)
         print(f"DEBUG: Found appointment {appointment.id} at {appointment.appointment_time}")
 
-        # Get employees who are busy at this time
-        busy_employee_ids = EmployeeCalendar.objects.filter(
-            scheduled_time=appointment.appointment_time
+        # Get employees who are busy due to overlapping appointments
+        from ..utils import get_overlapping_appointments
+        
+        # Get overlapping approved appointments
+        overlapping_appointments = get_overlapping_appointments(appointment)
+        busy_employee_ids_appointments = [appt.employee.id for appt in overlapping_appointments if appt.employee]
+        
+        # Also check EmployeeCalendar for exact time conflicts (legacy support)
+        busy_employee_ids_calendar = EmployeeCalendar.objects.filter(
+            scheduled_time=appointment.appointment_time,
+            available_time=False
         ).values_list('user_profile_id', flat=True)
 
-        print(f"DEBUG: Busy employee IDs: {list(busy_employee_ids)}")
+        # Combine both sources of busy employees
+        all_busy_employee_ids = list(busy_employee_ids_calendar) + busy_employee_ids_appointments
+
+        print(f"DEBUG: Busy from calendar: {list(busy_employee_ids_calendar)}")
+        print(f"DEBUG: Busy from appointments: {list(busy_employee_ids_appointments)}")
+        print(f"DEBUG: All busy employee IDs: {all_busy_employee_ids}")
 
         # Get available employees
         available_employees = UserProfile.objects.filter(
             role='employee'
-        ).exclude(id__in=busy_employee_ids).select_related('user')
+        ).exclude(id__in=all_busy_employee_ids).select_related('user')
 
         print(f"DEBUG: Found {available_employees.count()} available employees")
 

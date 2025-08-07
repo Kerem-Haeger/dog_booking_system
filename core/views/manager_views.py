@@ -111,12 +111,21 @@ def approve_appointments(request):
                 selected_appointment.status = 'approved'
                 selected_appointment.save()
 
-                EmployeeCalendar.objects.create(
+                # Create EmployeeCalendar entry to mark employee as busy
+                # First check if entry already exists to prevent duplicates
+                existing_calendar = EmployeeCalendar.objects.filter(
                     user_profile=selected_employee,
-                    appointment=selected_appointment,
                     scheduled_time=selected_appointment.appointment_time,
                     available_time=False
-                )
+                ).first()
+                
+                if not existing_calendar:
+                    EmployeeCalendar.objects.create(
+                        user_profile=selected_employee,
+                        appointment=selected_appointment,
+                        scheduled_time=selected_appointment.appointment_time,
+                        available_time=False
+                    )
 
                 # Log audit action
                 log_audit_action(
@@ -135,7 +144,8 @@ def approve_appointments(request):
                 )
 
                 success_msg = (f"Appointment approved and assigned to "
-                               f"{selected_employee.user.username}.")
+                               f"{selected_employee.user.username}. "
+                               f"Page refreshed to update availability.")
                 messages.success(request, success_msg)
             else:
                 messages.error(
@@ -164,19 +174,35 @@ def approve_appointments(request):
 
         return redirect('approve_appointments')
 
-    # Build forms with unique prefixes
+    # Build forms with unique prefixes - dynamically filter available employees
     appointment_forms = []
     for appointment in pending_appointments:
-        busy_employee_ids = EmployeeCalendar.objects.filter(
-            scheduled_time=appointment.appointment_time
+        # Get all busy employees for appointments that overlap with this one
+        from ..utils import get_overlapping_appointments
+        
+        # Get overlapping approved appointments
+        overlapping_appointments = get_overlapping_appointments(appointment)
+        busy_employee_ids_appointments = [appt.employee.id for appt in overlapping_appointments if appt.employee]
+        
+        # Also check EmployeeCalendar for this exact time (legacy support)
+        busy_employee_ids_calendar = EmployeeCalendar.objects.filter(
+            scheduled_time=appointment.appointment_time,
+            available_time=False
         ).values_list('user_profile_id', flat=True)
-
+        
+        # Combine both sources to get all busy employees
+        all_busy_employee_ids = list(busy_employee_ids_calendar) + busy_employee_ids_appointments
+        
         available_employees = UserProfile.objects.filter(
             role='employee'
-        ).exclude(id__in=busy_employee_ids)
+        ).exclude(id__in=all_busy_employee_ids)
 
         form = AppointmentApprovalForm(prefix=str(appointment.id))
         form.fields['employee'].queryset = available_employees
+        
+        # Add helpful info about availability
+        form.fields['employee'].help_text = f"Available employees for {appointment.appointment_time.strftime('%Y-%m-%d %H:%M')}"
+        
         appointment_forms.append((appointment, form))
 
     approved_appointments = Appointment.objects.filter(
