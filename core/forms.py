@@ -42,7 +42,7 @@ class AppointmentForm(forms.ModelForm):
     time_slot = forms.CharField(
         required=True,
         label="Choose a Time Slot",
-        widget=forms.HiddenInput()  # we hide it from rendering; your custom <select> handles it
+        widget=forms.HiddenInput()
     )
 
     class Meta:

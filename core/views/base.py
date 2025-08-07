@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 class RoleRequiredMixin(UserPassesTestMixin):
     """Mixin to require specific user roles"""
     required_role = None
-    
+
     def test_func(self):
         if not self.request.user.is_authenticated:
             return False

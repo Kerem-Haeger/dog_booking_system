@@ -77,7 +77,7 @@ def approve_appointments(request):
         form = AppointmentApprovalForm(
             request.POST, prefix=str(appointment_id)
         )
-        
+
         if decision == 'approve':
             if form.is_valid():
                 selected_employee = form.cleaned_data['employee']

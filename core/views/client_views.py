@@ -80,7 +80,7 @@ def book_appointment(request):
                 messages.error(request, error_msg)
                 return render(request, 'core/book_appointment.html',
                               {'form': form})
-            
+
             appointment.status = 'pending'
             appointment.save()
 

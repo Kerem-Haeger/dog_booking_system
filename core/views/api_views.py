@@ -91,32 +91,32 @@ def get_calendar_events(request):
             start_fixed = start_str.replace(' ', '+')
         else:
             start_fixed = start_str
-            
+
         if ' ' in end_str and 'T' in end_str:
             end_fixed = end_str.replace(' ', '+')
         else:
             end_fixed = end_str
-        
+
         print(f"DEBUG: Fixed start={start_fixed}, end={end_fixed}")
-        
+
         # Remove timezone info (e.g., +01:00, -05:00, Z)
         start_clean = re.sub(r'[+-]\d{2}:\d{2}$|Z$', '', start_fixed)
         end_clean = re.sub(r'[+-]\d{2}:\d{2}$|Z$', '', end_fixed)
-        
+
         print(f"DEBUG: Cleaned start={start_clean}, end={end_clean}")
-        
+
         # Parse the cleaned datetime strings
         start_date = datetime.fromisoformat(start_clean)
         end_date = datetime.fromisoformat(end_clean)
-        
+
         print(f"DEBUG: Parsed start={start_date}, end={end_date}")
-        
+
         # Make timezone aware (assume UTC)
         start_date = timezone.make_aware(start_date, timezone.utc)
         end_date = timezone.make_aware(end_date, timezone.utc)
-        
+
         print(f"DEBUG: Timezone aware start={start_date}, end={end_date}")
-            
+
     except Exception as e:
         print(f"DEBUG: Error parsing dates: {e}")
         return JsonResponse({
@@ -147,7 +147,7 @@ def get_calendar_events(request):
     for appointment in appointments:
         # Calculate end time
         end_time = appointment.appointment_time + appointment.service.duration
-        
+
         # Set color based on status
         if appointment.status == 'approved':
             bg_color = '#28a745'  # Green
@@ -171,7 +171,7 @@ def get_calendar_events(request):
             )
         else:
             employee_name = 'Unassigned'
-        
+
         title = f"{appointment.pet_profile.name} - {appointment.service.name}"
         if appointment.employee:
             title += f" ({employee_name})"
@@ -195,7 +195,7 @@ def get_calendar_events(request):
         })
 
     print(f"DEBUG: Returning {len(events)} events")
-    
+
     # Return just the events array (FullCalendar expects this format)
     return JsonResponse(events, safe=False)
 
@@ -205,17 +205,17 @@ def debug_appointments(request):
     """Debug endpoint to check appointments"""
     from django.utils import timezone
     from datetime import timedelta
-    
+
     # Get all appointments
     all_appointments = Appointment.objects.all().select_related(
         'pet_profile__user', 'service', 'employee__user'
     )
-    
+
     debug_info = {
         'total_appointments': all_appointments.count(),
         'appointments': []
     }
-    
+
     for appt in all_appointments:
         debug_info['appointments'].append({
             'id': appt.id,
@@ -226,12 +226,12 @@ def debug_appointments(request):
             'employee': (appt.employee.user.username
                          if appt.employee else 'Unassigned')
         })
-    
+
     # Also check what date range we're looking at
     now = timezone.now()
     week_start = now - timedelta(days=now.weekday())
     week_end = week_start + timedelta(days=6)
-    
+
     debug_info['current_week'] = {
         'start': week_start.isoformat(),
         'end': week_end.isoformat(),
@@ -240,7 +240,7 @@ def debug_appointments(request):
             appointment_time__lte=week_end
         ).count()
     }
-    
+
     return JsonResponse(debug_info, safe=False)
 
 
@@ -252,35 +252,35 @@ def approve_appointment_ajax(request):
         data = json.loads(request.body)
         appointment_id = data.get('appointment_id')
         employee_id = data.get('employee_id')
-        
+
         if not appointment_id or not employee_id:
             return JsonResponse({
                 'success': False,
                 'error': 'Missing appointment_id or employee_id'
             }, status=400)
-        
+
         appointment = get_object_or_404(Appointment, id=appointment_id)
         employee = get_object_or_404(
             UserProfile, id=employee_id, role='employee'
         )
-        
+
         # Check if employee is available at this time
         busy_calendar = EmployeeCalendar.objects.filter(
             user_profile=employee,
             scheduled_time=appointment.appointment_time
         ).exists()
-        
+
         if busy_calendar:
             return JsonResponse({
                 'success': False,
                 'error': 'Employee is not available at this time'
             }, status=400)
-        
+
         # Update appointment
         appointment.employee = employee
         appointment.status = 'approved'
         appointment.save()
-        
+
         # Create calendar entry
         EmployeeCalendar.objects.create(
             user_profile=employee,
@@ -288,13 +288,13 @@ def approve_appointment_ajax(request):
             scheduled_time=appointment.appointment_time,
             available_time=False
         )
-        
+
         return JsonResponse({
             'success': True,
             'message': (f'Appointment approved and assigned to '
                         f'{employee.user.username}')
         })
-        
+
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
@@ -314,24 +314,24 @@ def reject_appointment_ajax(request):
     try:
         data = json.loads(request.body)
         appointment_id = data.get('appointment_id')
-        
+
         if not appointment_id:
             return JsonResponse({
                 'success': False,
                 'error': 'Missing appointment_id'
             }, status=400)
-        
+
         appointment = get_object_or_404(Appointment, id=appointment_id)
-        
+
         # Update appointment status
         appointment.status = 'rejected'
         appointment.save()
-        
+
         return JsonResponse({
             'success': True,
             'message': 'Appointment rejected successfully'
         })
-        
+
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
@@ -349,34 +349,34 @@ def reject_appointment_ajax(request):
 def get_available_employees(request):
     """Get available employees for a specific appointment time"""
     appointment_id = request.GET.get('appointment_id')
-    
+
     print(f"DEBUG: get_available_employees called with appointment_id: {appointment_id}")
-    
+
     if not appointment_id:
         print("DEBUG: No appointment_id provided")
         return JsonResponse({
             'success': False,
             'error': 'Missing appointment_id'
         }, status=400)
-    
+
     try:
         appointment = get_object_or_404(Appointment, id=appointment_id)
         print(f"DEBUG: Found appointment {appointment.id} at {appointment.appointment_time}")
-        
+
         # Get employees who are busy at this time
         busy_employee_ids = EmployeeCalendar.objects.filter(
             scheduled_time=appointment.appointment_time
         ).values_list('user_profile_id', flat=True)
-        
+
         print(f"DEBUG: Busy employee IDs: {list(busy_employee_ids)}")
-        
+
         # Get available employees
         available_employees = UserProfile.objects.filter(
             role='employee'
         ).exclude(id__in=busy_employee_ids).select_related('user')
-        
+
         print(f"DEBUG: Found {available_employees.count()} available employees")
-        
+
         employees_data = []
         for employee in available_employees:
             employee_info = {
@@ -386,19 +386,19 @@ def get_available_employees(request):
             }
             employees_data.append(employee_info)
             print(f"DEBUG: Employee {employee_info['id']}: {employee_info['name']}")
-        
+
         current_employee_id = appointment.employee.id if appointment.employee else None
         print(f"DEBUG: Current employee ID: {current_employee_id}")
-        
+
         response_data = {
             'success': True,
             'employees': employees_data,
             'current_employee': current_employee_id
         }
-        
+
         print(f"DEBUG: Returning response with {len(employees_data)} employees")
         return JsonResponse(response_data)
-        
+
     except Exception as e:
         print(f"DEBUG: Exception in get_available_employees: {str(e)}")
         return JsonResponse({
@@ -415,26 +415,26 @@ def reassign_appointment_ajax(request):
         data = json.loads(request.body)
         appointment_id = data.get('appointment_id')
         new_employee_id = data.get('employee_id')
-        
+
         print(f"DEBUG: Reassign request - appointment_id: {appointment_id}, "
               f"employee_id: {new_employee_id}")
-        
+
         if not appointment_id or not new_employee_id:
             return JsonResponse({
                 'success': False,
                 'error': 'Missing appointment_id or employee_id'
             }, status=400)
-        
+
         appointment = get_object_or_404(Appointment, id=appointment_id)
         new_employee = get_object_or_404(
             UserProfile, id=new_employee_id, role='employee'
         )
-        
+
         current_emp_id = (appointment.employee.id
                           if appointment.employee else None)
         print(f"DEBUG: Current employee: {current_emp_id}")
         print(f"DEBUG: New employee: {new_employee.id}")
-        
+
         # Check if it's the same employee (no change needed)
         if (appointment.employee and
                 appointment.employee.id == int(new_employee_id)):
@@ -442,29 +442,29 @@ def reassign_appointment_ajax(request):
                 'success': True,
                 'message': 'Appointment is already assigned to this employee'
             })
-        
+
         # Check if new employee is available (but exclude current appointment)
         busy_calendar = EmployeeCalendar.objects.filter(
             user_profile=new_employee,
             scheduled_time=appointment.appointment_time
         ).exclude(appointment=appointment).exists()
-        
+
         if busy_calendar:
             return JsonResponse({
                 'success': False,
                 'error': 'New employee is not available at this time'
             }, status=400)
-        
+
         # Remove old calendar entry if exists
         if appointment.employee:
             EmployeeCalendar.objects.filter(
                 appointment=appointment
             ).delete()
-        
+
         # Update appointment
         appointment.employee = new_employee
         appointment.save()
-        
+
         # Create new calendar entry
         EmployeeCalendar.objects.create(
             user_profile=new_employee,
@@ -472,15 +472,15 @@ def reassign_appointment_ajax(request):
             scheduled_time=appointment.appointment_time,
             available_time=False
         )
-        
+
         employee_name = new_employee.user.username
         print(f"DEBUG: Successfully reassigned to {employee_name}")
-        
+
         return JsonResponse({
             'success': True,
             'message': f'Appointment reassigned to {employee_name}'
         })
-        
+
     except json.JSONDecodeError:
         print("DEBUG: JSON decode error")
         return JsonResponse({
