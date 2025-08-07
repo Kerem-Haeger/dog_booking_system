@@ -73,6 +73,12 @@ body {
     color: white;
 }
 
+.logo-image {
+    height: 32px;
+    width: auto;
+    margin-right: 8px;
+}
+
 /* Navigation Styles */
 .nav {
     background-color: #495057;

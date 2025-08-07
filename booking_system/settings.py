@@ -140,3 +140,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/redirect-by-role/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Security settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB limit for uploads
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB limit for file uploads
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000  # Limit number of form fields
+
+# Rate limiting cache (required for django-ratelimit)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'ratelimit-cache',
+    }
+}

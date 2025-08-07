@@ -3,9 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django_ratelimit.decorators import ratelimit
 
 from ..models import PetProfile, Appointment, ServicePrice
 from ..forms import PetProfileForm, AppointmentForm
+from ..utils import log_audit_action
 
 
 @login_required
@@ -50,6 +52,7 @@ def client_dashboard(request):
 
 
 @login_required
+@ratelimit(key='user', rate='3/h', method='POST', block=True)
 def add_pet(request):
     """Allow clients to add new pet profiles for approval"""
     if request.method == 'POST':
@@ -67,6 +70,7 @@ def add_pet(request):
     return render(request, 'core/add_pet.html', {'form': form})
 
 
+@ratelimit(key='user', rate='5/h', method='POST', block=True)
 def book_appointment(request):
     """Allow clients to book appointments for their approved pets"""
     user_profile = getattr(request.user, 'userprofile', None)
@@ -152,6 +156,20 @@ def cancel_appointment(request, appointment_id):
         # Cancel the appointment
         appointment.status = 'cancelled'
         appointment.save()
+        
+        # Log audit action
+        log_audit_action(
+            user=request.user,
+            action='appointment_cancelled',
+            details={
+                'appointment_id': appointment.id,
+                'pet_name': appointment.pet_profile.name,
+                'service': appointment.service.name,
+                'appointment_time': appointment.appointment_time.isoformat(),
+                'hours_before': time_until_appointment.total_seconds() / 3600
+            },
+            request=request
+        )
         
         formatted_time = appointment.appointment_time.strftime(
             "%H:%M on %d/%m/%Y"

@@ -144,10 +144,15 @@ def get_calendar_events(request):
             pass
 
     events = []
+    now = timezone.now()
+    
     for appointment in appointments:
         # Calculate end time
         end_time = appointment.appointment_time + appointment.service.duration
 
+        # Check if appointment is in the past
+        is_past = appointment.appointment_time < now
+        
         # Set color based on status
         if appointment.status == 'approved':
             bg_color = '#28a745'  # Green
@@ -190,7 +195,9 @@ def get_calendar_events(request):
                 'employee': employee_name,
                 'client': (appointment.pet_profile.user.get_full_name() or
                            appointment.pet_profile.user.username),
-                'appointment_id': appointment.id
+                'appointment_id': appointment.id,
+                'is_past': is_past,
+                'is_rejected': appointment.status in ['rejected', 'canceled']
             }
         })
 
@@ -264,6 +271,13 @@ def approve_appointment_ajax(request):
             UserProfile, id=employee_id, role='employee'
         )
 
+        # Additional validation: appointment must still be pending
+        if appointment.status != 'pending':
+            return JsonResponse({
+                'success': False,
+                'error': 'Appointment is no longer pending approval'
+            }, status=400)
+
         # Check if employee is available at this time
         busy_calendar = EmployeeCalendar.objects.filter(
             user_profile=employee,
@@ -274,6 +288,13 @@ def approve_appointment_ajax(request):
             return JsonResponse({
                 'success': False,
                 'error': 'Employee is not available at this time'
+            }, status=400)
+
+        # Verify appointment time is still in the future
+        if appointment.appointment_time <= timezone.now():
+            return JsonResponse({
+                'success': False,
+                'error': 'Cannot approve appointments in the past'
             }, status=400)
 
         # Update appointment

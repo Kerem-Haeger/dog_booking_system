@@ -7,7 +7,8 @@ from .models import (
     Appointment,
     EmployeeCalendar,
     TimeOffRequest,
-    Voucher
+    Voucher,
+    AuditLog
 )
 
 
@@ -70,6 +71,29 @@ class VoucherAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Voucher, VoucherAdmin)  # Register Voucher with the customized admin
+
+
+@admin.register(AuditLog)
+class AuditLogAdmin(admin.ModelAdmin):
+    list_display = (
+        'timestamp', 'user', 'action', 'target_user', 'ip_address'
+    )
+    list_filter = ('action', 'timestamp')
+    search_fields = ['user__username', 'target_user__username', 'action']
+    readonly_fields = ('timestamp', 'ip_address', 'details')
+    ordering = ['-timestamp']
+    
+    def has_add_permission(self, request):
+        # Prevent manual creation of audit logs
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        # Prevent editing of audit logs
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        # Only superusers can delete audit logs
+        return request.user.is_superuser
 
 
 @admin.register(Service)

@@ -7,6 +7,7 @@ from ..models import (
     UserProfile, PetProfile, Appointment, EmployeeCalendar
 )
 from ..forms import PetApprovalForm, AppointmentApprovalForm
+from ..utils import log_audit_action
 from .base import is_manager
 
 
@@ -46,8 +47,33 @@ def approve_pets(request):
                     pet.profile_status = 'approved'
                     pet.size = size
                     pet.verified_at = timezone.now()
+                    
+                    # Log audit action
+                    log_audit_action(
+                        user=request.user,
+                        action='pet_approved',
+                        target_user=pet.user,
+                        details={
+                            'pet_id': pet.id,
+                            'pet_name': pet.name,
+                            'assigned_size': size
+                        },
+                        request=request
+                    )
                 elif decision == 'reject':
                     pet.profile_status = 'rejected'
+                    
+                    # Log audit action
+                    log_audit_action(
+                        user=request.user,
+                        action='pet_rejected',
+                        target_user=pet.user,
+                        details={
+                            'pet_id': pet.id,
+                            'pet_name': pet.name
+                        },
+                        request=request
+                    )
 
                 pet.save()
 
@@ -92,6 +118,22 @@ def approve_appointments(request):
                     available_time=False
                 )
 
+                # Log audit action
+                log_audit_action(
+                    user=request.user,
+                    action='appointment_approved',
+                    target_user=selected_appointment.pet_profile.user,
+                    details={
+                        'appointment_id': selected_appointment.id,
+                        'pet_name': selected_appointment.pet_profile.name,
+                        'service': selected_appointment.service.name,
+                        'employee': selected_employee.user.username,
+                        'appointment_time':
+                            selected_appointment.appointment_time.isoformat()
+                    },
+                    request=request
+                )
+
                 success_msg = (f"Appointment approved and assigned to "
                                f"{selected_employee.user.username}.")
                 messages.success(request, success_msg)
@@ -102,6 +144,22 @@ def approve_appointments(request):
         elif decision == 'reject':
             selected_appointment.status = 'rejected'
             selected_appointment.save()
+            
+            # Log audit action
+            log_audit_action(
+                user=request.user,
+                action='appointment_rejected',
+                target_user=selected_appointment.pet_profile.user,
+                details={
+                    'appointment_id': selected_appointment.id,
+                    'pet_name': selected_appointment.pet_profile.name,
+                    'service': selected_appointment.service.name,
+                    'appointment_time':
+                        selected_appointment.appointment_time.isoformat()
+                },
+                request=request
+            )
+            
             messages.warning(request, "Appointment was rejected.")
 
         return redirect('approve_appointments')
