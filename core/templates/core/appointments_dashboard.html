@@ -50,7 +50,8 @@
 <!-- Modal for Appointment Details -->
 <div id="appointmentModal"
     style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
-    <div style="background-color: white; margin: 15% auto; padding: 20px; border-radius: 5px; width: 300px;">
+    <div
+        style="background-color: white; margin: 10% auto; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
         <span id="closeModal"
             style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
         <h3>Appointment Details</h3>
@@ -85,6 +86,7 @@
             hiddenDays: [0], // Hide Sunday (0 = Sunday)
             slotMinTime: '08:00:00',
             slotMaxTime: '18:00:00',
+            timeZone: 'UTC',
             allDaySlot: false,
             height: 'auto',
             events: function (fetchInfo, successCallback, failureCallback) {
@@ -106,6 +108,7 @@
                 var event = info.event;
                 var props = event.extendedProps;
 
+                // Show appointment details
                 modalContent.innerHTML = `
                 <p><strong>Pet:</strong> ${props.pet_name}</p>
                 <p><strong>Service:</strong> ${props.service}</p>
@@ -113,17 +116,15 @@
                 <p><strong>Client:</strong> ${props.client}</p>
                 <p><strong>Time:</strong> ${event.start.toLocaleString()}</p>
                 <p><strong>Status:</strong> <span style="color: ${event.backgroundColor}; font-weight: bold;">${props.status.toUpperCase()}</span></p>
+                <div id="employeeSection" style="margin-top: 15px;"></div>
+                <div id="loadingIndicator" style="display: none; text-align: center; margin: 10px 0;">
+                    <span>Loading...</span>
+                </div>
+                <div id="messageArea" style="margin-top: 10px;"></div>
             `;
 
-                // Add action buttons for pending appointments
-                if (props.status === 'pending') {
-                    modalActions.innerHTML = `
-                    <button onclick="approveAppointment(${props.appointment_id})" style="background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 3px; margin-right: 10px;">✅ Approve</button>
-                    <button onclick="rejectAppointment(${props.appointment_id})" style="background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 3px;">❌ Reject</button>
-                `;
-                } else {
-                    modalActions.innerHTML = '';
-                }
+                // Load available employees and show appropriate actions
+                loadEmployeesAndActions(props.appointment_id, props.status);
 
                 modal.style.display = 'block';
             }
@@ -147,24 +148,282 @@
             }
         }
 
-        // Functions for approve/reject actions
-        window.approveAppointment = function (appointmentId) {
-            // You can implement AJAX approval here if needed
-            // For now, we'll redirect to the current page with a form submission
-            console.log('Approve appointment', appointmentId);
-            alert(
-                'Approval functionality can be enhanced with AJAX. For now, use the pending appointments section above.'
-            );
-            modal.style.display = 'none';
+        // Functions for AJAX appointment management
+        window.loadEmployeesAndActions = function (appointmentId, status) {
+            var employeeSection = document.getElementById('employeeSection');
+            var loadingIndicator = document.getElementById('loadingIndicator');
+
+            loadingIndicator.style.display = 'block';
+
+            // Fetch available employees
+            fetch(`{% url 'get_available_employees' %}?appointment_id=${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('DEBUG: Employee data received:', data);
+                    loadingIndicator.style.display = 'none';
+
+                    if (data.success) {
+                        if (status === 'pending') {
+                            // Show employee dropdown for pending appointments
+                            var employeeOptions = data.employees.map(emp =>
+                                `<option value="${emp.id}">${emp.name}</option>`
+                            ).join('');
+
+                            employeeSection.innerHTML = `
+                                <label for="employeeSelect"><strong>Assign to Employee:</strong></label>
+                                <select id="employeeSelect" style="width: 100%; padding: 5px; margin: 5px 0;">
+                                    <option value="">Select an employee...</option>
+                                    ${employeeOptions}
+                                </select>
+                            `;
+
+                            modalActions.innerHTML = `
+                                <button onclick="approveAppointmentAjax(${appointmentId})" style="background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 3px; margin-right: 10px;">✅ Approve</button>
+                                <button onclick="rejectAppointmentAjax(${appointmentId})" style="background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 3px;">❌ Reject</button>
+                            `;
+                        } else if (status === 'approved') {
+                            // Show reassignment dropdown for approved appointments
+                            console.log('DEBUG: Setting up approved appointment UI');
+                            console.log('DEBUG: Available employees:', data.employees);
+                            console.log('DEBUG: Current employee:', data.current_employee);
+
+                            var employeeOptions = data.employees.map(emp => {
+                                var isSelected = emp.id === data.current_employee ? 'selected' :
+                                    '';
+                                console.log(
+                                    `DEBUG: Employee ${emp.id} (${emp.name}) - selected: ${isSelected}`
+                                    );
+                                return `<option value="${emp.id}" ${isSelected}>${emp.name}</option>`;
+                            }).join('');
+
+                            console.log('DEBUG: Generated employee options:', employeeOptions);
+
+                            employeeSection.innerHTML = `
+                                <label for="employeeSelect"><strong>Reassign to Employee:</strong></label>
+                                <select id="employeeSelect" style="width: 100%; padding: 5px; margin: 5px 0;">
+                                    ${employeeOptions}
+                                </select>
+                            `;
+
+                            modalActions.innerHTML = `
+                                <button onclick="reassignAppointmentAjax(${appointmentId})" style="background: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 3px;">🔄 Reassign</button>
+                            `;
+
+                            console.log('DEBUG: UI setup complete for approved appointment');
+                        } else {
+                            // No actions for rejected/completed appointments
+                            employeeSection.innerHTML = '';
+                            modalActions.innerHTML = '';
+                        }
+                    } else {
+                        showMessage('Error loading employees: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    showMessage('Error loading employees: ' + error.message, 'error');
+                });
         }
 
-        window.rejectAppointment = function (appointmentId) {
-            // You can implement AJAX rejection here if needed
-            console.log('Reject appointment', appointmentId);
-            alert(
-                'Rejection functionality can be enhanced with AJAX. For now, use the pending appointments section above.'
-            );
-            modal.style.display = 'none';
+        window.showMessage = function (message, type) {
+            var messageArea = document.getElementById('messageArea');
+            var color = type === 'error' ? '#dc3545' : '#28a745';
+            messageArea.innerHTML =
+                `<div style="padding: 10px; background: ${color}; color: white; border-radius: 3px; margin: 5px 0;">${message}</div>`;
+
+            // Clear message after 3 seconds
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+
+        window.approveAppointmentAjax = function (appointmentId) {
+            var employeeSelect = document.getElementById('employeeSelect');
+            var employeeId = employeeSelect.value;
+
+            if (!employeeId) {
+                showMessage('Please select an employee first.', 'error');
+                return;
+            }
+
+            var loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'block';
+
+            // Get CSRF token
+            var csrfToken = null;
+            var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) {
+                csrfToken = csrfInput.value;
+            } else {
+                csrfToken = getCookie('csrftoken');
+            }
+
+            fetch(`{% url 'approve_appointment_ajax' %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        appointment_id: appointmentId,
+                        employee_id: employeeId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingIndicator.style.display = 'none';
+
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        // Refresh calendar to show updated appointment
+                        calendar.refetchEvents();
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                        }, 2000);
+                    } else {
+                        showMessage('Error: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    showMessage('Error: ' + error.message, 'error');
+                });
+        }
+
+        window.rejectAppointmentAjax = function (appointmentId) {
+            if (!confirm('Are you sure you want to reject this appointment?')) {
+                return;
+            }
+
+            var loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'block';
+
+            // Get CSRF token
+            var csrfToken = null;
+            var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) {
+                csrfToken = csrfInput.value;
+            } else {
+                csrfToken = getCookie('csrftoken');
+            }
+
+            fetch(`{% url 'reject_appointment_ajax' %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        appointment_id: appointmentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingIndicator.style.display = 'none';
+
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        // Refresh calendar to show updated appointment
+                        calendar.refetchEvents();
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                        }, 2000);
+                    } else {
+                        showMessage('Error: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    showMessage('Error: ' + error.message, 'error');
+                });
+        }
+
+        window.reassignAppointmentAjax = function (appointmentId) {
+            var employeeSelect = document.getElementById('employeeSelect');
+            var employeeId = employeeSelect.value;
+
+            console.log('DEBUG: Reassign function called', {
+                appointmentId: appointmentId,
+                employeeId: employeeId,
+                selectElement: employeeSelect
+            });
+
+            if (!employeeId) {
+                showMessage('Please select an employee.', 'error');
+                return;
+            }
+
+            var loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'block';
+
+            console.log('DEBUG: Sending reassign request');
+
+            // Get CSRF token from the form in the pending appointments section
+            var csrfToken = null;
+            var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) {
+                csrfToken = csrfInput.value;
+            } else {
+                // Fallback: get from cookie
+                csrfToken = getCookie('csrftoken');
+            }
+
+            console.log('DEBUG: CSRF token:', csrfToken);
+
+            fetch(`{% url 'reassign_appointment_ajax' %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        appointment_id: appointmentId,
+                        employee_id: employeeId
+                    })
+                })
+                .then(response => {
+                    console.log('DEBUG: Response received', response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('DEBUG: Response data', data);
+                    loadingIndicator.style.display = 'none';
+
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        // Refresh calendar to show updated appointment
+                        calendar.refetchEvents();
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                        }, 2000);
+                    } else {
+                        showMessage('Error: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('DEBUG: Fetch error', error);
+                    loadingIndicator.style.display = 'none';
+                    showMessage('Error: ' + error.message, 'error');
+                });
+        }
+
+        // Helper function to get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
     });
 </script>

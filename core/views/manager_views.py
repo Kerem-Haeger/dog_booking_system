@@ -68,6 +68,8 @@ def approve_appointments(request):
 
     if request.method == 'POST':
         appointment_id = request.POST.get('appointment_id')
+        # Get decision from button value
+        decision = request.POST.get('decision')
         selected_appointment = get_object_or_404(
             Appointment, id=appointment_id
         )
@@ -75,11 +77,10 @@ def approve_appointments(request):
         form = AppointmentApprovalForm(
             request.POST, prefix=str(appointment_id)
         )
-        if form.is_valid():
-            decision = form.cleaned_data['decision']
-            selected_employee = form.cleaned_data['employee']
-
-            if decision == 'approve':
+        
+        if decision == 'approve':
+            if form.is_valid():
+                selected_employee = form.cleaned_data['employee']
                 selected_appointment.employee = selected_employee
                 selected_appointment.status = 'approved'
                 selected_appointment.save()
@@ -94,12 +95,16 @@ def approve_appointments(request):
                 success_msg = (f"Appointment approved and assigned to "
                                f"{selected_employee.user.username}.")
                 messages.success(request, success_msg)
-            elif decision == 'reject':
-                selected_appointment.status = 'rejected'
-                selected_appointment.save()
-                messages.warning(request, "Appointment was rejected.")
+            else:
+                messages.error(
+                    request, "Please select an employee for approval."
+                )
+        elif decision == 'reject':
+            selected_appointment.status = 'rejected'
+            selected_appointment.save()
+            messages.warning(request, "Appointment was rejected.")
 
-            return redirect('approve_appointments')
+        return redirect('approve_appointments')
 
     # Build forms with unique prefixes
     appointment_forms = []

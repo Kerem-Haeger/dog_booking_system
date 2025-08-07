@@ -73,7 +73,3 @@ class AppointmentApprovalForm(forms.Form):
         queryset=UserProfile.objects.filter(role='employee'),
         label="Assign to Employee"
     )
-    decision = forms.ChoiceField(choices=[
-        ('approve', '✅ Approve'),
-        ('reject', '❌ Reject')
-    ])
