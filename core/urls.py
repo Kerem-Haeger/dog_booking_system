@@ -14,6 +14,8 @@ urlpatterns = [
     path('client/pets/add/', views.add_pet, name='add_pet'),
     path('client/appointments/book/', views.book_appointment,
          name='book_appointment'),
+    path('client/appointments/cancel/<int:appointment_id>/',
+         views.cancel_appointment, name='cancel_appointment'),
     path('ajax/available-slots/', fetch_available_slots,
          name='fetch_available_slots'),
     path('employee/', views.employee_dashboard, name='employee_dashboard'),

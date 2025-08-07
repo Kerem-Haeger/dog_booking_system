@@ -29,26 +29,189 @@
     <a href="{% url 'book_appointment' %}">📅 Book a New Appointment</a>
 </p>
 
-<h2>Upcoming Appointments</h2>
+<h3>Upcoming Appointments</h3>
 
-{% if appointments %}
-<ul>
-    {% for appt in appointments %}
-    <li>
-        <span style="
-    {% if appt.status == 'approved' %}color: green;
-    {% elif appt.status == 'pending' %}color: orange;
-    {% elif appt.status == 'rejected' %}color: red;
-    {% else %}color: black;
-    {% endif %}
-">
-            {{ appt }}
+{% if upcoming_appointments %}
+<div class="appointments-list">
+    {% for appt in upcoming_appointments %}
+    <div class="appointment-item upcoming">
+        <span class="appointment-status status-{{ appt.status }}">
+            <strong>{{ appt.appointment_time|date:"D, M j, Y" }} at {{ appt.appointment_time|time:"H:i" }}</strong><br>
+            Pet: {{ appt.pet_profile.name }}<br>
+            Service: {{ appt.service.name }}<br>
+            Status:
+            <span class="
+                {% if appt.status == 'approved' %}text-success
+                {% elif appt.status == 'pending' %}text-warning
+                {% elif appt.status == 'rejected' %}text-danger
+                {% elif appt.status == 'cancelled' %}text-muted
+                {% else %}text-muted
+                {% endif %}
+            ">
+                {{ appt.status|title }}
+            </span>
+            {% if appt.assigned_employee %}
+            <br>Assigned to:
+            {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}
+            {% endif %}
+
+            <!-- Cancellation Option - Only for approved appointments -->
+            {% if appt.status == 'approved' %}
+            {% if appt.can_cancel %}
+            <br><a href="{% url 'cancel_appointment' appt.id %}" class="btn btn-cancel-neutral">Cancel</a>
+            {% else %}
+            <br><button class="btn btn-cancel-disabled" disabled
+                title="Cannot cancel within 24 hours - Contact business directly">Cancel</button>
+            {% endif %}
+            {% endif %}
         </span>
-    </li>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% else %}
-<p>No upcoming appointments.</p>
+<p class="text-muted">No upcoming appointments.</p>
 {% endif %}
+
+<h3>Past Appointments</h3>
+
+{% if past_appointments %}
+<div class="appointments-list past-appointments">
+    {% for appt in past_appointments %}
+    <div class="appointment-item past">
+        <span class="appointment-status-past">
+            <strong>{{ appt.appointment_time|date:"D, M j, Y" }} at {{ appt.appointment_time|time:"H:i" }}</strong><br>
+            Pet: {{ appt.pet_profile.name }}<br>
+            Service: {{ appt.service.name }}<br>
+            Status: {{ appt.status|title }}
+            {% if appt.assigned_employee %}
+            <br>Assigned to:
+            {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}
+            {% endif %}
+        </span>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No past appointments.</p>
+{% endif %}
+
+<style>
+    .appointments-list {
+        margin: 15px 0;
+    }
+
+    .appointment-item {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+
+    .appointment-item.upcoming {
+        background-color: #f8f9fa;
+        border-left-color: #007bff;
+    }
+
+    .appointment-item.past {
+        background-color: #f5f5f5;
+        border-left-color: #6c757d;
+        color: #6c757d;
+    }
+
+    .appointment-status {
+        display: block;
+    }
+
+    .appointment-status-past {
+        display: block;
+        color: #6c757d;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .past-appointments .text-success,
+    .past-appointments .text-warning,
+    .past-appointments .text-danger {
+        color: #6c757d !important;
+    }
+
+    .btn-cancel {
+        display: inline-block;
+        padding: 4px 8px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #fff;
+        background-color: #dc3545;
+        border: 1px solid #dc3545;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-cancel:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .btn-cancel-neutral {
+        display: inline-block;
+        padding: 4px 12px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #6c757d;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-cancel-neutral:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        text-decoration: none;
+        color: #495057;
+    }
+
+    .btn-cancel-disabled {
+        display: inline-block;
+        padding: 4px 12px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #6c757d;
+        background-color: #e9ecef;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .warning-text {
+        font-size: 12px;
+        color: #856404;
+        background-color: #fff3cd;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 8px;
+        border: 1px solid #ffeaa7;
+    }
+</style>
 
 {% endblock %}

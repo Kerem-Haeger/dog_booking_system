@@ -1,5 +1,7 @@
 # Import all views for backward compatibility
-from .client_views import client_dashboard, add_pet, book_appointment
+from .client_views import (
+    client_dashboard, add_pet, book_appointment, cancel_appointment
+)
 from .employee_views import employee_dashboard
 from .manager_views import (
     manager_dashboard, approve_pets, approve_appointments
@@ -49,6 +51,7 @@ __all__ = [
     'client_dashboard',
     'add_pet',
     'book_appointment',
+    'cancel_appointment',
     'employee_dashboard',
     'manager_dashboard',
     'approve_pets',

@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ..models import PetProfile, Appointment, ServicePrice
 from ..forms import PetProfileForm, AppointmentForm
@@ -12,13 +12,33 @@ from ..forms import PetProfileForm, AppointmentForm
 def client_dashboard(request):
     """Dashboard view for clients showing their pets and appointments"""
     pets = PetProfile.objects.filter(user=request.user)
-    appointments = Appointment.objects.filter(
-        pet_profile__user=request.user
-    ).order_by('appointment_time')
+    
+    # Get current datetime
+    now = timezone.now()
+    
+    # Separate upcoming and past appointments
+    upcoming_appointments = Appointment.objects.filter(
+        pet_profile__user=request.user,
+        appointment_time__gte=now
+    ).order_by('appointment_time')  # Nearest first
+    
+    past_appointments = Appointment.objects.filter(
+        pet_profile__user=request.user,
+        appointment_time__lt=now
+    ).order_by('-appointment_time')  # Most recent first
+
+    # Add cancellation eligibility to upcoming appointments
+    for appointment in upcoming_appointments:
+        time_until_appointment = appointment.appointment_time - now
+        appointment.can_cancel = (
+            time_until_appointment.total_seconds() > 24 * 60 * 60 and
+            appointment.status not in ['cancelled', 'rejected']
+        )
 
     return render(request, 'core/client_dashboard.html', {
         'pets': pets,
-        'appointments': appointments,
+        'upcoming_appointments': upcoming_appointments,
+        'past_appointments': past_appointments,
     })
 
 
@@ -97,3 +117,45 @@ def book_appointment(request):
         form = AppointmentForm(user=request.user)
 
     return render(request, 'core/book_appointment.html', {'form': form})
+
+
+@login_required
+def cancel_appointment(request, appointment_id):
+    """Allow clients to cancel appointments if more than 24 hours in advance"""
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id,
+        pet_profile__user=request.user
+    )
+    
+    # Check if appointment is more than 24 hours in the future
+    now = timezone.now()
+    time_until_appointment = appointment.appointment_time - now
+    
+    # 24 hours in seconds
+    if time_until_appointment.total_seconds() <= 24 * 60 * 60:
+        messages.error(
+            request,
+            "Cannot cancel appointments within 24 hours. "
+            "Please contact the business directly."
+        )
+        return redirect('client_dashboard')
+    
+    if request.method == 'POST':
+        # Cancel the appointment
+        appointment.status = 'cancelled'
+        appointment.save()
+        
+        formatted_time = appointment.appointment_time.strftime(
+            "%H:%M on %d/%m/%Y"
+        )
+        messages.success(
+            request,
+            f"Appointment for {formatted_time} has been cancelled."
+        )
+        return redirect('client_dashboard')
+    
+    return render(request, 'core/cancel_appointment.html', {
+        'appointment': appointment,
+        'time_until_appointment': time_until_appointment
+    })
