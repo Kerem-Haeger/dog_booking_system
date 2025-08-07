@@ -4,7 +4,10 @@ from .employee_views import employee_dashboard
 from .manager_views import (
     manager_dashboard, approve_pets, approve_appointments
 )
-from .api_views import fetch_available_slots, get_service_price
+from .api_views import (
+    fetch_available_slots, get_service_price, get_calendar_events,
+    debug_appointments
+)
 from .base import is_manager, is_client, is_employee
 
 # Keep the redirect function in the main views.py for now
@@ -52,6 +55,8 @@ __all__ = [
     'approve_appointments',
     'fetch_available_slots',
     'get_service_price',
+    'get_calendar_events',
+    'debug_appointments',
     'is_manager',
     'is_client',
     'is_employee',

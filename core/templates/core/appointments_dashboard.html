@@ -6,16 +6,22 @@
 <h2>Pending Appointments</h2>
 {% if appointment_forms %}
 {% for appointment, form in appointment_forms %}
-<div class="appointment-card">
+<div class="appointment-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px;">
     <h3>{{ appointment.pet_profile.name }} - {{ appointment.service.name }}</h3>
     <p><strong>Time:</strong> {{ appointment.appointment_time }}</p>
+    <p><strong>Client:</strong>
+        {{ appointment.pet_profile.user.get_full_name|default:appointment.pet_profile.user.username }}</p>
 
-    <form method="post">
+    <form method="post" style="margin-top: 10px;">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-        <button type="submit" name="decision" value="approve">Approve</button>
-        <button type="submit" name="decision" value="reject">Reject</button>
+        <button type="submit" name="decision" value="approve"
+            style="background: #28a745; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;">✅
+            Approve</button>
+        <button type="submit" name="decision" value="reject"
+            style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px;">❌
+            Reject</button>
     </form>
 </div>
 {% endfor %}
@@ -25,19 +31,163 @@
 
 <hr>
 
-<h2>Approved Appointments</h2>
-{% if approved_appointments %}
-<ul>
-    {% for appt in approved_appointments %}
-    <li>
-        {{ appt.pet_profile.name }} - {{ appt.service.name }} at {{ appt.appointment_time }}
-        (Groomer: {{ appt.employee.user.username }})
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No approved appointments yet.</p>
-{% endif %}
+<h2>All Appointments - Calendar View</h2>
 
-<a href="{% url 'manager_dashboard' %}">⬅ Back to Dashboard</a>
+<!-- Employee Filter -->
+<div style="margin-bottom: 20px;">
+    <label for="employee-filter"><strong>Filter by Employee:</strong></label>
+    <select id="employee-filter" style="padding: 5px; margin-left: 10px;">
+        <option value="all">All Employees</option>
+        {% for employee in all_employees %}
+        <option value="{{ employee.id }}">{{ employee.user.get_full_name|default:employee.user.username }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- FullCalendar Container -->
+<div id="calendar" style="margin: 20px 0;"></div>
+
+<!-- Modal for Appointment Details -->
+<div id="appointmentModal"
+    style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
+    <div style="background-color: white; margin: 15% auto; padding: 20px; border-radius: 5px; width: 300px;">
+        <span id="closeModal"
+            style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        <h3>Appointment Details</h3>
+        <div id="modalContent"></div>
+        <div id="modalActions" style="margin-top: 15px;"></div>
+    </div>
+</div>
+
+<a href="{% url 'manager_dashboard' %}"
+    style="display: inline-block; margin-top: 20px; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 3px;">⬅
+    Back to Dashboard</a>
+
+<!-- Include FullCalendar CSS and JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var employeeFilter = document.getElementById('employee-filter');
+        var modal = document.getElementById('appointmentModal');
+        var closeModal = document.getElementById('closeModal');
+        var modalContent = document.getElementById('modalContent');
+        var modalActions = document.getElementById('modalActions');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: ''
+            },
+            hiddenDays: [0], // Hide Sunday (0 = Sunday)
+            slotMinTime: '08:00:00',
+            slotMaxTime: '18:00:00',
+            allDaySlot: false,
+            height: 'auto',
+            events: function (fetchInfo, successCallback, failureCallback) {
+                var employeeId = employeeFilter.value;
+
+                fetch(
+                        `{% url 'get_calendar_events' %}?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&employee_id=${employeeId}`
+                    )
+                    .then(response => response.json())
+                    .then(data => {
+                        successCallback(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
+                    });
+            },
+            eventClick: function (info) {
+                var event = info.event;
+                var props = event.extendedProps;
+
+                modalContent.innerHTML = `
+                <p><strong>Pet:</strong> ${props.pet_name}</p>
+                <p><strong>Service:</strong> ${props.service}</p>
+                <p><strong>Employee:</strong> ${props.employee}</p>
+                <p><strong>Client:</strong> ${props.client}</p>
+                <p><strong>Time:</strong> ${event.start.toLocaleString()}</p>
+                <p><strong>Status:</strong> <span style="color: ${event.backgroundColor}; font-weight: bold;">${props.status.toUpperCase()}</span></p>
+            `;
+
+                // Add action buttons for pending appointments
+                if (props.status === 'pending') {
+                    modalActions.innerHTML = `
+                    <button onclick="approveAppointment(${props.appointment_id})" style="background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 3px; margin-right: 10px;">✅ Approve</button>
+                    <button onclick="rejectAppointment(${props.appointment_id})" style="background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 3px;">❌ Reject</button>
+                `;
+                } else {
+                    modalActions.innerHTML = '';
+                }
+
+                modal.style.display = 'block';
+            }
+        });
+
+        calendar.render();
+
+        // Refresh calendar when employee filter changes
+        employeeFilter.addEventListener('change', function () {
+            calendar.refetchEvents();
+        });
+
+        // Close modal functionality
+        closeModal.onclick = function () {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Functions for approve/reject actions
+        window.approveAppointment = function (appointmentId) {
+            // You can implement AJAX approval here if needed
+            // For now, we'll redirect to the current page with a form submission
+            console.log('Approve appointment', appointmentId);
+            alert(
+                'Approval functionality can be enhanced with AJAX. For now, use the pending appointments section above.'
+            );
+            modal.style.display = 'none';
+        }
+
+        window.rejectAppointment = function (appointmentId) {
+            // You can implement AJAX rejection here if needed
+            console.log('Reject appointment', appointmentId);
+            alert(
+                'Rejection functionality can be enhanced with AJAX. For now, use the pending appointments section above.'
+            );
+            modal.style.display = 'none';
+        }
+    });
+</script>
+
+<style>
+    .appointment-card {
+        background: #f8f9fa;
+        border-left: 4px solid #ffc107;
+    }
+
+    #calendar {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .fc-event {
+        cursor: pointer;
+    }
+
+    .fc-event:hover {
+        opacity: 0.8;
+    }
+</style>
+
 {% endblock %}

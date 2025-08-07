@@ -120,7 +120,13 @@ def approve_appointments(request):
         status='approved'
     ).order_by('appointment_time')
 
+    # Get all employees for the filter dropdown
+    all_employees = UserProfile.objects.filter(
+        role='employee'
+    ).select_related('user')
+
     return render(request, 'core/appointments_dashboard.html', {
         'appointment_forms': appointment_forms,
         'approved_appointments': approved_appointments,
+        'all_employees': all_employees,
     })
