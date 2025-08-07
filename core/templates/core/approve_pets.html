@@ -1,40 +1,75 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Approve Pets - Dog Booking System{% endblock %}
 
 {% block content %}
-<h1>Approve Pending Pets</h1>
+<div class="dashboard-header">
+    <h1>Approve Pending Pets</h1>
+    <p class="dashboard-subtitle">Review pet registrations and assign size categories</p>
+</div>
 
 {% if pet_forms %}
-<ul>
+<div class="pets-grid">
     {% for pet, form in pet_forms %}
-    <li>
-        <strong>{{ pet.name }}</strong> ({{ pet.breed }})<br>
-        Owner: {{ pet.user.username }}<br>
-        Date of Birth: {{ pet.date_of_birth }}<br>
+    <div class="pet-card">
+        <div class="pet-info">
+            <h3>{{ pet.name }}</h3>
+            <div class="pet-details">
+                <div class="pet-detail-item">
+                    <strong>Breed:</strong> {{ pet.breed }}
+                </div>
+                <div class="pet-detail-item">
+                    <strong>Owner:</strong> {{ pet.user.username }}
+                </div>
+                <div class="pet-detail-item">
+                    <strong>Date of Birth:</strong> {{ pet.date_of_birth }}
+                </div>
+                {% if pet.grooming_preferences %}
+                <div class="pet-detail-item">
+                    <strong>Grooming Preferences:</strong> {{ pet.grooming_preferences }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
 
-        <form method="post" class="pet-approval-form" data-pet-id="{{ pet.id }}">
+        <form method="post" class="pet-approval-form action-form" data-pet-id="{{ pet.id }}">
             {% csrf_token %}
-            {{ form.size.label_tag }} {{ form.size }}
-            {{ form.decision }}
+            <div class="form-group">
+                {{ form.size.label_tag }}
+                {{ form.size|add_class:"form-control" }}
+                {{ form.decision|add_class:"hidden" }}
+            </div>
 
             <input type="hidden" name="pet_id" value="{{ pet.id }}">
 
-            <br><br>
-            <button type="submit" name="{{ form.prefix }}-decision" value="approve" class="approve-btn" disabled>
-                ✅ Approve
-            </button>
-            <button type="submit" name="{{ form.prefix }}-decision" value="reject">
-                ❌ Reject
-            </button>
+            <div class="pet-actions">
+                <button type="submit" name="{{ form.prefix }}-decision" value="approve"
+                    class="btn btn-success approve-btn" disabled>
+                    ✅ Approve
+                </button>
+                <button type="submit" name="{{ form.prefix }}-decision" value="reject" class="btn btn-danger">
+                    ❌ Reject
+                </button>
+            </div>
         </form>
-    </li>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% else %}
-<p>No pending pet profiles.</p>
+<div class="empty-state">
+    <h3>No Pending Pet Profiles</h3>
+    <p>All pet registrations have been reviewed.</p>
+</div>
 {% endif %}
 
-<a href="{% url 'manager_dashboard' %}">⬅ Back to Dashboard</a>
+<div class="back-link">
+    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+</div>
+{% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'core/js/base.js' %}"></script>
 <script>
     document.querySelectorAll('.pet-approval-form').forEach(form => {
         const sizeSelect = form.querySelector('select');

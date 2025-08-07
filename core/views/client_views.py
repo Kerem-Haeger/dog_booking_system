@@ -35,7 +35,7 @@ def client_dashboard(request):
             appointment.status not in ['cancelled', 'rejected']
         )
 
-    return render(request, 'core/client_dashboard.html', {
+    return render(request, 'core/client_dashboard_new.html', {
         'pets': pets,
         'upcoming_appointments': upcoming_appointments,
         'past_appointments': past_appointments,

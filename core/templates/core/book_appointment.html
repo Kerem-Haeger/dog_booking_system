@@ -1,45 +1,72 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Book Appointment - Dog Booking System{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<h1>Book a Grooming Appointment</h1>
+<div class="dashboard-header">
+    <h1>Book a Grooming Appointment</h1>
+    <p class="dashboard-subtitle">Select your pet, service, and preferred time slot</p>
+</div>
 
 {% if messages %}
-<ul class="messages">
+<div class="messages">
     {% for message in messages %}
-    <li>{{ message }}</li>
+    <div class="message message-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
-</ul>
+</div>
 {% endif %}
 
-<form method="post">
-    {% csrf_token %}
-    <p>
-        {{ form.pet_profile.label_tag }} {{ form.pet_profile }}
-    </p>
-    <p>
-        {{ form.service.label_tag }} {{ form.service }}
-    </p>
+<div class="form-container">
+    <form method="post" class="booking-form">
+        {% csrf_token %}
 
-    <p id="price-display"><strong>Price:</strong> Please choose your pet and service first!</p>
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.pet_profile.label_tag }}
+                {{ form.pet_profile|add_class:"form-control" }}
+            </div>
 
-    <div id="calendar" style="max-width: 700px; margin-top: 30px;"></div>
+            <div class="form-group">
+                {{ form.service.label_tag }}
+                {{ form.service|add_class:"form-control" }}
+            </div>
+        </div>
 
-    {{ form.time_slot }}
+        <div class="price-display-container">
+            <div id="price-display" class="price-display">
+                <strong>Price:</strong> Please choose your pet and service first!
+            </div>
+        </div>
 
-    <p>
-        {{ form.voucher_code.label_tag }} {{ form.voucher_code }}
-    </p>
+        <div class="calendar-container">
+            <h3>Select Available Time Slot</h3>
+            <div id="calendar"></div>
+        </div>
 
-    <button type="submit">📅 Book</button>
-</form>
+        {{ form.time_slot|add_class:"hidden" }}
 
-<br>
-<a href="{% url 'client_dashboard' %}">⬅ Back to Dashboard</a>
+        <div class="form-group">
+            {{ form.voucher_code.label_tag }}
+            {{ form.voucher_code|add_class:"form-control" }}
+            <div class="form-help">Optional: Enter a voucher code for discounts</div>
+        </div>
 
-<!-- FullCalendar CDN -->
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">📅 Book Appointment</button>
+            <a href="{% url 'client_dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
+<script src="{% static 'core/js/base.js' %}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const serviceField = document.getElementById("id_service");
@@ -54,6 +81,12 @@
             slotMaxTime: "18:01:00",
             timeZone: 'UTC',
             hiddenDays: [0], // Sundays closed!
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            height: 'auto',
             events: function (info, successCallback, failureCallback) {
                 const serviceId = serviceField.value;
                 if (!serviceId) return;
@@ -63,7 +96,7 @@
                     )
                     .then(response => response.json())
                     .then(data => {
-                        successCallback(data); // FullCalendar renders them
+                        successCallback(data);
                     })
                     .catch(error => {
                         console.error("Error loading slots:", error);
@@ -71,46 +104,55 @@
                     });
             },
             eventClick: function (info) {
-                timeSlotInput.value = info.event.start.toISOString(); // full ISO datetime
+                timeSlotInput.value = info.event.start.toISOString();
                 calendar.getEvents().forEach(e => e.setProp('backgroundColor', '#3788d8'));
-                info.event.setProp('backgroundColor', 'green');
+                info.event.setProp('backgroundColor', '#28a745');
+
+                showToast('Time slot selected: ' + info.event.start.toLocaleString());
             }
         });
 
         calendar.render();
 
         // Refetch slots when service changes
-        serviceField.addEventListener("change", () => calendar.refetchEvents());
-    });
+        serviceField.addEventListener("change", () => {
+            calendar.refetchEvents();
+            updatePrice();
+        });
 
-    const petField = document.getElementById("id_pet_profile");
-    const serviceField = document.getElementById("id_service");
-    const priceDisplay = document.getElementById("price-display");
+        // Price update functionality
+        const petField = document.getElementById("id_pet_profile");
+        const priceDisplay = document.getElementById("price-display");
 
-    function updatePrice() {
-        const petId = petField.value;
-        const serviceId = serviceField.value;
+        function updatePrice() {
+            const petId = petField.value;
+            const serviceId = serviceField.value;
 
-        if (!petId || !serviceId) {
-            priceDisplay.innerHTML = "<strong>Price:</strong> Please choose your pet and service first!";
-            return;
+            if (!petId || !serviceId) {
+                priceDisplay.innerHTML = "<strong>Price:</strong> Please choose your pet and service first!";
+                priceDisplay.className = "price-display";
+                return;
+            }
+
+            fetch(`/ajax/get-service-price/?pet_id=${petId}&service_id=${serviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.price) {
+                        priceDisplay.innerHTML = `<strong>Price:</strong> £${data.price}`;
+                        priceDisplay.className = "price-display price-available";
+                    } else {
+                        priceDisplay.innerHTML =
+                        "<strong>Price:</strong> Not available for this selection.";
+                        priceDisplay.className = "price-display price-unavailable";
+                    }
+                })
+                .catch(error => {
+                    priceDisplay.innerHTML = "<strong>Price:</strong> Error fetching price.";
+                    priceDisplay.className = "price-display price-error";
+                });
         }
 
-        fetch(`/ajax/get-service-price/?pet_id=${petId}&service_id=${serviceId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.price) {
-                    priceDisplay.innerHTML = `<strong>Price:</strong> £${data.price}`;
-                } else {
-                    priceDisplay.innerHTML = "<strong>Price:</strong> Not available for this selection.";
-                }
-            })
-            .catch(error => {
-                priceDisplay.innerHTML = "<strong>Price:</strong> Error fetching price.";
-            });
-    }
-
-    petField.addEventListener("change", updatePrice);
-    serviceField.addEventListener("change", updatePrice);
+        petField.addEventListener("change", updatePrice);
+    });
 </script>
 {% endblock %}

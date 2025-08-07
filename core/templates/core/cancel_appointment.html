@@ -1,76 +1,41 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cancel Appointment - Dog Booking System{% endblock %}
 
 {% block content %}
-<h2>Cancel Appointment</h2>
+<div class="form-container">
+    <h2>Cancel Appointment</h2>
 
-<div class="alert alert-warning">
-    <h4>Are you sure you want to cancel this appointment?</h4>
-    <p>
-        <strong>Date & Time:</strong> {{ appointment.appointment_time|date:"D, M j, Y" }} at
-        {{ appointment.appointment_time|time:"H:i" }}<br>
-        <strong>Pet:</strong> {{ appointment.pet_profile.name }}<br>
-        <strong>Service:</strong> {{ appointment.service.name }}<br>
-        <strong>Status:</strong> {{ appointment.status|title }}
-    </p>
+    <div class="alert alert-warning">
+        <h4>Are you sure you want to cancel this appointment?</h4>
+        <div class="appointment-details">
+            <div class="detail-item">
+                <strong>Date & Time:</strong> {{ appointment.appointment_time|date:"D, M j, Y" }} at
+                {{ appointment.appointment_time|time:"H:i" }}
+            </div>
+            <div class="detail-item">
+                <strong>Pet:</strong> {{ appointment.pet_profile.name }}
+            </div>
+            <div class="detail-item">
+                <strong>Service:</strong> {{ appointment.service.name }}
+            </div>
+            <div class="detail-item">
+                <strong>Status:</strong> {{ appointment.status|title }}
+            </div>
+        </div>
+    </div>
+
+    <form method="post" class="cancel-form">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Yes, Cancel Appointment</button>
+            <a href="{% url 'client_dashboard' %}" class="btn btn-secondary">No, Keep Appointment</a>
+        </div>
+    </form>
 </div>
+{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Yes, Cancel Appointment</button>
-    <a href="{% url 'client_dashboard' %}" class="btn btn-secondary">No, Keep Appointment</a>
-</form>
-
-<style>
-    .alert {
-        padding: 15px;
-        margin: 20px 0;
-        border: 1px solid transparent;
-        border-radius: 4px;
-    }
-
-    .alert-warning {
-        color: #856404;
-        background-color: #fff3cd;
-        border-color: #ffeaa7;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 6px 12px;
-        margin: 5px;
-        font-size: 14px;
-        font-weight: normal;
-        line-height: 1.42857143;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: middle;
-        cursor: pointer;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        text-decoration: none;
-    }
-
-    .btn-danger {
-        color: #fff;
-        background-color: #d9534f;
-        border-color: #d43f3a;
-    }
-
-    .btn-danger:hover {
-        background-color: #c9302c;
-        border-color: #ac2925;
-    }
-
-    .btn-secondary {
-        color: #333;
-        background-color: #fff;
-        border-color: #ccc;
-    }
-
-    .btn-secondary:hover {
-        background-color: #e6e6e6;
-        border-color: #adadad;
-    }
-</style>
-
+{% block extra_js %}
+<script src="{% static 'core/js/base.js' %}"></script>
 {% endblock %}

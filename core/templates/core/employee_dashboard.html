@@ -1,7 +1,33 @@
 {% extends 'core/base.html' %}
 
+{% block title %}Employee Dashboard - Dog Booking System{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
-<p>You are logged in as a <strong>{{ user.userprofile.role }}</strong>.</p>
-<a href="{% url 'logout' %}">Logout</a>
+<h1>Employee Dashboard</h1>
+
+<div class="employee-preview">
+    <h2>👋 Welcome to your workspace!</h2>
+    <p>Your employee features are coming soon. You'll be able to:</p>
+
+    <div class="feature-grid">
+        <div class="feature-card primary">
+            <div class="feature-title primary">📅 View My Schedule</div>
+            <div class="feature-description">See your assigned appointments and availability</div>
+        </div>
+        <div class="feature-card success">
+            <div class="feature-title success">✅ Update Appointment Status</div>
+            <div class="feature-description">Mark appointments as completed or add notes</div>
+        </div>
+        <div class="feature-card warning">
+            <div class="feature-title warning">⏰ Manage Availability</div>
+            <div class="feature-description">Set your working hours and time off</div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

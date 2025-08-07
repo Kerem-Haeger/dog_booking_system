@@ -3,27 +3,84 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dog Grooming ERP</title>
+    <title>{% block title %}Dog Booking System{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS Link -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+    {% if user.is_authenticated %}
+    <header class="header">
+        <div class="header-container">
+            <a href="{% url 'redirect_by_role' %}" class="logo">🐕 Dog Booking System</a>
+            <div class="user-info">
+                <div class="user-details">
+                    Welcome, <strong>{{ user.get_full_name|default:user.username }}</strong>
+                    <span class="role-badge">{{ user.userprofile.role|default:"User" }}</span>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
         </div>
-        {% endfor %}
-    </div>
+    </header>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <ul class="nav-list">
+                {% if user.userprofile.role == 'client' %}
+                <li class="nav-item">
+                    <a href="{% url 'client_dashboard' %}" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'add_pet' %}" class="nav-link">Add Pet</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'book_appointment' %}" class="nav-link">Book Appointment</a>
+                </li>
+                {% elif user.userprofile.role == 'employee' %}
+                <li class="nav-item">
+                    <a href="{% url 'employee_dashboard' %}" class="nav-link">Dashboard</a>
+                </li>
+                {% elif user.userprofile.role == 'manager' %}
+                <li class="nav-item">
+                    <a href="{% url 'manager_dashboard' %}" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'approve_appointments' %}" class="nav-link">Appointments Calendar</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'approve_pets' %}" class="nav-link">
+                        Approve Pets
+                        {% if pending_pets_count > 0 %}
+                        <span class="notification-badge">{{ pending_pets_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
     {% endif %}
 
-    {% block content %}
-    <!-- Each page overrides this -->
-    {% endblock %}
+    <main class="main-content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
+        {% block content %}
+        <!-- Each page overrides this -->
+        {% endblock %}
+    </main>
+
+    <script src="{% static 'core/js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>
