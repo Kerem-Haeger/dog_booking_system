@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Book Appointment - Dog Booking System{% endblock %}
 
@@ -142,7 +143,7 @@
                         priceDisplay.className = "price-display price-available";
                     } else {
                         priceDisplay.innerHTML =
-                        "<strong>Price:</strong> Not available for this selection.";
+                            "<strong>Price:</strong> Not available for this selection.";
                         priceDisplay.className = "price-display price-unavailable";
                     }
                 })

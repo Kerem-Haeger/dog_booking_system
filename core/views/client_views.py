@@ -16,15 +16,21 @@ def client_dashboard(request):
     # Get current datetime
     now = timezone.now()
     
-    # Separate upcoming and past appointments
+    # Separate upcoming, past, and rejected appointments
     upcoming_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
-        appointment_time__gte=now
+        appointment_time__gte=now,
+        status__in=['pending', 'approved']  # Exclude rejected from upcoming
     ).order_by('appointment_time')  # Nearest first
     
     past_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
         appointment_time__lt=now
+    ).order_by('-appointment_time')  # Most recent first
+    
+    rejected_appointments = Appointment.objects.filter(
+        pet_profile__user=request.user,
+        status='rejected'
     ).order_by('-appointment_time')  # Most recent first
 
     # Add cancellation eligibility to upcoming appointments
@@ -39,6 +45,7 @@ def client_dashboard(request):
         'pets': pets,
         'upcoming_appointments': upcoming_appointments,
         'past_appointments': past_appointments,
+        'rejected_appointments': rejected_appointments,
     })
 
 

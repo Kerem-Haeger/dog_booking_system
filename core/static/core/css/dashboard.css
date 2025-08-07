@@ -261,12 +261,17 @@
 }
 
 /* Past Appointments */
-.past-appointments-section {
+.past-appointments-section,
+.rejected-appointments-section {
     margin-top: 2rem;
     background: white;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rejected-appointments-section {
+    border-left: 4px solid #dc3545;
 }
 
 .section-toggle {
@@ -288,12 +293,14 @@
     background: #e9ecef;
 }
 
-.toggle-icon {
+.toggle-icon,
+.toggle-icon-rejected {
     font-size: 0.8rem;
     color: #6c757d;
 }
 
-.past-appointments-content {
+.past-appointments-content,
+.rejected-appointments-content {
     padding: 1rem 1.5rem;
 }
 
@@ -306,6 +313,39 @@
     background: #f8f9fa;
     border-radius: 6px;
     opacity: 0.8;
+}
+
+.appointment-card.rejected {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #f8d7da;
+    border-radius: 6px;
+    border-left: 3px solid #dc3545;
+}
+
+.appointment-time.rejected {
+    background: #dc3545;
+    color: white;
+}
+
+.rejection-note {
+    color: #721c24;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.requested-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.completed-message {
+    color: #28a745;
+    font-style: italic;
+    font-weight: 500;
 }
 
 .show-more {

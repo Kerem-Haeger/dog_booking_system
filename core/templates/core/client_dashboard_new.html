@@ -95,13 +95,54 @@
                     </div>
                     <div class="appointment-info">
                         <div class="pet-service">{{ appt.pet_profile.name }} - {{ appt.service.name }}</div>
-                        <div class="status-line">{{ appt.status|title }}</div>
+                        <div class="status-line">
+                            {% if appt.status == 'approved' or appt.status == 'completed' %}
+                            <span class="completed-message">Thanks for your business! 🐾</span>
+                            {% else %}
+                            {{ appt.status|title }}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
                 {% if past_appointments|length > 5 %}
                 <div class="show-more">
                     <button class="btn-link">Show {{ past_appointments|length|add:"-5" }} more...</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Rejected Appointments (Collapsed by default) -->
+        {% if rejected_appointments %}
+        <div class="rejected-appointments-section">
+            <button class="section-toggle" onclick="toggleRejectedAppointments()">
+                <span>❌ Rejected Appointments ({{ rejected_appointments|length }})</span>
+                <span class="toggle-icon-rejected">▼</span>
+            </button>
+            <div class="rejected-appointments-content" style="display: none;">
+                {% for appt in rejected_appointments|slice:":5" %}
+                <div class="appointment-card rejected compact">
+                    <div class="appointment-time small rejected">
+                        {{ appt.appointment_time|date:"M j" }}
+                    </div>
+                    <div class="appointment-info">
+                        <div class="pet-service">{{ appt.pet_profile.name }} - {{ appt.service.name }}</div>
+                        <div class="status-line">
+                            <span class="status-badge rejected">Rejected</span>
+                            <span class="rejection-note">Reason will be shown here in future</span>
+                        </div>
+                        <div class="appointment-detail">
+                            <small class="requested-time">Requested: {{ appt.appointment_time|date:"D, M j, Y" }} at
+                                {{ appt.appointment_time|time:"H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if rejected_appointments|length > 5 %}
+                <div class="show-more">
+                    <button class="btn-link">Show {{ rejected_appointments|length|add:"-5" }} more...</button>
                 </div>
                 {% endif %}
             </div>
@@ -170,7 +211,9 @@
         // Remove active class from current
         if (cards[currentAppointment]) {
             cards[currentAppointment].classList.remove('active');
-            dots[currentAppointment].classList.remove('active');
+            if (dots[currentAppointment]) {
+                dots[currentAppointment].classList.remove('active');
+            }
         }
 
         // Calculate new index
@@ -181,7 +224,9 @@
         // Add active class to new
         if (cards[currentAppointment]) {
             cards[currentAppointment].classList.add('active');
-            dots[currentAppointment].classList.add('active');
+            if (dots[currentAppointment]) {
+                dots[currentAppointment].classList.add('active');
+            }
         }
     }
 
@@ -205,12 +250,29 @@
         const content = document.querySelector('.past-appointments-content');
         const icon = document.querySelector('.toggle-icon');
 
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            icon.textContent = '▲';
-        } else {
-            content.style.display = 'none';
-            icon.textContent = '▼';
+        if (content && icon) {
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            }
+        }
+    }
+
+    function toggleRejectedAppointments() {
+        const content = document.querySelector('.rejected-appointments-content');
+        const icon = document.querySelector('.toggle-icon-rejected');
+
+        if (content && icon) {
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            }
         }
     }
 </script>
