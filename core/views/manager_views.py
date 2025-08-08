@@ -4,9 +4,12 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
 from ..models import (
-    UserProfile, PetProfile, Appointment, EmployeeCalendar
+    UserProfile, PetProfile, Appointment, EmployeeCalendar, Service, ServicePrice
 )
-from ..forms import PetApprovalForm, AppointmentApprovalForm
+from ..forms import (
+    PetApprovalForm, AppointmentApprovalForm, UserApprovalForm, 
+    ServiceForm, ServicePriceForm
+)
 from ..utils import log_audit_action
 from .base import is_manager
 
@@ -20,9 +23,13 @@ def manager_dashboard(request):
     pending_appt_count = Appointment.objects.filter(
         status='pending'
     ).count()
+    pending_user_count = UserProfile.objects.filter(
+        role='pending'
+    ).count()
     return render(request, 'core/manager_dashboard.html', {
         'pending_count': pending_count,
         'pending_appt_count': pending_appt_count,
+        'pending_user_count': pending_user_count,
     })
 
 
@@ -225,3 +232,259 @@ def approve_appointments(request):
         'rejected_appointments': rejected_appointments,
         'all_employees': all_employees,
     })
+
+
+@user_passes_test(is_manager)
+def approve_users(request):
+    """Allow managers to approve or reject pending user registrations"""
+    pending_users = UserProfile.objects.filter(
+        role='pending'
+    ).select_related('user').order_by('created_at')
+
+    if request.method == 'POST':
+        for user_profile in pending_users:
+            form = UserApprovalForm(request.POST, prefix=str(user_profile.id))
+            if form.is_valid():
+                decision = form.cleaned_data['decision']
+                role = form.cleaned_data['role']
+
+                if decision == 'approve':
+                    user_profile.role = role
+                    user_profile.save()
+                    
+                    # Log audit action
+                    log_audit_action(
+                        user=request.user,
+                        action='user_approved',
+                        details={
+                            'approved_user': user_profile.user.username,
+                            'assigned_role': role
+                        },
+                        target_user=user_profile.user,
+                        request=request
+                    )
+                    
+                    messages.success(
+                        request,
+                        f'User {user_profile.user.username} approved as {role}.'
+                    )
+                elif decision == 'reject':
+                    username = user_profile.user.username
+                    
+                    # Log audit action before deletion
+                    log_audit_action(
+                        user=request.user,
+                        action='user_rejected',
+                        details={
+                            'rejected_user': username,
+                            'reason': 'Registration rejected by manager'
+                        },
+                        target_user=user_profile.user,
+                        request=request
+                    )
+                    
+                    # Delete the entire user account
+                    user_profile.user.delete()  # This also deletes UserProfile due to cascade
+                    
+                    messages.info(
+                        request,
+                        f'User registration for {username} has been rejected and deleted.'
+                    )
+
+        return redirect('approve_users')
+
+    # Create forms for each pending user
+    user_forms = []
+    for user_profile in pending_users:
+        form = UserApprovalForm(prefix=str(user_profile.id))
+        user_forms.append((user_profile, form))
+
+    return render(request, 'core/approve_users.html', {
+        'user_forms': user_forms,
+    })
+
+
+@user_passes_test(is_manager)
+def manage_services(request):
+    """Service management dashboard for managers"""
+    services = Service.objects.all().order_by('name')
+    
+    return render(request, 'core/manage_services.html', {
+        'services': services,
+    })
+
+
+@user_passes_test(is_manager)
+def create_service(request):
+    """Create a new service"""
+    if request.method == 'POST':
+        form = ServiceForm(request.POST)
+        if form.is_valid():
+            service = form.save()
+            
+            # Log audit action
+            log_audit_action(
+                user=request.user,
+                action='service_created',
+                details={
+                    'service_name': service.name,
+                    'duration': str(service.duration),
+                    'allowed_times': service.allowed_start_times
+                },
+                request=request
+            )
+            
+            messages.success(
+                request,
+                f'Service "{service.name}" created successfully!'
+            )
+            return redirect('edit_service_pricing', service_id=service.id)
+    else:
+        form = ServiceForm()
+    
+    return render(request, 'core/create_service.html', {
+        'form': form,
+    })
+
+
+@user_passes_test(is_manager)
+def edit_service(request, service_id):
+    """Edit an existing service"""
+    service = get_object_or_404(Service, id=service_id)
+    
+    if request.method == 'POST':
+        form = ServiceForm(request.POST, instance=service)
+        if form.is_valid():
+            old_name = service.name
+            service = form.save()
+            
+            # Log audit action
+            log_audit_action(
+                user=request.user,
+                action='service_updated',
+                details={
+                    'service_name': service.name,
+                    'old_name': old_name if old_name != service.name else None,
+                    'duration': str(service.duration),
+                    'is_active': service.is_active
+                },
+                request=request
+            )
+            
+            messages.success(
+                request,
+                f'Service "{service.name}" updated successfully!'
+            )
+            return redirect('manage_services')
+    else:
+        form = ServiceForm(instance=service)
+    
+    return render(request, 'core/edit_service.html', {
+        'form': form,
+        'service': service,
+    })
+
+
+@user_passes_test(is_manager)
+def edit_service_pricing(request, service_id):
+    """Edit pricing for a service"""
+    service = get_object_or_404(Service, id=service_id)
+    
+    # Get all existing prices for this service
+    prices = ServicePrice.objects.filter(service=service)
+    
+    # Check if we're editing a specific price
+    price_id = request.POST.get('price_id') or request.GET.get('price_id')
+    price_instance = None
+    if price_id:
+        try:
+            price_instance = ServicePrice.objects.get(id=price_id, service=service)
+        except ServicePrice.DoesNotExist:
+            pass
+    
+    if request.method == 'POST':
+        if price_instance:
+            # Editing existing price
+            form = ServicePriceForm(request.POST, instance=price_instance)
+        else:
+            # Creating new price
+            form = ServicePriceForm(request.POST)
+        
+        if form.is_valid():
+            price_obj = form.save(commit=False)
+            price_obj.service = service
+            
+            # Check if price already exists for this size
+            existing_price = ServicePrice.objects.filter(
+                service=service, 
+                size=price_obj.size
+            ).exclude(id=price_obj.id if price_obj.id else None).first()
+            
+            if existing_price:
+                messages.error(
+                    request,
+                    f'Pricing for {price_obj.get_size_display()} size already exists. Use edit to update it.'
+                )
+            else:
+                price_obj.save()
+                
+                # Log audit action
+                action = 'service_pricing_updated' if price_instance else 'service_pricing_added'
+                log_audit_action(
+                    user=request.user,
+                    action=action,
+                    details={
+                        'service_name': service.name,
+                        'size': price_obj.get_size_display(),
+                        'price': str(price_obj.price)
+                    },
+                    request=request
+                )
+                
+                action_text = 'updated' if price_instance else 'added'
+                messages.success(
+                    request,
+                    f'Pricing for "{service.name}" ({price_obj.get_size_display()}) {action_text} successfully!'
+                )
+                return redirect('edit_service_pricing', service_id=service.id)
+    else:
+        if price_instance:
+            form = ServicePriceForm(instance=price_instance)
+        else:
+            form = ServicePriceForm()
+    
+    return render(request, 'core/edit_service_pricing.html', {
+        'service': service,
+        'form': form,
+        'prices': prices,
+    })
+
+
+@user_passes_test(is_manager)
+def toggle_service_status(request, service_id):
+    """Toggle active/inactive status of a service"""
+    service = get_object_or_404(Service, id=service_id)
+    
+    if request.method == 'POST':
+        service.is_active = not service.is_active
+        service.save()
+        
+        status = "activated" if service.is_active else "deactivated"
+        
+        # Log audit action
+        log_audit_action(
+            user=request.user,
+            action='service_status_changed',
+            details={
+                'service_name': service.name,
+                'new_status': 'active' if service.is_active else 'inactive'
+            },
+            request=request
+        )
+        
+        messages.success(
+            request,
+            f'Service "{service.name}" has been {status}!'
+        )
+    
+    return redirect('manage_services')

@@ -1,0 +1,115 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Create Service - Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="manager-section">
+    <h1>Create New Service</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            {% if form.name.errors %}
+            <div class="form-errors">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+            {% if form.description.errors %}
+            <div class="form-errors">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.duration.label_tag }}
+            {{ form.duration }}
+            <small>Format: HH:MM:SS (e.g., 01:30:00 for 1.5 hours)</small>
+            {% if form.duration.errors %}
+            <div class="form-errors">{{ form.duration.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.allowed_start_times.label_tag }}
+            {{ form.allowed_start_times }}
+            <small>Comma-separated times in HH:MM format (e.g., 09:00,11:30,14:00)</small>
+            {% if form.allowed_start_times.errors %}
+            <div class="form-errors">{{ form.allowed_start_times.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.is_active.label_tag }}
+            {{ form.is_active }}
+            {% if form.is_active.errors %}
+            <div class="form-errors">{{ form.is_active.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Service</button>
+            <a href="{% url 'manage_services' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        max-width: 400px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+
+    .form-group small {
+        display: block;
+        color: #666;
+        margin-top: 3px;
+    }
+
+    .form-errors {
+        color: red;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+{% endblock %}

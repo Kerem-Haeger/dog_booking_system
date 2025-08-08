@@ -1,0 +1,105 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Manage Services - Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="manager-section">
+    <h1>Service Management</h1>
+
+    <div class="service-actions">
+        <a href="{% url 'create_service' %}" class="btn btn-primary">Add New Service</a>
+        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+
+    {% if services %}
+    <div class="services-list">
+        {% for service in services %}
+        <div class="service-card {% if not service.is_active %}inactive{% endif %}">
+            <div class="service-info">
+                <h3>{{ service.name }}
+                    {% if not service.is_active %}<span class="status-inactive">(Inactive)</span>{% endif %}
+                </h3>
+                <p><strong>Duration:</strong> {{ service.duration }}</p>
+                <p><strong>Description:</strong> {{ service.description|default:"No description" }}</p>
+                <p><strong>Available Times:</strong> {{ service.allowed_start_times|default:"Not set" }}</p>
+
+                <div class="pricing-info">
+                    <strong>Pricing:</strong>
+                    {% for price in service.prices.all %}
+                    {{ price.size|title }}: £{{ price.price }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                    <em>No pricing set</em>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="service-actions">
+                <a href="{% url 'edit_service' service.id %}" class="btn btn-small">Edit Service</a>
+
+                {% if service.prices.all %}
+                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small">Edit Pricing</a>
+                {% else %}
+                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small btn-success">Add Pricing</a>
+                {% endif %}
+
+                <form method="post" action="{% url 'toggle_service_status' service.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    {% if service.is_active %}
+                    <button type="submit" class="btn btn-small btn-warning"
+                        onclick="return confirm('Deactivate this service? It will no longer be available for booking.');">
+                        Deactivate
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-small btn-success">
+                        Activate
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-services">
+        <p>No services created yet.</p>
+        <a href="{% url 'create_service' %}" class="btn btn-primary">Create Your First Service</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .service-card {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+
+    .service-card.inactive {
+        background-color: #f5f5f5;
+        opacity: 0.7;
+    }
+
+    .status-inactive {
+        color: #666;
+        font-size: 0.8em;
+    }
+
+    .service-actions {
+        margin-top: 10px;
+    }
+
+    .btn-small {
+        padding: 5px 10px;
+        font-size: 0.9em;
+        margin-right: 5px;
+    }
+
+    .pricing-info {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}

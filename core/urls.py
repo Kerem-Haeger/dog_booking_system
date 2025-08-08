@@ -6,6 +6,7 @@ from .views.api_views import (
      approve_appointment_ajax, reject_appointment_ajax,
      get_available_employees, reassign_appointment_ajax
 )
+from .views.auth_views import register_view
 
 urlpatterns = [
      path('redirect-by-role/', views.redirect_by_role,
@@ -23,6 +24,12 @@ urlpatterns = [
      path('manager/approve-appointments/', views.approve_appointments,
           name='approve_appointments'),
      path('manager/pets/pending/', views.approve_pets, name='approve_pets'),
+     path('manager/users/pending/', views.approve_users, name='approve_users'),
+     path('manager/services/', views.manage_services, name='manage_services'),
+     path('manager/services/create/', views.create_service, name='create_service'),
+     path('manager/services/<int:service_id>/edit/', views.edit_service, name='edit_service'),
+     path('manager/services/<int:service_id>/pricing/', views.edit_service_pricing, name='edit_service_pricing'),
+     path('manager/services/<int:service_id>/toggle/', views.toggle_service_status, name='toggle_service_status'),
      path('ajax/get-service-price/', get_service_price,
           name='get_service_price'),
      path('ajax/calendar-events/', get_calendar_events,
@@ -37,4 +44,5 @@ urlpatterns = [
           name='get_available_employees'),
      path('ajax/reassign-appointment/', reassign_appointment_ajax,
           name='reassign_appointment_ajax'),
+     path('register/', register_view, name='register'),
 ]

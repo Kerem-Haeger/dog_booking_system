@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Approve User Registrations - Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="manager-section">
+    <h1>Pending User Registrations</h1>
+
+    {% if user_forms %}
+    <p>{{ user_forms|length }} user registration(s) pending approval.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="bulk-actions">
+            <h3>Bulk Actions:</h3>
+            <button type="submit" name="bulk_approve_clients" onclick="return bulkApproveClients();">
+                Approve All as Clients
+            </button>
+            <button type="submit" name="bulk_reject"
+                onclick="return confirm('Are you sure you want to reject all pending registrations? This will delete their accounts.');">
+                Reject All
+            </button>
+        </div>
+
+        <div class="pending-users">
+            {% for user_profile, form in user_forms %}
+            <div class="user-approval-card">
+                <div class="user-info">
+                    <h3>{{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
+                    <p><strong>Username:</strong> {{ user_profile.user.username }}</p>
+                    <p><strong>Email:</strong> {{ user_profile.user.email|default:"Not provided" }}</p>
+                    <p><strong>Registered:</strong> {{ user_profile.created_at|date:"M j, Y g:i A" }}</p>
+                </div>
+
+                <div class="approval-form">
+                    {{ form.role.label_tag }}
+                    {{ form.role }}
+                    {{ form.decision }}
+
+                    <div class="action-buttons">
+                        <button type="submit" name="user_{{ user_profile.id }}_approve"
+                            onclick="setDecision('{{ form.prefix }}', 'approve');">
+                            Approve
+                        </button>
+                        <button type="submit" name="user_{{ user_profile.id }}_reject"
+                            onclick="setDecision('{{ form.prefix }}', 'reject'); return confirm('Are you sure you want to reject this user? Their account will be deleted.');">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <p>No pending user registrations.</p>
+    <a href="{% url 'manager_dashboard' %}">← Back to Manager Dashboard</a>
+    {% endif %}
+</div>
+
+<script>
+    function setDecision(prefix, decision) {
+        document.getElementById('id_' + prefix + '-decision').value = decision;
+    }
+
+    function bulkApproveClients() {
+        // Set all users to be approved as clients
+        {
+            %
+            for user_profile, form in user_forms %
+        }
+        document.getElementById('id_{{ form.prefix }}-decision').value = 'approve';
+        document.getElementById('id_{{ form.prefix }}-role').value = 'client'; {
+            % endfor %
+        }
+        return confirm('Approve all pending users as clients?');
+    }
+</script>
+{% endblock %}

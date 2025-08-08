@@ -28,6 +28,14 @@
     </div>
     {% endif %}
 
+    {% if pending_user_count > 0 %}
+    <div class="alert-card info">
+        <h3>👤 User Registrations</h3>
+        <p>You have <span class="alert-count">{{ pending_user_count }}</span> new user registrations to approve</p>
+        <a href="{% url 'approve_users' %}" class="btn btn-info">Review Users</a>
+    </div>
+    {% endif %}
+
     <div class="card card-primary">
         <h3>📊 Quick Actions</h3>
         <div class="quick-actions">
@@ -40,6 +48,16 @@
                 <span class="action-icon">🐕</span>
                 <span class="action-title">Manage Pets</span>
                 <div class="action-description">Approve or review pet profiles</div>
+            </a>
+            <a href="{% url 'approve_users' %}" class="action-link">
+                <span class="action-icon">👤</span>
+                <span class="action-title">Manage Users</span>
+                <div class="action-description">Approve new user registrations</div>
+            </a>
+            <a href="{% url 'manage_services' %}" class="action-link">
+                <span class="action-icon">⚙️</span>
+                <span class="action-title">Manage Services</span>
+                <div class="action-description">Add, edit, and price services</div>
             </a>
         </div>
     </div>

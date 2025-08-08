@@ -51,6 +51,7 @@ class AuditLog(models.Model):
 # UserProfile model (used for roles)
 class UserProfile(models.Model):
     USER_ROLES = [
+        ('pending', 'Pending Approval'),
         ('client', 'Client'),
         ('employee', 'Employee'),
         ('manager', 'Manager'),
@@ -123,8 +124,14 @@ class Service(models.Model):
     allowed_start_times = models.CharField(
         max_length=200,
         help_text="Comma-separated start times (e.g., '09:00,11:30,14:00')",
-        default="09:00,11:30,14:00"
+        default=""
     )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this service is currently available for booking"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def get_allowed_times(self):
         return [t.strip() for t in self.allowed_start_times.split(",")]

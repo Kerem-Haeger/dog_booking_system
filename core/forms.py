@@ -1,13 +1,16 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta, datetime
 import bleach
 from .models import (
-    User,
     UserProfile,
     PetProfile,
     Appointment,
     Service,
+    ServicePrice,
     Voucher
     )
 
@@ -173,3 +176,172 @@ class AppointmentApprovalForm(forms.Form):
         queryset=UserProfile.objects.filter(role='employee'),
         label="Assign to Employee"
     )
+
+
+class UserApprovalForm(forms.Form):
+    """Form for approving pending user registrations"""
+    ROLE_CHOICES = [
+        ('client', 'Client'),
+        ('employee', 'Employee'),
+        ('manager', 'Manager'),
+    ]
+    
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        initial='client',
+        label="Assign Role"
+    )
+    decision = forms.ChoiceField(
+        choices=[('approve', 'Approve'), ('reject', 'Reject')],
+        widget=forms.HiddenInput(),
+        required=True
+    )
+
+
+class ServiceForm(forms.ModelForm):
+    """Form for creating and editing services"""
+    
+    class Meta:
+        model = Service
+        fields = ['name', 'description', 'duration', 'allowed_start_times', 'is_active']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'allowed_start_times': forms.TextInput(attrs={
+                'placeholder': 'e.g., 09:00,11:30,14:00',
+                'help_text': 'Comma-separated start times'
+            }),
+        }
+    
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if name:
+            # Sanitize service name
+            sanitized = bleach.clean(name, tags=[], strip=True)
+            if not sanitized or len(sanitized.strip()) < 2:
+                raise forms.ValidationError(
+                    "Service name must be at least 2 characters long."
+                )
+            return sanitized.strip()
+        return name
+    
+    def clean_allowed_start_times(self):
+        times_str = self.cleaned_data.get('allowed_start_times')
+        if not times_str or not times_str.strip():
+            raise forms.ValidationError(
+                "Please specify at least one allowed start time."
+            )
+        
+        # Validate time format
+        times = [t.strip() for t in times_str.split(',')]
+        for time_str in times:
+            try:
+                # Try to parse as HH:MM format
+                datetime.strptime(time_str, '%H:%M')
+            except ValueError:
+                raise forms.ValidationError(
+                    f"Invalid time format: '{time_str}'. Use HH:MM format (e.g., 09:00)."
+                )
+        
+        return times_str
+    
+    def clean_duration(self):
+        duration = self.cleaned_data.get('duration')
+        if duration:
+            # Convert to total seconds for validation
+            total_seconds = duration.total_seconds()
+            
+            # Minimum 15 minutes
+            if total_seconds < 15 * 60:
+                raise forms.ValidationError(
+                    "Service duration must be at least 15 minutes."
+                )
+            
+            # Maximum 8 hours
+            if total_seconds > 8 * 60 * 60:
+                raise forms.ValidationError(
+                    "Service duration cannot exceed 8 hours."
+                )
+        
+        return duration
+
+
+class ServicePriceForm(forms.ModelForm):
+    """Form for managing service pricing"""
+    
+    class Meta:
+        model = ServicePrice
+        fields = ['size', 'price']
+        widgets = {
+            'price': forms.NumberInput(attrs={
+                'step': '0.01',
+                'min': '0.01'
+            })
+        }
+    
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price is not None:
+            if price <= 0:
+                raise forms.ValidationError(
+                    "Price must be greater than 0."
+                )
+            if price > 999.99:
+                raise forms.ValidationError(
+                    "Price cannot exceed $999.99."
+                )
+        return price
+
+
+class CustomUserRegistrationForm(UserCreationForm):
+    """Extended registration form with additional user information"""
+    
+    first_name = forms.CharField(
+        max_length=30,
+        required=True,
+        help_text="Enter your first name"
+    )
+    
+    last_name = forms.CharField(
+        max_length=30,
+        required=True,
+        help_text="Enter your last name"
+    )
+    
+    email = forms.EmailField(
+        required=False,
+        help_text="Optional: Enter your email address"
+    )
+    
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize username field
+        self.fields['username'].max_length = 20
+        self.fields['username'].help_text = "Required. 20 characters or fewer. Letters, digits, spaces and special characters allowed."
+    
+    def clean_username(self):
+        """Validate username length and uniqueness"""
+        username = self.cleaned_data.get('username')
+        
+        if len(username) > 20:
+            raise ValidationError("Username cannot be longer than 20 characters.")
+        
+        # Check if username already exists (case-insensitive)
+        if User.objects.filter(username__iexact=username).exists():
+            raise ValidationError("A user with this username already exists.")
+        
+        return username
+    
+    def clean_email(self):
+        """Validate email if provided"""
+        email = self.cleaned_data.get('email')
+        
+        if email:
+            # Check if email already exists (case-insensitive)
+            if User.objects.filter(email__iexact=email).exists():
+                raise ValidationError("A user with this email already exists.")
+        
+        return email

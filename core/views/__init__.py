@@ -4,13 +4,16 @@ from .client_views import (
 )
 from .employee_views import employee_dashboard
 from .manager_views import (
-    manager_dashboard, approve_pets, approve_appointments
+    manager_dashboard, approve_pets, approve_appointments, approve_users,
+    manage_services, create_service, edit_service, edit_service_pricing,
+    toggle_service_status
 )
 from .api_views import (
     fetch_available_slots, get_service_price, get_calendar_events,
     debug_appointments
 )
 from .base import is_manager, is_client, is_employee
+from .auth_views import register_view
 
 # Keep the redirect function in the main views.py for now
 from django.contrib.auth.decorators import login_required
@@ -41,6 +44,11 @@ def redirect_by_role(request):
         return redirect('employee_dashboard')
     elif role == 'manager':
         return redirect('manager_dashboard')
+    elif role == 'pending':
+        return HttpResponse(
+            "Your account is pending approval by a manager. "
+            "You will be able to access the system once approved."
+        )
     else:
         return HttpResponse("Unknown role.")
 
@@ -56,6 +64,12 @@ __all__ = [
     'manager_dashboard',
     'approve_pets',
     'approve_appointments',
+    'approve_users',
+    'manage_services',
+    'create_service',
+    'edit_service',
+    'edit_service_pricing',
+    'toggle_service_status',
     'fetch_available_slots',
     'get_service_price',
     'get_calendar_events',
@@ -63,4 +77,5 @@ __all__ = [
     'is_manager',
     'is_client',
     'is_employee',
+    'register_view',
 ]

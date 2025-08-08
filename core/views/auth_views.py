@@ -1,0 +1,44 @@
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login
+from django.db import transaction
+from ..forms import CustomUserRegistrationForm
+from ..models import UserProfile
+
+
+def register_view(request):
+    """Handle user registration"""
+    if request.method == 'POST':
+        form = CustomUserRegistrationForm(request.POST)
+        if form.is_valid():
+            try:
+                # Use transaction to ensure both User and UserProfile are created
+                with transaction.atomic():
+                    # Create the user
+                    user = form.save()
+                    
+                    # Create UserProfile with 'pending' role
+                    UserProfile.objects.create(
+                        user=user,
+                        role='pending'
+                    )
+                    
+                    messages.success(
+                        request, 
+                        f'Account created successfully for {user.username}! '
+                        'You can now log in.'
+                    )
+                    return redirect('login')
+                    
+            except Exception as e:
+                # If anything goes wrong, show error message
+                messages.error(
+                    request,
+                    'There was an error creating your account. Please try again.'
+                )
+                # Re-display the form with errors
+                
+    else:
+        form = CustomUserRegistrationForm()
+    
+    return render(request, 'registration/register.html', {'form': form})
