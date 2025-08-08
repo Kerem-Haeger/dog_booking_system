@@ -589,6 +589,154 @@
 }
 
 /* Manager Dashboard Specific */
+.manager-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e3e6ea;
+}
+
+.dashboard-section h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.75rem;
+}
+
+.requests-section {
+    border-left: 4px solid #007bff;
+}
+
+.actions-section {
+    border-left: 4px solid #28a745;
+}
+
+/* Request Cards */
+.request-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.request-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.request-card.has-requests {
+    border-left: 4px solid #007bff;
+    background: #e7f3ff;
+}
+
+.request-card.empty {
+    opacity: 0.7;
+}
+
+.request-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.request-icon {
+    font-size: 1.2rem;
+}
+
+.request-title {
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.request-count {
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.request-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.request-action {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.request-action:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    color: white;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+    color: #212529;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #138496;
+    color: white;
+}
+
+/* Legacy Alert Cards (kept for backward compatibility) */
 .manager-alerts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -711,6 +859,11 @@
     }
 
     .manager-alerts {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .manager-dashboard {
         grid-template-columns: 1fr;
         gap: 1rem;
     }

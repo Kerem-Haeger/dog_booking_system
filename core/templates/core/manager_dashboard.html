@@ -10,34 +10,80 @@
 {% block content %}
 <h1>Manager Dashboard</h1>
 
-<div class="manager-alerts">
+<div class="manager-dashboard">
+    <!-- Requests Section -->
+    <div class="dashboard-section requests-section">
+        <h2>📋 Pending Requests</h2>
+        <div class="request-cards">
+            <!-- Appointment Requests -->
+            <div class="request-card {% if pending_appt_count > 0 %}has-requests{% else %}empty{% endif %}">
+                <div class="request-header">
+                    <span class="request-icon">📅</span>
+                    <span class="request-title">Appointment Requests</span>
+                    {% if pending_appt_count > 0 %}
+                    <span class="request-count">{{ pending_appt_count }}</span>
+                    {% endif %}
+                </div>
+                <div class="request-description">
+                    {% if pending_appt_count > 0 %}
+                    You have {{ pending_appt_count }} new appointment request{{ pending_appt_count|pluralize }} to
+                    review
+                    {% else %}
+                    No pending appointment requests
+                    {% endif %}
+                </div>
+                {% if pending_appt_count > 0 %}
+                <a href="{% url 'approve_appointments' %}" class="request-action btn btn-primary">View Calendar</a>
+                {% endif %}
+            </div>
 
-    {% if pending_count > 0 %}
-    <div class="alert-card warning">
-        <h3>🚨 Pet Approvals Needed</h3>
-        <p>You have <span class="alert-count">{{ pending_count }}</span> new pet profiles to review</p>
-        <a href="{% url 'approve_pets' %}" class="btn btn-warning">Review Pets</a>
+            <!-- Pet Approvals -->
+            <div class="request-card {% if pending_count > 0 %}has-requests{% else %}empty{% endif %}">
+                <div class="request-header">
+                    <span class="request-icon">🐕</span>
+                    <span class="request-title">Pet Approvals</span>
+                    {% if pending_count > 0 %}
+                    <span class="request-count">{{ pending_count }}</span>
+                    {% endif %}
+                </div>
+                <div class="request-description">
+                    {% if pending_count > 0 %}
+                    You have {{ pending_count }} new pet profile{{ pending_count|pluralize }} to review
+                    {% else %}
+                    No pending pet approvals
+                    {% endif %}
+                </div>
+                {% if pending_count > 0 %}
+                <a href="{% url 'approve_pets' %}" class="request-action btn btn-warning">Review Pets</a>
+                {% endif %}
+            </div>
+
+            <!-- User Registrations -->
+            <div class="request-card {% if pending_user_count > 0 %}has-requests{% else %}empty{% endif %}">
+                <div class="request-header">
+                    <span class="request-icon">👤</span>
+                    <span class="request-title">User Registrations</span>
+                    {% if pending_user_count > 0 %}
+                    <span class="request-count">{{ pending_user_count }}</span>
+                    {% endif %}
+                </div>
+                <div class="request-description">
+                    {% if pending_user_count > 0 %}
+                    You have {{ pending_user_count }} new user registration{{ pending_user_count|pluralize }} to approve
+                    {% else %}
+                    No pending user registrations
+                    {% endif %}
+                </div>
+                {% if pending_user_count > 0 %}
+                <a href="{% url 'approve_users' %}" class="request-action btn btn-info">Review Users</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% endif %}
 
-    {% if pending_appt_count > 0 %}
-    <div class="alert-card success">
-        <h3>📅 Appointment Requests</h3>
-        <p>You have <span class="alert-count">{{ pending_appt_count }}</span> new appointment requests to review</p>
-        <a href="{% url 'approve_appointments' %}" class="btn btn-success">View Calendar</a>
-    </div>
-    {% endif %}
-
-    {% if pending_user_count > 0 %}
-    <div class="alert-card info">
-        <h3>👤 User Registrations</h3>
-        <p>You have <span class="alert-count">{{ pending_user_count }}</span> new user registrations to approve</p>
-        <a href="{% url 'approve_users' %}" class="btn btn-info">Review Users</a>
-    </div>
-    {% endif %}
-
-    <div class="card card-primary">
-        <h3>📊 Quick Actions</h3>
+    <!-- Quick Actions Section -->
+    <div class="dashboard-section actions-section">
+        <h2>📊 Quick Actions</h2>
         <div class="quick-actions">
             <a href="{% url 'approve_appointments' %}" class="action-link">
                 <span class="action-icon">📅</span>
