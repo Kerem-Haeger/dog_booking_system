@@ -4,6 +4,9 @@
 <h1>Appointments Dashboard</h1>
 
 <h2>Pending Appointments</h2>
+<p style="color: #6c757d; margin-bottom: 20px; font-style: italic;">
+    ⏰ Ordered by appointment time - most urgent first
+</p>
 {% if appointment_forms %}
 {% for appointment, form in appointment_forms %}
 <div class="appointment-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px;">
@@ -204,6 +207,7 @@
                                     <option value="">Select an employee...</option>
                                     ${employeeOptions}
                                 </select>
+                                <p style="font-size: 0.9rem; color: #6c757d; margin: 5px 0;">Employee assignment is only required for approval.</p>
                             `;
 
                             modalActions.innerHTML = `

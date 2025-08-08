@@ -100,6 +100,11 @@ class AppointmentForm(forms.ModelForm):
         self.fields['pet_profile'].queryset = PetProfile.objects.filter(
             user=user, profile_status='approved'
         )
+        
+        # Filter to show only active services
+        self.fields['service'].queryset = Service.objects.filter(
+            is_active=True
+        ).order_by('name')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -174,7 +179,9 @@ class AppointmentForm(forms.ModelForm):
 class AppointmentApprovalForm(forms.Form):
     employee = forms.ModelChoiceField(
         queryset=UserProfile.objects.filter(role='employee'),
-        label="Assign to Employee"
+        label="Assign to Employee",
+        required=False,  # Not required - only needed for approval
+        empty_label="Select an employee..."
     )
 
 

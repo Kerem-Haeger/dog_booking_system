@@ -287,30 +287,64 @@
 }
 
 .price-display-container {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    border: 1px solid #dee2e6;
-    margin: 1rem 0;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 3px solid #28a745;
+    margin: 2rem 0;
     text-align: center;
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.price-display-container::before {
+    content: "💰";
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+.price-display-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
 }
 
 .price-display {
-    font-size: 1.1rem;
-    color: #6c757d;
+    font-size: 1.4rem;
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .price-display.price-available {
-    color: #28a745;
+    color: white;
     font-weight: bold;
+    font-size: 1.8rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.price-display.price-available strong {
+    color: #f8f9fa;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
 }
 
 .price-display.price-unavailable {
     color: #dc3545;
+    font-weight: 600;
+    background: #f8d7da;
+    border-color: #dc3545;
 }
 
 .price-display.price-error {
     color: #fd7e14;
+    font-weight: 600;
+    background: #fff3cd;
+    border-color: #fd7e14;
 }
 
 /* Appointment Cards */

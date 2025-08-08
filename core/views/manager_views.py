@@ -97,7 +97,9 @@ def approve_pets(request):
 @user_passes_test(is_manager)
 def approve_appointments(request):
     """Allow managers to approve or reject pending appointments"""
-    pending_appointments = Appointment.objects.filter(status='pending')
+    pending_appointments = Appointment.objects.filter(
+        status='pending'
+    ).order_by('appointment_time')  # Order by time - earliest first
 
     if request.method == 'POST':
         appointment_id = request.POST.get('appointment_id')
@@ -114,6 +116,12 @@ def approve_appointments(request):
         if decision == 'approve':
             if form.is_valid():
                 selected_employee = form.cleaned_data['employee']
+                if not selected_employee:
+                    messages.error(
+                        request, "Please select an employee for approval."
+                    )
+                    return redirect('approve_appointments')
+                
                 selected_appointment.employee = selected_employee
                 selected_appointment.status = 'approved'
                 selected_appointment.save()
@@ -155,9 +163,8 @@ def approve_appointments(request):
                                f"Page refreshed to update availability.")
                 messages.success(request, success_msg)
             else:
-                messages.error(
-                    request, "Please select an employee for approval."
-                )
+                # Form has validation errors 
+                messages.error(request, "Please correct the form errors.")
         elif decision == 'reject':
             selected_appointment.status = 'rejected'
             selected_appointment.save()
