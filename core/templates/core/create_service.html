@@ -1,6 +1,11 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Create Service - Manager Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/services.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="manager-section">
@@ -57,59 +62,4 @@
         </div>
     </form>
 </div>
-
-<style>
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .form-group input,
-    .form-group textarea {
-        width: 100%;
-        max-width: 400px;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-    }
-
-    .form-group small {
-        display: block;
-        color: #666;
-        margin-top: 3px;
-    }
-
-    .form-errors {
-        color: red;
-        margin-top: 5px;
-    }
-
-    .form-actions {
-        margin-top: 30px;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        margin-right: 10px;
-        border: none;
-        border-radius: 3px;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
-</style>
 {% endblock %}

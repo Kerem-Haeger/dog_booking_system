@@ -1,6 +1,11 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Manage Services - Manager Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/services.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="manager-section">
@@ -66,40 +71,4 @@
     </div>
     {% endif %}
 </div>
-
-<style>
-    .service-card {
-        border: 1px solid #ddd;
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 5px;
-    }
-
-    .service-card.inactive {
-        background-color: #f5f5f5;
-        opacity: 0.7;
-    }
-
-    .status-inactive {
-        color: #666;
-        font-size: 0.8em;
-    }
-
-    .service-actions {
-        margin-top: 10px;
-    }
-
-    .btn-small {
-        padding: 5px 10px;
-        font-size: 0.9em;
-        margin-right: 5px;
-    }
-
-    .pricing-info {
-        margin-top: 10px;
-        padding: 10px;
-        background-color: #f9f9f9;
-        border-radius: 3px;
-    }
-</style>
 {% endblock %}
