@@ -35,13 +35,18 @@ def manager_dashboard(request):
 
 @user_passes_test(is_manager)
 def approve_pets(request):
-    """Allow managers to approve or reject pending pet profiles"""
+    """Allow managers to approve or reject pending pet profiles and view all pets"""
     user_profile = getattr(request.user, 'userprofile', None)
     if (not request.user.is_authenticated or not user_profile or
             user_profile.role != 'manager'):
         return redirect('login')
 
     pending_pets = PetProfile.objects.filter(profile_status='pending')
+    
+    # Get all pets for the comprehensive view, with related data for efficiency
+    all_pets = PetProfile.objects.select_related('user').prefetch_related(
+        'appointment_set'
+    ).exclude(profile_status='pending').order_by('-verified_at', 'name')
 
     if request.method == 'POST':
         for pet in pending_pets:
@@ -91,7 +96,12 @@ def approve_pets(request):
         (pet, PetApprovalForm(prefix=str(pet.id)))
         for pet in pending_pets
     ]
-    return render(request, 'core/approve_pets.html', {'pet_forms': pet_forms})
+    
+    context = {
+        'pet_forms': pet_forms,
+        'all_pets': all_pets
+    }
+    return render(request, 'core/approve_pets.html', context)
 
 
 @user_passes_test(is_manager)
@@ -270,13 +280,12 @@ def approve_users(request):
             
             messages.success(
                 request,
-                f'Successfully approved {pending_users.count()} users as clients.'
+                f'Successfully approved {pending_users.count()} users.'
             )
             return redirect('approve_users')
         
         elif 'bulk_reject' in request.POST:
             count = pending_users.count()
-            usernames = [up.user.username for up in pending_users]
             
             # Log audit actions before deletion
             for user_profile in pending_users:
@@ -354,7 +363,7 @@ def approve_users(request):
                     
                     messages.info(
                         request,
-                        f'User registration for {username} has been rejected and deleted.'
+                        f'Registration for {username} rejected and deleted.'
                     )
                     return redirect('approve_users')
 

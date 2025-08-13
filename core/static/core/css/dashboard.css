@@ -170,7 +170,8 @@
     color: #856404;
 }
 
-.status-badge.approved {
+.status-badge.approved,
+.status-badge.verified {
     background: #d4edda;
     color: #155724;
 }
@@ -519,7 +520,8 @@
     text-transform: uppercase;
 }
 
-.pet-status-badge.approved {
+.pet-status-badge.approved,
+.pet-status-badge.verified {
     background: #d4edda;
     color: #155724;
 }
@@ -604,7 +606,8 @@
     font-weight: 500;
 }
 
-.pet-status.approved {
+.pet-status.approved,
+.pet-status.verified {
     color: #28a745;
 }
 
