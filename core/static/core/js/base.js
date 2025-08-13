@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeAlerts();
     initializeModals();
     initializeTooltips();
+    initializeDropdowns();
 });
 
 // Auto-dismiss alerts after 5 seconds
@@ -193,6 +194,55 @@ function confirmAction(message, callback) {
     if (confirm(message)) {
         callback();
     }
+}
+
+// Initialize dropdown menus
+function initializeDropdowns() {
+    // Wait a bit to ensure DOM is fully ready
+    setTimeout(() => {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        dropdownToggles.forEach(toggle => {
+            // Remove any existing listeners to avoid duplicates
+            const newToggle = toggle.cloneNode(true);
+            toggle.parentNode.replaceChild(newToggle, toggle);
+
+            newToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const dropdown = this.closest('.dropdown');
+
+                // Close all other dropdowns
+                document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
+                    if (openDropdown !== dropdown) {
+                        openDropdown.classList.remove('open');
+                    }
+                });
+
+                // Toggle current dropdown
+                dropdown.classList.toggle('open');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown.open').forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                });
+            }
+        });
+
+        // Close dropdowns with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.dropdown.open').forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                });
+            }
+        });
+    }, 100);
 }
 
 // Export functions for use in other scripts

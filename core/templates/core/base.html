@@ -34,32 +34,66 @@
             <ul class="nav-list">
                 {% if user.userprofile.role == 'client' %}
                 <li class="nav-item">
-                    <a href="{% url 'client_dashboard' %}" class="nav-link">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'add_pet' %}" class="nav-link">Add Pet</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'book_appointment' %}" class="nav-link">Book Appointment</a>
+                    <div class="simple-dropdown">
+                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('client-menu')">
+                            <i class="fas fa-paw"></i> My Pet Care <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content" id="client-menu">
+                            <a href="{% url 'client_dashboard' %}">
+                                <i class="fas fa-home"></i> My Dashboard
+                            </a>
+                            <a href="{% url 'add_pet' %}">
+                                <i class="fas fa-plus"></i> Add My Pet
+                            </a>
+                            <a href="{% url 'book_appointment' %}">
+                                <i class="fas fa-calendar-plus"></i> Book Grooming
+                            </a>
+                        </div>
+                    </div>
                 </li>
                 {% elif user.userprofile.role == 'employee' %}
                 <li class="nav-item">
-                    <a href="{% url 'employee_dashboard' %}" class="nav-link">Dashboard</a>
+                    <div class="simple-dropdown">
+                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('employee-menu')">
+                            <i class="fas fa-user-tie"></i> Staff Tools <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content" id="employee-menu">
+                            <a href="{% url 'employee_dashboard' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </div>
+                    </div>
                 </li>
                 {% elif user.userprofile.role == 'manager' %}
                 <li class="nav-item">
-                    <a href="{% url 'manager_dashboard' %}" class="nav-link">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'approve_appointments' %}" class="nav-link">Appointments Calendar</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'approve_pets' %}" class="nav-link">
-                        Approve Pets
-                        {% if pending_pets_count > 0 %}
-                        <span class="notification-badge">{{ pending_pets_count }}</span>
-                        {% endif %}
-                    </a>
+                    <div class="simple-dropdown">
+                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('manager-menu')">
+                            <i class="fas fa-user-cog"></i> Admin Center <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content" id="manager-menu">
+                            <a href="{% url 'manager_dashboard' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="{% url 'approve_appointments' %}">
+                                <i class="fas fa-calendar-check"></i> Appointments Calendar
+                            </a>
+                            <a href="{% url 'approve_pets' %}">
+                                <i class="fas fa-paw"></i> Approve Pets
+                                {% if pending_pets_count > 0 %}
+                                <span class="notification-badge">{{ pending_pets_count }}</span>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'approve_users' %}">
+                                <i class="fas fa-users"></i> Approve Users
+                            </a>
+                            <a href="{% url 'manage_services' %}">
+                                <i class="fas fa-cogs"></i> Manage Services
+                            </a>
+                            <a href="{% url 'create_service' %}">
+                                <i class="fas fa-plus"></i> Create Service
+                            </a>
+                        </div>
+                    </div>
                 </li>
                 {% endif %}
             </ul>
@@ -111,6 +145,52 @@
     </footer>
 
     <script src="{% static 'core/js/base.js' %}"></script>
+    <script>
+        // Simple dropdown function that definitely works
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isOpen = dropdown.style.display === 'block';
+
+            // Close all dropdowns first
+            const allDropdowns = document.querySelectorAll('.dropdown-content');
+            allDropdowns.forEach(d => {
+                d.style.display = 'none';
+                const btn = d.previousElementSibling;
+                if (btn) {
+                    btn.classList.remove('active');
+                    const chevron = btn.querySelector('.fa-chevron-down');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle the clicked dropdown
+            if (!isOpen) {
+                dropdown.style.display = 'block';
+                const btn = dropdown.previousElementSibling;
+                if (btn) {
+                    btn.classList.add('active');
+                    const chevron = btn.querySelector('.fa-chevron-down');
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.simple-dropdown')) {
+                const allDropdowns = document.querySelectorAll('.dropdown-content');
+                allDropdowns.forEach(d => {
+                    d.style.display = 'none';
+                    const btn = d.previousElementSibling;
+                    if (btn) {
+                        btn.classList.remove('active');
+                        const chevron = btn.querySelector('.fa-chevron-down');
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 
