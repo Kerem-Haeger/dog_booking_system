@@ -51,7 +51,7 @@ def approve_pets(request):
                 size = form.cleaned_data['size']
 
                 if decision == 'approve':
-                    pet.profile_status = 'approved'
+                    pet.profile_status = 'verified'
                     pet.size = size
                     pet.verified_at = timezone.now()
                     

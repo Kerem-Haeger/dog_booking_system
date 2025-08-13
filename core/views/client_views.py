@@ -75,9 +75,9 @@ def edit_pet(request, pet_id):
         if form.is_valid():
             updated_pet = form.save(commit=False)
 
-            # If pet was approved and we're making changes to core info,
+            # If pet was verified and we're making changes to core info,
             # reset to pending
-            if pet.profile_status == 'approved':
+            if pet.profile_status == 'verified':
                 original_pet = PetProfile.objects.get(id=pet.id)
                 if (original_pet.name != updated_pet.name or
                         original_pet.breed != updated_pet.breed or
