@@ -164,35 +164,8 @@ def get_calendar_events(request):
         # Calculate end time
         end_time = appointment.appointment_time + appointment.service.duration
 
-        # Check if appointment is in the past
+        # Check if appointment is in the past (send to frontend for color logic)
         is_past = appointment.appointment_time < now
-        
-        # Set color based on status
-        if appointment.status == 'approved':
-            bg_color = '#28a745'  # Green
-            border_color = '#28a745'
-        elif appointment.status == 'pending':
-            bg_color = '#ffc107'  # Yellow
-            border_color = '#ffc107'
-        elif appointment.status == 'completed':
-            bg_color = '#6c757d'  # Gray
-            border_color = '#6c757d'
-        else:  # This shouldn't happen since we exclude rejected/canceled
-            bg_color = '#dc3545'  # Red
-            border_color = '#dc3545'
-
-        # Apply faded colors for past appointments only
-        if is_past:
-            # Convert colors to more transparent versions
-            if appointment.status == 'approved':
-                bg_color = '#28a74580'  # Green with transparency
-                border_color = '#28a74580'
-            elif appointment.status == 'pending':
-                bg_color = '#ffc10780'  # Yellow with transparency
-                border_color = '#ffc10780'
-            elif appointment.status == 'completed':
-                bg_color = '#6c757d80'  # Gray with transparency
-                border_color = '#6c757d80'
 
         # Create employee name
         if appointment.employee:
@@ -213,8 +186,7 @@ def get_calendar_events(request):
             'title': title,
             'start': appointment.appointment_time.isoformat(),
             'end': end_time.isoformat(),
-            'backgroundColor': bg_color,
-            'borderColor': border_color,
+            # Colors will be applied by JavaScript for better performance
             'extendedProps': {
                 'status': appointment.status,
                 'pet_name': appointment.pet_profile.name,

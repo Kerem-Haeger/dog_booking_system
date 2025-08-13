@@ -1,4 +1,11 @@
 {% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Appointments Dashboard - Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/appointments.css' %}">
+{% endblock %}
 
 {% block content %}
 <h1>Appointments Dashboard</h1>
@@ -95,12 +102,17 @@
 <a href="{% url 'manager_dashboard' %}"
     style="display: inline-block; margin-top: 20px; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 3px;">⬅
     Back to Dashboard</a>
+{% endblock %}
 
-<!-- Include FullCalendar CSS and JS -->
+{% block extra_js %}
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src="{% static 'core/js/calendar-colors.js' %}"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Initialize color manager for client-side performance optimization
+        var colorManager = new CalendarColorManager();
+
         var calendarEl = document.getElementById('calendar');
         var employeeFilter = document.getElementById('employee-filter');
         var modal = document.getElementById('appointmentModal');
@@ -129,7 +141,15 @@
                     )
                     .then(response => response.json())
                     .then(data => {
-                        successCallback(data);
+                        // Apply colors client-side for better performance
+                        try {
+                            var coloredEvents = colorManager.processCalendarEvents(data);
+                            successCallback(coloredEvents);
+                        } catch (error) {
+                            console.error('Error processing calendar colors:', error);
+                            // Fallback: use raw data without colors
+                            successCallback(data);
+                        }
                     })
                     .catch(error => {
                         console.error('Error fetching events:', error);
@@ -308,8 +328,8 @@
 
                     if (data.success) {
                         showMessage(data.message, 'success');
-                        // Refresh calendar to show updated appointment
-                        calendar.refetchEvents();
+                        // Update appointment color instantly (better UX than full refresh)
+                        colorManager.updateAppointmentColor(calendar, appointmentId, 'approved');
                         // Close modal after 2 seconds
                         setTimeout(() => {
                             modal.style.display = 'none';
@@ -357,8 +377,11 @@
 
                     if (data.success) {
                         showMessage(data.message, 'success');
-                        // Refresh calendar to show updated appointment
-                        calendar.refetchEvents();
+                        // Remove rejected appointment from calendar instantly (better UX)
+                        var event = calendar.getEventById(appointmentId);
+                        if (event) {
+                            event.remove();
+                        }
                         // Close modal after 2 seconds
                         setTimeout(() => {
                             modal.style.display = 'none';
@@ -481,5 +504,4 @@
         opacity: 0.8;
     }
 </style>
-
 {% endblock %}
