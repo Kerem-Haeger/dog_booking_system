@@ -231,11 +231,6 @@ class UserApprovalForm(forms.Form):
         initial='client',
         label="Assign Role"
     )
-    decision = forms.ChoiceField(
-        choices=[('approve', 'Approve'), ('reject', 'Reject')],
-        widget=forms.HiddenInput(),
-        required=True
-    )
 
 
 class ServiceForm(forms.ModelForm):

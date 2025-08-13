@@ -54,7 +54,7 @@ class CalendarColorManager {
             try {
                 const eventStart = new Date(event.start);
                 const isPast = eventStart < now;
-                const status = event.extendedProps ? .status || 'default';
+                const status = (event.extendedProps && event.extendedProps.status) || 'default';
                 const colors = this.getAppointmentColors(status, isPast);
 
                 return {

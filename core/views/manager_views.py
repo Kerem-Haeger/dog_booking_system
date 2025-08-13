@@ -249,13 +249,70 @@ def approve_users(request):
     ).select_related('user').order_by('created_at')
 
     if request.method == 'POST':
-        for user_profile in pending_users:
-            form = UserApprovalForm(request.POST, prefix=str(user_profile.id))
-            if form.is_valid():
-                decision = form.cleaned_data['decision']
-                role = form.cleaned_data['role']
-
-                if decision == 'approve':
+        # Handle bulk actions
+        if 'bulk_approve_clients' in request.POST:
+            for user_profile in pending_users:
+                user_profile.role = 'client'
+                user_profile.save()
+                
+                # Log audit action
+                log_audit_action(
+                    user=request.user,
+                    action='user_approved',
+                    details={
+                        'approved_user': user_profile.user.username,
+                        'assigned_role': 'client',
+                        'method': 'bulk_approval'
+                    },
+                    target_user=user_profile.user,
+                    request=request
+                )
+            
+            messages.success(
+                request,
+                f'Successfully approved {pending_users.count()} users as clients.'
+            )
+            return redirect('approve_users')
+        
+        elif 'bulk_reject' in request.POST:
+            count = pending_users.count()
+            usernames = [up.user.username for up in pending_users]
+            
+            # Log audit actions before deletion
+            for user_profile in pending_users:
+                log_audit_action(
+                    user=request.user,
+                    action='user_rejected',
+                    details={
+                        'rejected_user': user_profile.user.username,
+                        'reason': 'Bulk rejection by manager'
+                    },
+                    target_user=user_profile.user,
+                    request=request
+                )
+            
+            # Delete all pending users
+            for user_profile in pending_users:
+                user_profile.user.delete()
+            
+            messages.info(
+                request,
+                f'Rejected and deleted {count} pending user registrations.'
+            )
+            return redirect('approve_users')
+        
+        # Handle individual user actions
+        else:
+            for user_profile in pending_users:
+                # Check for individual approve/reject buttons
+                approve_key = f'user_{user_profile.id}_approve'
+                reject_key = f'user_{user_profile.id}_reject'
+                
+                if approve_key in request.POST:
+                    # Get the role from the form
+                    role_field = f'id_{user_profile.id}-role'
+                    role = request.POST.get(role_field, 'client')
+                    
                     user_profile.role = role
                     user_profile.save()
                     
@@ -275,7 +332,9 @@ def approve_users(request):
                         request,
                         f'User {user_profile.user.username} approved as {role}.'
                     )
-                elif decision == 'reject':
+                    return redirect('approve_users')
+                
+                elif reject_key in request.POST:
                     username = user_profile.user.username
                     
                     # Log audit action before deletion
@@ -284,21 +343,20 @@ def approve_users(request):
                         action='user_rejected',
                         details={
                             'rejected_user': username,
-                            'reason': 'Registration rejected by manager'
+                            'reason': 'Individual rejection by manager'
                         },
                         target_user=user_profile.user,
                         request=request
                     )
                     
-                    # Delete the entire user account
-                    user_profile.user.delete()  # This also deletes UserProfile due to cascade
+                    # Delete the user account
+                    user_profile.user.delete()
                     
                     messages.info(
                         request,
                         f'User registration for {username} has been rejected and deleted.'
                     )
-
-        return redirect('approve_users')
+                    return redirect('approve_users')
 
     # Create forms for each pending user
     user_forms = []

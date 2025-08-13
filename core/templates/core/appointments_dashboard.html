@@ -159,13 +159,19 @@
                 <p><strong>Employee:</strong> ${props.employee}</p>
                 <p><strong>Client:</strong> ${props.client}</p>
                 <p><strong>Time:</strong> ${event.start.toLocaleString()}</p>
-                <p><strong>Status:</strong> <span style="color: ${event.backgroundColor}; font-weight: bold;">${props.status.toUpperCase()}</span></p>
-                <div id="employeeSection" style="margin-top: 15px;"></div>
-                <div id="loadingIndicator" style="display: none; text-align: center; margin: 10px 0;">
+                <p><strong>Status:</strong> <span class="status-display" data-status-color="${event.backgroundColor}">${props.status.toUpperCase()}</span></p>
+                <div id="employeeSection" class="employee-section"></div>
+                <div id="loadingIndicator" class="loading-indicator">
                     <span>Loading...</span>
                 </div>
-                <div id="messageArea" style="margin-top: 10px;"></div>
+                <div id="messageArea" class="message-area"></div>
             `;
+
+                // Set status color dynamically
+                const statusSpan = modalContent.querySelector('.status-display');
+                if (statusSpan) {
+                    statusSpan.style.color = statusSpan.getAttribute('data-status-color');
+                }
 
                 // Load available employees and show appropriate actions
                 loadEmployeesAndActions(props.appointment_id, props.status);
@@ -215,16 +221,16 @@
 
                             employeeSection.innerHTML = `
                                 <label for="employeeSelect"><strong>Assign to Employee:</strong></label>
-                                <select id="employeeSelect" style="width: 100%; padding: 5px; margin: 5px 0;">
+                                <select id="employeeSelect" class="employee-select">
                                     <option value="">Select an employee...</option>
                                     ${employeeOptions}
                                 </select>
-                                <p style="font-size: 0.9rem; color: #6c757d; margin: 5px 0;">Employee assignment is only required for approval.</p>
+                                <p class="employee-note">Employee assignment is only required for approval.</p>
                             `;
 
                             modalActions.innerHTML = `
-                                <button onclick="approveAppointmentAjax(${appointmentId})" style="background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 3px; margin-right: 10px;">✅ Approve</button>
-                                <button onclick="rejectAppointmentAjax(${appointmentId})" style="background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 3px;">❌ Reject</button>
+                                <button onclick="approveAppointmentAjax(${appointmentId})" class="approve-btn-modal">✅ Approve</button>
+                                <button onclick="rejectAppointmentAjax(${appointmentId})" class="reject-btn-modal">❌ Reject</button>
                             `;
                         } else if (status === 'approved') {
                             // Show reassignment dropdown for approved appointments
@@ -245,13 +251,13 @@
 
                             employeeSection.innerHTML = `
                                 <label for="employeeSelect"><strong>Reassign to Employee:</strong></label>
-                                <select id="employeeSelect" style="width: 100%; padding: 5px; margin: 5px 0;">
+                                <select id="employeeSelect" class="employee-select">
                                     ${employeeOptions}
                                 </select>
                             `;
 
                             modalActions.innerHTML = `
-                                <button onclick="reassignAppointmentAjax(${appointmentId})" style="background: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 3px;">🔄 Reassign</button>
+                                <button onclick="reassignAppointmentAjax(${appointmentId})" class="reassign-btn-modal">🔄 Reassign</button>
                             `;
 
                             console.log('DEBUG: UI setup complete for approved appointment');
@@ -272,9 +278,9 @@
 
         window.showMessage = function (message, type) {
             var messageArea = document.getElementById('messageArea');
-            var color = type === 'error' ? '#dc3545' : '#28a745';
+            var cssClass = type === 'error' ? 'message-error' : 'message-success';
             messageArea.innerHTML =
-                `<div style="padding: 10px; background: ${color}; color: white; border-radius: 3px; margin: 5px 0;">${message}</div>`;
+                `<div class="${cssClass}">${message}</div>`;
 
             // Clear message after 3 seconds
             setTimeout(() => {
@@ -475,25 +481,4 @@
         }
     });
 </script>
-
-<style>
-    .appointment-card {
-        background: #f8f9fa;
-        border-left: 4px solid #ffc107;
-    }
-
-    #calendar {
-        font-family: Arial, sans-serif;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .fc-event {
-        cursor: pointer;
-    }
-
-    .fc-event:hover {
-        opacity: 0.8;
-    }
-</style>
 {% endblock %}

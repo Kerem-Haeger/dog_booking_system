@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Calendar Debug</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+</head>
+
+<body>
+    <h1>Debug Calendar Test</h1>
+    <div id="calendar"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: ''
+                },
+                events: [{
+                    title: 'Test Event',
+                    start: '2025-08-13T10:00:00',
+                    end: '2025-08-13T11:00:00'
+                }]
+            });
+
+            calendar.render();
+            console.log('Calendar should be rendered now');
+        });
+    </script>
+</body>
+
+</html>

@@ -1,25 +1,210 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Approve User Registrations - Manager Dashboard{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/appointments.css' %}">
+<style>
+    .user-approval-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .bulk-actions {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .bulk-actions h3 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 1.1rem;
+    }
+
+    .bulk-btn {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .bulk-approve {
+        background: #28a745;
+        color: white;
+    }
+
+    .bulk-approve:hover {
+        background: #218838;
+    }
+
+    .bulk-reject {
+        background: #dc3545;
+        color: white;
+    }
+
+    .bulk-reject:hover {
+        background: #c82333;
+    }
+
+    .pending-users {
+        display: grid;
+        gap: 20px;
+    }
+
+    .user-approval-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .user-approval-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-info {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .user-info h3 {
+        margin: 0 0 10px 0;
+        color: #212529;
+        font-size: 1.3rem;
+    }
+
+    .user-detail {
+        margin: 5px 0;
+        color: #6c757d;
+    }
+
+    .user-detail strong {
+        color: #495057;
+        display: inline-block;
+        width: 100px;
+    }
+
+    .approval-form {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .role-selection {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .role-selection label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .role-selection select {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .approve-btn {
+        background: #28a745;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .approve-btn:hover {
+        background: #218838;
+    }
+
+    .reject-btn {
+        background: #dc3545;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .reject-btn:hover {
+        background: #c82333;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+
+    .empty-state h3 {
+        margin-bottom: 10px;
+        color: #495057;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.2s ease;
+    }
+
+    .back-link:hover {
+        background: #0056b3;
+        text-decoration: none;
+        color: white;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="manager-section">
-    <h1>Pending User Registrations</h1>
+<div class="user-approval-container">
+    <h1>📋 Pending User Registrations</h1>
 
     {% if user_forms %}
-    <p>{{ user_forms|length }} user registration(s) pending approval.</p>
+    <p class="mb-4">You have {{ user_forms|length }} user registration{{ user_forms|length|pluralize }} pending
+        approval.</p>
 
     <form method="post">
         {% csrf_token %}
 
         <div class="bulk-actions">
-            <h3>Bulk Actions:</h3>
-            <button type="submit" name="bulk_approve_clients" onclick="return bulkApproveClients();">
-                Approve All as Clients
+            <h3>🚀 Bulk Actions</h3>
+            <button type="submit" name="bulk_approve_clients" class="bulk-btn bulk-approve"
+                onclick="return confirm('Approve all pending users as clients?');">
+                ✅ Approve All as Clients
             </button>
-            <button type="submit" name="bulk_reject"
-                onclick="return confirm('Are you sure you want to reject all pending registrations? This will delete their accounts.');">
-                Reject All
+            <button type="submit" name="bulk_reject" class="bulk-btn bulk-reject"
+                onclick="return confirm('Are you sure you want to reject all pending registrations? This will permanently delete their accounts.');">
+                ❌ Reject All
             </button>
         </div>
 
@@ -27,25 +212,31 @@
             {% for user_profile, form in user_forms %}
             <div class="user-approval-card">
                 <div class="user-info">
-                    <h3>{{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
-                    <p><strong>Username:</strong> {{ user_profile.user.username }}</p>
-                    <p><strong>Email:</strong> {{ user_profile.user.email|default:"Not provided" }}</p>
-                    <p><strong>Registered:</strong> {{ user_profile.created_at|date:"M j, Y g:i A" }}</p>
+                    <h3>👤 {{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
+                    <div class="user-detail">
+                        <strong>Username:</strong> {{ user_profile.user.username }}
+                    </div>
+                    <div class="user-detail">
+                        <strong>Email:</strong> {{ user_profile.user.email|default:"Not provided" }}
+                    </div>
+                    <div class="user-detail">
+                        <strong>Registered:</strong> {{ user_profile.created_at|date:"M j, Y g:i A" }}
+                    </div>
                 </div>
 
                 <div class="approval-form">
-                    {{ form.role.label_tag }}
-                    {{ form.role }}
-                    {{ form.decision }}
+                    <div class="role-selection">
+                        {{ form.role.label_tag }}
+                        {{ form.role }}
+                    </div>
 
                     <div class="action-buttons">
-                        <button type="submit" name="user_{{ user_profile.id }}_approve"
-                            onclick="setDecision('{{ form.prefix }}', 'approve');">
-                            Approve
+                        <button type="submit" name="user_{{ user_profile.id }}_approve" class="approve-btn">
+                            ✅ Approve
                         </button>
-                        <button type="submit" name="user_{{ user_profile.id }}_reject"
-                            onclick="setDecision('{{ form.prefix }}', 'reject'); return confirm('Are you sure you want to reject this user? Their account will be deleted.');">
-                            Reject
+                        <button type="submit" name="user_{{ user_profile.id }}_reject" class="reject-btn"
+                            onclick="return confirm('Are you sure you want to reject {{ user_profile.user.username }}? Their account will be permanently deleted.');">
+                            ❌ Reject
                         </button>
                     </div>
                 </div>
@@ -54,27 +245,11 @@
         </div>
     </form>
     {% else %}
-    <p>No pending user registrations.</p>
-    <a href="{% url 'manager_dashboard' %}">← Back to Manager Dashboard</a>
+    <div class="empty-state">
+        <h3>🎉 All caught up!</h3>
+        <p>No pending user registrations at this time.</p>
+        <a href="{% url 'manager_dashboard' %}" class="back-link">← Back to Manager Dashboard</a>
+    </div>
     {% endif %}
 </div>
-
-<script>
-    function setDecision(prefix, decision) {
-        document.getElementById('id_' + prefix + '-decision').value = decision;
-    }
-
-    function bulkApproveClients() {
-        // Set all users to be approved as clients
-        {
-            %
-            for user_profile, form in user_forms %
-        }
-        document.getElementById('id_{{ form.prefix }}-decision').value = 'approve';
-        document.getElementById('id_{{ form.prefix }}-role').value = 'client'; {
-            % endfor %
-        }
-        return confirm('Approve all pending users as clients?');
-    }
-</script>
 {% endblock %}
