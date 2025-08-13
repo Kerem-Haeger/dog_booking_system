@@ -35,13 +35,7 @@ def client_dashboard(request):
         status='rejected'
     ).order_by('-appointment_time')  # Most recent first
 
-    # Add cancellation eligibility to upcoming appointments
-    for appointment in upcoming_appointments:
-        time_until_appointment = appointment.appointment_time - now
-        appointment.can_cancel = (
-            time_until_appointment.total_seconds() > 24 * 60 * 60 and
-            appointment.status not in ['cancelled', 'rejected']
-        )
+    # The can_cancel and can_edit properties are already defined in the model
 
     return render(request, 'core/client_dashboard.html', {
         'pets': pets,
@@ -284,5 +278,167 @@ def cancel_appointment(request, appointment_id):
     
     return render(request, 'core/cancel_appointment.html', {
         'appointment': appointment,
+        'time_until_appointment': time_until_appointment
+    })
+
+
+@login_required
+@ratelimit(key='user', rate='5/h', method='POST', block=True)
+def edit_appointment(request, appointment_id):
+    """Allow clients to edit appointments if more than 24h away and under 3 edits"""
+    appointment = get_object_or_404(
+        Appointment,
+        id=appointment_id,
+        pet_profile__user=request.user
+    )
+    
+    # Check if appointment is more than 24 hours in the future
+    now = timezone.now()
+    time_until_appointment = appointment.appointment_time - now
+    
+    if time_until_appointment.total_seconds() <= 24 * 60 * 60:
+        messages.error(
+            request,
+            "Cannot edit appointments within 24 hours. "
+            "Please contact the business directly."
+        )
+        return redirect('client_dashboard')
+    
+    # Check edit count limit
+    if appointment.edit_count >= 3:
+        messages.error(
+            request,
+            "You have reached the maximum number of edits (3) for this "
+            "appointment. Please contact the business directly for further "
+            "changes."
+        )
+        return redirect('client_dashboard')
+    
+    # Check if appointment can be edited
+    if appointment.status in ['cancelled', 'completed']:
+        messages.error(
+            request,
+            "Cannot edit cancelled or completed appointments."
+        )
+        return redirect('client_dashboard')
+    
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, user=request.user, instance=appointment)
+        if form.is_valid():
+            # Store original values for comparison
+            original_time = appointment.appointment_time
+            original_service = appointment.service
+            
+            updated_appointment = form.save(commit=False)
+            
+            # Ensure pet profile doesn't change (security measure)
+            updated_appointment.pet_profile = appointment.pet_profile
+            
+            service = updated_appointment.service
+            time_slot_str = form.cleaned_data.get('time_slot')
+
+            try:
+                # Parse time slot
+                if time_slot_str.endswith("Z"):
+                    time_slot_str = time_slot_str.rstrip("Z")
+
+                # Parse the datetime string
+                parsed_datetime = datetime.fromisoformat(time_slot_str)
+                
+                # Check if it's naive or aware
+                if timezone.is_naive(parsed_datetime):
+                    combined_datetime = timezone.make_aware(parsed_datetime)
+                else:
+                    combined_datetime = parsed_datetime
+                
+                # Security check: ensure appointment is in the future
+                if combined_datetime <= timezone.now():
+                    messages.error(
+                        request, 
+                        "Appointments can only be scheduled for future times."
+                    )
+                    return render(request, 'core/edit_appointment.html', {
+                        'form': form, 'appointment': appointment,
+                        'edits_remaining': 3 - appointment.edit_count,
+                        'time_until_appointment': time_until_appointment
+                    })
+                
+                updated_appointment.appointment_time = combined_datetime
+            except (ValueError, TypeError):
+                messages.error(request, "Invalid time slot format.")
+                return render(request, 'core/edit_appointment.html', {
+                    'form': form, 'appointment': appointment,
+                    'edits_remaining': 3 - appointment.edit_count,
+                    'time_until_appointment': time_until_appointment
+                })
+
+            # Calculate new price
+            try:
+                pet_size = updated_appointment.pet_profile.size
+                updated_appointment.final_price = service.get_price_for_size(pet_size)
+            except ServicePrice.DoesNotExist:
+                messages.error(
+                    request, 
+                    f"No price found for {service.name} and {pet_size} dogs."
+                )
+                return render(request, 'core/edit_appointment.html', {
+                    'form': form, 'appointment': appointment,
+                    'edits_remaining': 3 - appointment.edit_count,
+                    'time_until_appointment': time_until_appointment
+                })
+
+            # Reset to pending and increment edit count
+            updated_appointment.status = 'pending'
+            updated_appointment.edit_count += 1
+            updated_appointment.save()
+
+            # Log audit action
+            log_audit_action(
+                user=request.user,
+                action='appointment_edited',
+                details={
+                    'appointment_id': appointment.id,
+                    'pet_name': appointment.pet_profile.name,
+                    'original_service': original_service.name,
+                    'new_service': service.name,
+                    'original_time': original_time.isoformat(),
+                    'new_time': combined_datetime.isoformat(),
+                    'edit_count': updated_appointment.edit_count,
+                    'hours_before': time_until_appointment.total_seconds() / 3600
+                },
+                request=request
+            )
+
+            formatted_time = updated_appointment.appointment_time.strftime(
+                "%H:%M on %d/%m/%Y"
+            )
+            
+            edits_remaining = 3 - updated_appointment.edit_count
+            if edits_remaining > 0:
+                messages.success(
+                    request,
+                    f"Appointment updated for {formatted_time} and pending "
+                    f"approval. You have {edits_remaining} edit(s) remaining."
+                )
+            else:
+                messages.success(
+                    request,
+                    f"Appointment updated for {formatted_time} and pending "
+                    "approval. No more edits allowed - contact us for further "
+                    "changes."
+                )
+            
+            return redirect('client_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        # Pre-populate form with current appointment data
+        form = AppointmentForm(user=request.user, instance=appointment)
+
+    edits_remaining = 3 - appointment.edit_count
+    return render(request, 'core/edit_appointment.html', {
+        'form': form,
+        'appointment': appointment,
+        'edits_remaining': edits_remaining,
         'time_until_appointment': time_until_appointment
     })

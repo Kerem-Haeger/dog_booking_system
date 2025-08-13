@@ -46,15 +46,26 @@
                                 {{ appt.assigned_employee.user.get_full_name|default:appt.assigned_employee.user.username }}</span>
                             {% endif %}
                         </div>
-                        {% if appt.status == 'approved' and appt.can_cancel %}
                         <div class="appointment-actions">
-                            <a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-small">Cancel</a>
+                            {% if appt.can_edit %}
+                            <a href="{% url 'edit_appointment' appt.id %}" class="btn-edit-small"
+                                title="Edit appointment ({{ appt.edit_count }}/3 edits used)">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            {% endif %}
+                            {% if appt.can_cancel %}
+                            <a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-small">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            {% elif not appt.can_cancel and appt.status == 'approved' %}
+                            <span class="cancel-warning-text">Cannot modify within 24h</span>
+                            {% endif %}
+                            {% if not appt.can_edit and appt.status in 'pending,approved' and appt.edit_count >= 3 %}
+                            <span class="edit-limit-text" title="Maximum edits reached">
+                                Edit limit reached
+                            </span>
+                            {% endif %}
                         </div>
-                        {% elif appt.status == 'approved' and not appt.can_cancel %}
-                        <div class="appointment-actions">
-                            <span class="cancel-warning-text">Cannot cancel within 24h</span>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}

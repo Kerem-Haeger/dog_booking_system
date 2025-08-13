@@ -17,6 +17,8 @@ urlpatterns = [
      path('client/pets/<int:pet_id>/delete/', views.delete_pet, name='delete_pet'),
      path('client/appointments/book/', views.book_appointment,
           name='book_appointment'),
+     path('client/appointments/<int:appointment_id>/edit/', 
+          views.edit_appointment, name='edit_appointment'),
      path('client/appointments/cancel/<int:appointment_id>/',
           views.cancel_appointment, name='cancel_appointment'),
      path('ajax/available-slots/', fetch_available_slots,

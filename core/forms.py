@@ -129,9 +129,9 @@ class AppointmentForm(forms.ModelForm):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
-        # Filter to show only approved pets owned by this user
+        # Filter to show only verified pets owned by this user
         self.fields['pet_profile'].queryset = PetProfile.objects.filter(
-            user=user, profile_status='approved'
+            user=user, profile_status='verified'
         )
         
         # Filter to show only active services

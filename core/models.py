@@ -13,6 +13,7 @@ class AuditLog(models.Model):
         ('appointment_rejected', 'Appointment Rejected'),
         ('appointment_reassigned', 'Appointment Reassigned'),
         ('appointment_cancelled', 'Appointment Cancelled'),
+        ('appointment_edited', 'Appointment Edited'),
         ('login_attempt', 'Login Attempt'),
     ]
     
@@ -179,6 +180,18 @@ class Appointment(models.Model):
         choices=STATUS_CHOICES,
         default='pending'
     )
+    edit_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of times this appointment has been edited "
+                  "by the client"
+    )
+    final_price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Final calculated price for this appointment"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -194,6 +207,44 @@ class Appointment(models.Model):
         if self.service and self.service.duration:
             return self.appointment_time + self.service.duration
         return self.appointment_time  # Fallback if no duration is set
+    
+    @property
+    def can_edit(self):
+        """Check if this appointment can be edited by the client"""
+        from django.utils import timezone
+        
+        # Cannot edit completed or cancelled appointments
+        if self.status in ['cancelled', 'completed']:
+            return False
+        
+        # Cannot edit if max edits reached
+        if self.edit_count >= 3:
+            return False
+        
+        # Cannot edit within 24 hours
+        now = timezone.now()
+        time_until_appointment = self.appointment_time - now
+        if time_until_appointment.total_seconds() <= 24 * 60 * 60:
+            return False
+        
+        return True
+    
+    @property
+    def can_cancel(self):
+        """Check if this appointment can be cancelled by the client"""
+        from django.utils import timezone
+        
+        # Cannot cancel completed or already cancelled appointments
+        if self.status in ['cancelled', 'completed']:
+            return False
+        
+        # Cannot cancel within 24 hours
+        now = timezone.now()
+        time_until_appointment = self.appointment_time - now
+        if time_until_appointment.total_seconds() <= 24 * 60 * 60:
+            return False
+        
+        return True
 
 
 # Employee calendar (for tracking appointments per employee)
