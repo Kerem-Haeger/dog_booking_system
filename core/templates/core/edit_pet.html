@@ -4,63 +4,8 @@
 {% block title %}Edit Pet - Dog Booking System{% endblock %}
 
 {% block extra_css %}
-<style>
-    .form-errors {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    .error-input {
-        border-color: #dc3545 !important;
-    }
-
-    .success-feedback {
-        color: #28a745;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    .pet-status-info {
-        background: #e9ecef;
-        padding: 1rem;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-    }
-
-    .pet-status-info.rejected {
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-    }
-
-    .remove-profile-section {
-        margin-top: 2rem;
-        padding-top: 1rem;
-    }
-
-    .remove-profile-section h3 {
-        color: #6c757d;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .btn-outline-danger {
-        background: transparent;
-        color: #dc3545;
-        border: 1px solid #dc3545;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-
-    .btn-outline-danger:hover {
-        background: #dc3545;
-        color: white;
-        text-decoration: none;
-    }
-</style>
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/forms.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -110,20 +55,11 @@
             {% if form.date_of_birth.errors %}
             <div class="form-errors">{{ form.date_of_birth.errors }}</div>
             {% endif %}
-            <div id="dateValidationMessage" class="form-errors" style="display: none;"></div>
+            <div id="dateValidationMessage" class="form-errors date-validation-message"></div>
             <div class="form-help">Enter your pet's actual birth date (cannot be in the future)</div>
         </div>
 
-        <div class="form-group">
-            <label for="{{ form.grooming_preferences.id_for_label }}" class="form-label">Grooming Preferences:</label>
-            {{ form.grooming_preferences|add_class:"form-control textarea" }}
-            {% if form.grooming_preferences.errors %}
-            <div class="form-errors">{{ form.grooming_preferences.errors }}</div>
-            {% endif %}
-            <div class="form-help">Any special requirements or preferences for your pet's grooming</div>
-        </div>
-
-        <div style="display: flex; gap: 1rem;">
+        <div class="form-buttons">
             <button type="submit" class="btn btn-success" id="submitBtn">
                 {% if pet.profile_status == 'rejected' %}
                 Update & Resubmit for Approval
@@ -137,15 +73,15 @@
 
     <!-- Remove Profile Section -->
     <div class="remove-profile-section">
-        <hr style="margin: 2rem 0;">
+        <hr class="remove-profile-divider">
         <h3>Profile Management</h3>
         <p>If you need to remove this pet profile from your account, you can do so below.</p>
 
         <a href="{% url 'delete_pet' pet.id %}" class="btn btn-outline-danger">
             Remove Profile from List
         </a>
-        <div class="form-help" style="margin-top: 0.5rem;">
-            <small>Note: You can only remove profiles that don't have existing appointments.</small>
+        <div class="form-help remove-profile-help">
+            <small>Note: Any future appointments will be automatically cancelled when the profile is removed.</small>
         </div>
     </div>
 </div>
@@ -169,13 +105,13 @@
 
             // Clear previous styles
             dateInput.classList.remove('error-input');
-            validationMessage.style.display = 'none';
+            validationMessage.classList.add('date-validation-message');
 
             if (dateInput.value && selectedDate > currentDate) {
                 // Future date selected
                 dateInput.classList.add('error-input');
                 validationMessage.textContent = 'Birth date cannot be in the future.';
-                validationMessage.style.display = 'block';
+                validationMessage.classList.remove('date-validation-message');
                 submitBtn.disabled = true;
                 return false;
             } else if (dateInput.value) {
@@ -186,7 +122,7 @@
                 if (selectedDate < thirtyYearsAgo) {
                     dateInput.classList.add('error-input');
                     validationMessage.textContent = 'Birth date cannot be more than 30 years ago.';
-                    validationMessage.style.display = 'block';
+                    validationMessage.classList.remove('date-validation-message');
                     submitBtn.disabled = true;
                     return false;
                 }

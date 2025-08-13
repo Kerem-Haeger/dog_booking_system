@@ -87,7 +87,7 @@
                 <span>📋 Past Appointments ({{ past_appointments|length }})</span>
                 <span class="toggle-icon">▼</span>
             </button>
-            <div class="past-appointments-content" style="display: none;">
+            <div class="past-appointments-content hidden-content">
                 {% for appt in past_appointments|slice:":5" %}
                 <div class="appointment-card past compact">
                     <div class="appointment-time small">
@@ -121,7 +121,7 @@
                 <span>❌ Rejected Appointments ({{ rejected_appointments|length }})</span>
                 <span class="toggle-icon-rejected">▼</span>
             </button>
-            <div class="rejected-appointments-content" style="display: none;">
+            <div class="rejected-appointments-content hidden-content">
                 {% for appt in rejected_appointments|slice:":5" %}
                 <div class="appointment-card rejected compact">
                     <div class="appointment-time small rejected">
@@ -255,11 +255,11 @@
         const icon = document.querySelector('.toggle-icon');
 
         if (content && icon) {
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
+            if (content.classList.contains('hidden-content')) {
+                content.classList.remove('hidden-content');
                 icon.textContent = '▲';
             } else {
-                content.style.display = 'none';
+                content.classList.add('hidden-content');
                 icon.textContent = '▼';
             }
         }
@@ -270,11 +270,11 @@
         const icon = document.querySelector('.toggle-icon-rejected');
 
         if (content && icon) {
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
+            if (content.classList.contains('hidden-content')) {
+                content.classList.remove('hidden-content');
                 icon.textContent = '▲';
             } else {
-                content.style.display = 'none';
+                content.classList.add('hidden-content');
                 icon.textContent = '▼';
             }
         }

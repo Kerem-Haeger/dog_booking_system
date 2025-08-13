@@ -1,6 +1,17 @@
 /* Dashboard Styles - Dog Booking System */
 
-/* Client Dashboard Layout */
+/* Hidden Content */
+.hidden-content {
+    display: none;
+}
+
+/* Dashboard Toggles */
+.past-appointments-content.hidden-content,
+.rejected-appointments-content.hidden-content {
+    display: none;
+}
+
+/* Client Dashboard Styles */
 .client-dashboard {
     display: grid;
     grid-template-columns: 2fr 1fr;

@@ -125,3 +125,8 @@
     color: #dc3545;
     font-weight: bold;
 }
+
+/* Inline Form */
+.inline-form {
+    display: inline;
+}

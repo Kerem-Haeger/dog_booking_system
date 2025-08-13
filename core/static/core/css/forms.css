@@ -1,0 +1,230 @@
+/* Pet Forms and General Form Styling */
+
+/* Form Validation Styles */
+.form-errors {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.error-input {
+    border-color: #dc3545 !important;
+}
+
+.success-feedback {
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Form Layout */
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-validation-message {
+    display: none;
+}
+
+/* Pet Status Information */
+.pet-status-info {
+    background: #e9ecef;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.pet-status-info.rejected {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* Remove Profile Section */
+.remove-profile-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+}
+
+.remove-profile-section h3 {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.remove-profile-divider {
+    margin: 2rem 0;
+}
+
+.remove-profile-help {
+    margin-top: 0.5rem;
+}
+
+/* Button Styles */
+.btn-outline-danger {
+    background: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+}
+
+/* Delete Pet Form Styles */
+.delete-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.delete-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.appointments-warning {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.appointments-list {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+.appointment-item {
+    margin-bottom: 0.25rem;
+}
+
+.pet-details {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.pet-details h3 {
+    margin: 0 0 0.5rem 0;
+    color: #343a40;
+}
+
+.pet-detail-item {
+    margin-bottom: 0.5rem;
+}
+
+.pet-detail-item strong {
+    color: #495057;
+    margin-right: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    text-decoration: none;
+    color: white;
+}
+
+/* Cancel Appointment Confirmation */
+.cancel-confirmation {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.cancel-confirmation .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #856404;
+    cursor: pointer;
+    opacity: 0.7;
+    line-height: 1;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-confirmation .close-btn:hover {
+    opacity: 1;
+}
+
+.cancel-confirmation.hidden {
+    display: none;
+}
+
+.appointment-details {
+    margin-top: 0.75rem;
+}
+
+.detail-item {
+    margin-bottom: 0.5rem;
+}
+
+.detail-item strong {
+    color: #856404;
+    margin-right: 0.5rem;
+}

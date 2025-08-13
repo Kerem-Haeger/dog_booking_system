@@ -47,7 +47,7 @@
                 <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small btn-success">Add Pricing</a>
                 {% endif %}
 
-                <form method="post" action="{% url 'toggle_service_status' service.id %}" style="display: inline;">
+                <form method="post" action="{% url 'toggle_service_status' service.id %}" class="inline-form">
                     {% csrf_token %}
                     {% if service.is_active %}
                     <button type="submit" class="btn btn-small btn-warning"

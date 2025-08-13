@@ -18,10 +18,9 @@ from .models import (
 class PetProfileForm(forms.ModelForm):
     class Meta:
         model = PetProfile
-        fields = ['name', 'breed', 'date_of_birth', 'grooming_preferences']
+        fields = ['name', 'breed', 'date_of_birth']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
-            'grooming_preferences': forms.Textarea(attrs={'rows': 3}),
         }
 
     def clean_name(self):
@@ -70,6 +69,17 @@ class PetProfileForm(forms.ModelForm):
                 )
         
         return date_of_birth
+
+
+class PetProfileManagerForm(forms.ModelForm):
+    """Manager/Employee form for editing pet profiles including grooming preferences"""
+    class Meta:
+        model = PetProfile
+        fields = ['name', 'breed', 'date_of_birth', 'grooming_preferences', 'size', 'profile_status']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'grooming_preferences': forms.Textarea(attrs={'rows': 3}),
+        }
 
     def clean_grooming_preferences(self):
         preferences = self.cleaned_data.get('grooming_preferences')

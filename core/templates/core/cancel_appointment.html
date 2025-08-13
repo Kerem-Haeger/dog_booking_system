@@ -3,11 +3,16 @@
 
 {% block title %}Cancel Appointment - Dog Booking System{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/forms.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="form-container">
     <h2>Cancel Appointment</h2>
 
-    <div class="alert alert-warning">
+    <div class="cancel-confirmation" id="cancelWarning">
+        <button type="button" class="close-btn" onclick="toggleWarning()" aria-label="Close">×</button>
         <h4>Are you sure you want to cancel this appointment?</h4>
         <div class="appointment-details">
             <div class="detail-item">
@@ -37,5 +42,22 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'core/js/base.js' %}"></script>
+<script>
+    function toggleWarning() {
+        const warning = document.getElementById('cancelWarning');
+        if (warning) {
+            warning.classList.toggle('hidden');
+        }
+    }
+
+    // Prevent base.js from auto-dismissing our custom confirmation
+    document.addEventListener('DOMContentLoaded', function () {
+        // Remove our custom confirmation from automatic alert processing
+        const cancelWarning = document.getElementById('cancelWarning');
+        if (cancelWarning) {
+            // Remove any alert classes that might trigger auto-dismiss
+            cancelWarning.classList.remove('alert', 'alert-warning');
+        }
+    });
+</script>
 {% endblock %}

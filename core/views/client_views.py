@@ -76,15 +76,13 @@ def edit_pet(request, pet_id):
     """Allow clients to edit their pet profiles"""
     pet = get_object_or_404(PetProfile, id=pet_id, user=request.user)
 
-    # For approved pets, we can only edit grooming preferences
-    # For pending/rejected pets, we can edit all fields
     if request.method == 'POST':
         form = PetProfileForm(request.POST, instance=pet)
         if form.is_valid():
             updated_pet = form.save(commit=False)
 
-            # If pet was approved and we're making changes to core info
-            # (not just grooming preferences), reset to pending
+            # If pet was approved and we're making changes to core info,
+            # reset to pending
             if pet.profile_status == 'approved':
                 original_pet = PetProfile.objects.get(id=pet.id)
                 if (original_pet.name != updated_pet.name or
@@ -95,13 +93,13 @@ def edit_pet(request, pet_id):
                     updated_pet.size = None  # Reset size assignment
                     messages.warning(
                         request,
-                        "Changes to core pet information require re-approval. "
+                        "Changes to pet information require re-approval. "
                         "Your pet profile has been resubmitted for review."
                     )
                 else:
                     messages.success(
                         request,
-                        "Grooming preferences updated successfully!"
+                        "Pet profile updated successfully!"
                     )
             # Reset status to pending if it was rejected and is being updated
             elif pet.profile_status == 'rejected':
@@ -127,30 +125,41 @@ def edit_pet(request, pet_id):
 @login_required
 @ratelimit(key='user', rate='3/h', method='POST', block=True)
 def delete_pet(request, pet_id):
-    """Allow clients to delete their pet profiles (with restrictions)"""
+    """Allow clients to delete their pet profiles, canceling future appointments"""
     pet = get_object_or_404(PetProfile, id=pet_id, user=request.user)
     
-    # Check if pet has any appointments
-    has_appointments = Appointment.objects.filter(pet_profile=pet).exists()
-    
-    if has_appointments:
-        messages.error(
-            request, 
-            f"Cannot delete {pet.name} as they have existing appointments. "
-            f"Please cancel all appointments first."
-        )
-        return redirect('client_dashboard')
+    # Check for future appointments that will be cancelled
+    from django.utils import timezone
+    future_appointments = Appointment.objects.filter(
+        pet_profile=pet,
+        appointment_time__gt=timezone.now(),
+        status__in=['pending', 'approved']
+    )
     
     if request.method == 'POST':
         pet_name = pet.name
+        future_count = future_appointments.count()
+        
+        # Cancel all future appointments for this pet
+        if future_count > 0:
+            future_appointments.update(status='canceled')
+            messages.warning(
+                request,
+                f"Cancelled {future_count} future appointment(s) for {pet_name}."
+            )
+        
+        # Delete the pet profile
         pet.delete()
         messages.success(
-            request, 
-            f"Pet profile for {pet_name} has been deleted."
+            request,
+            f"Pet profile for {pet_name} has been removed from your account."
         )
         return redirect('client_dashboard')
     
-    return render(request, 'core/delete_pet.html', {'pet': pet})
+    return render(request, 'core/delete_pet.html', {
+        'pet': pet,
+        'future_appointments': future_appointments
+    })
 
 
 @ratelimit(key='user', rate='5/h', method='POST', block=True)

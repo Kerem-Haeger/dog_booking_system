@@ -11,26 +11,24 @@
 <h1>Appointments Dashboard</h1>
 
 <h2>Pending Appointments</h2>
-<p style="color: #6c757d; margin-bottom: 20px; font-style: italic;">
+<p class="dashboard-intro">
     ⏰ Ordered by appointment time - most urgent first
 </p>
 {% if appointment_forms %}
 {% for appointment, form in appointment_forms %}
-<div class="appointment-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px;">
+<div class="appointment-card-dashboard">
     <h3>{{ appointment.pet_profile.name }} - {{ appointment.service.name }}</h3>
     <p><strong>Time:</strong> {{ appointment.appointment_time }}</p>
     <p><strong>Client:</strong>
         {{ appointment.pet_profile.user.get_full_name|default:appointment.pet_profile.user.username }}</p>
 
-    <form method="post" style="margin-top: 10px;">
+    <form method="post" class="appointment-form">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-        <button type="submit" name="decision" value="approve"
-            style="background: #28a745; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;">✅
+        <button type="submit" name="decision" value="approve" class="approve-btn">✅
             Approve</button>
-        <button type="submit" name="decision" value="reject"
-            style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px;">❌
+        <button type="submit" name="decision" value="reject" class="reject-btn">❌
             Reject</button>
     </form>
 </div>
@@ -44,9 +42,9 @@
 <h2>All Appointments - Calendar View</h2>
 
 <!-- Employee Filter -->
-<div style="margin-bottom: 20px;">
+<div class="employee-filter-section">
     <label for="employee-filter"><strong>Filter by Employee:</strong></label>
-    <select id="employee-filter" style="padding: 5px; margin-left: 10px;">
+    <select id="employee-filter" class="employee-filter">
         <option value="all">All Employees</option>
         {% for employee in all_employees %}
         <option value="{{ employee.id }}">{{ employee.user.get_full_name|default:employee.user.username }}</option>
@@ -55,30 +53,28 @@
 </div>
 
 <!-- FullCalendar Container -->
-<div id="calendar" style="margin: 20px 0;"></div>
+<div id="calendar" class="calendar-section"></div>
 
 <!-- Rejected Appointments Section -->
 {% if rejected_appointments %}
-<hr style="margin: 40px 0 20px 0;">
-<h2 style="color: #dc3545;">Rejected Appointments</h2>
-<div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+<hr class="rejected-appointments-divider">
+<h2 class="rejected-appointments-title">Rejected Appointments</h2>
+<div class="rejected-appointments-container">
     {% for appointment in rejected_appointments %}
-    <div
-        style="background: white; border-left: 4px solid #dc3545; padding: 15px; margin: 10px 0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
+    <div class="rejected-appointment-card">
+        <div class="rejected-appointment-header">
             <div>
-                <h4 style="margin: 0 0 8px 0; color: #721c24;">{{ appointment.pet_profile.name }} -
+                <h4 class="rejected-appointment-title">{{ appointment.pet_profile.name }} -
                     {{ appointment.service.name }}</h4>
-                <p style="margin: 4px 0; color: #721c24;"><strong>Client:</strong>
+                <p class="rejected-appointment-detail"><strong>Client:</strong>
                     {{ appointment.pet_profile.user.get_full_name|default:appointment.pet_profile.user.username }}</p>
-                <p style="margin: 4px 0; color: #721c24;"><strong>Scheduled Time:</strong>
+                <p class="rejected-appointment-detail"><strong>Scheduled Time:</strong>
                     {{ appointment.appointment_time|date:"M d, Y \a\t g:i A" }}</p>
-                <p style="margin: 4px 0; color: #721c24;"><strong>Service Duration:</strong>
+                <p class="rejected-appointment-detail"><strong>Service Duration:</strong>
                     {{ appointment.service.duration }}</p>
             </div>
-            <div style="text-align: right;">
-                <span
-                    style="background: #dc3545; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">REJECTED</span>
+            <div class="rejected-appointment-actions">
+                <span class="rejected-status-badge">REJECTED</span>
             </div>
         </div>
     </div>
@@ -87,20 +83,16 @@
 {% endif %}
 
 <!-- Modal for Appointment Details -->
-<div id="appointmentModal"
-    style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
-    <div
-        style="background-color: white; margin: 10% auto; padding: 20px; border-radius: 5px; width: 400px; max-width: 90%;">
-        <span id="closeModal"
-            style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+<div id="appointmentModal" class="appointment-modal">
+    <div class="appointment-modal-content">
+        <span id="closeModal" class="modal-close-btn">&times;</span>
         <h3>Appointment Details</h3>
         <div id="modalContent"></div>
-        <div id="modalActions" style="margin-top: 15px;"></div>
+        <div id="modalActions" class="modal-actions"></div>
     </div>
 </div>
 
-<a href="{% url 'manager_dashboard' %}"
-    style="display: inline-block; margin-top: 20px; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 3px;">⬅
+<a href="{% url 'manager_dashboard' %}" class="dashboard-nav-link">⬅
     Back to Dashboard</a>
 {% endblock %}
 
