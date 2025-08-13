@@ -70,6 +70,89 @@ def add_pet(request):
     return render(request, 'core/add_pet.html', {'form': form})
 
 
+@login_required
+@ratelimit(key='user', rate='5/h', method='POST', block=True)
+def edit_pet(request, pet_id):
+    """Allow clients to edit their pet profiles"""
+    pet = get_object_or_404(PetProfile, id=pet_id, user=request.user)
+
+    # For approved pets, we can only edit grooming preferences
+    # For pending/rejected pets, we can edit all fields
+    if request.method == 'POST':
+        form = PetProfileForm(request.POST, instance=pet)
+        if form.is_valid():
+            updated_pet = form.save(commit=False)
+
+            # If pet was approved and we're making changes to core info
+            # (not just grooming preferences), reset to pending
+            if pet.profile_status == 'approved':
+                original_pet = PetProfile.objects.get(id=pet.id)
+                if (original_pet.name != updated_pet.name or
+                        original_pet.breed != updated_pet.breed or
+                        original_pet.date_of_birth !=
+                        updated_pet.date_of_birth):
+                    updated_pet.profile_status = 'pending'
+                    updated_pet.size = None  # Reset size assignment
+                    messages.warning(
+                        request,
+                        "Changes to core pet information require re-approval. "
+                        "Your pet profile has been resubmitted for review."
+                    )
+                else:
+                    messages.success(
+                        request,
+                        "Grooming preferences updated successfully!"
+                    )
+            # Reset status to pending if it was rejected and is being updated
+            elif pet.profile_status == 'rejected':
+                updated_pet.profile_status = 'pending'
+                messages.success(
+                    request,
+                    "Pet profile updated and resubmitted for approval!"
+                )
+            else:
+                messages.success(request, "Pet profile updated!")
+
+            updated_pet.save()
+            return redirect('client_dashboard')
+    else:
+        form = PetProfileForm(instance=pet)
+
+    return render(request, 'core/edit_pet.html', {
+        'form': form,
+        'pet': pet
+    })
+
+
+@login_required
+@ratelimit(key='user', rate='3/h', method='POST', block=True)
+def delete_pet(request, pet_id):
+    """Allow clients to delete their pet profiles (with restrictions)"""
+    pet = get_object_or_404(PetProfile, id=pet_id, user=request.user)
+    
+    # Check if pet has any appointments
+    has_appointments = Appointment.objects.filter(pet_profile=pet).exists()
+    
+    if has_appointments:
+        messages.error(
+            request, 
+            f"Cannot delete {pet.name} as they have existing appointments. "
+            f"Please cancel all appointments first."
+        )
+        return redirect('client_dashboard')
+    
+    if request.method == 'POST':
+        pet_name = pet.name
+        pet.delete()
+        messages.success(
+            request, 
+            f"Pet profile for {pet_name} has been deleted."
+        )
+        return redirect('client_dashboard')
+    
+    return render(request, 'core/delete_pet.html', {'pet': pet})
+
+
 @ratelimit(key='user', rate='5/h', method='POST', block=True)
 def book_appointment(request):
     """Allow clients to book appointments for their approved pets"""

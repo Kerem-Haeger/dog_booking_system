@@ -13,6 +13,8 @@ urlpatterns = [
           name='redirect_by_role'),
      path('client/', views.client_dashboard, name='client_dashboard'),
      path('client/pets/add/', views.add_pet, name='add_pet'),
+     path('client/pets/<int:pet_id>/edit/', views.edit_pet, name='edit_pet'),
+     path('client/pets/<int:pet_id>/delete/', views.delete_pet, name='delete_pet'),
      path('client/appointments/book/', views.book_appointment,
           name='book_appointment'),
      path('client/appointments/cancel/<int:appointment_id>/',

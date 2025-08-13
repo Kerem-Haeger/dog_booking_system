@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}Add Pet - Dog Booking System{% endblock %}
+{% block title %}Edit Pet - Dog Booking System{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -20,14 +20,64 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
+
+    .pet-status-info {
+        background: #e9ecef;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .pet-status-info.rejected {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+
+    .remove-profile-section {
+        margin-top: 2rem;
+        padding-top: 1rem;
+    }
+
+    .remove-profile-section h3 {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-outline-danger {
+        background: transparent;
+        color: #dc3545;
+        border: 1px solid #dc3545;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-outline-danger:hover {
+        background: #dc3545;
+        color: white;
+        text-decoration: none;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
-    <h1>Add a New Pet</h1>
-    <p class="form-help">Add your pet's information below. Your pet will need to be approved by our team before you can
-        book appointments.</p>
+    <h1>Edit Pet Profile</h1>
+
+    {% if pet.profile_status == 'rejected' %}
+    <div class="pet-status-info rejected">
+        <strong>🚫 Pet Profile Rejected</strong>
+        <p>This pet profile was previously rejected. You can make changes and resubmit it for approval.</p>
+    </div>
+    {% elif pet.profile_status == 'pending' %}
+    <div class="pet-status-info">
+        <strong>⏳ Pending Approval</strong>
+        <p>This pet profile is currently pending approval. You can still make changes before it's reviewed.</p>
+    </div>
+    {% endif %}
 
     <form method="post" id="petForm">
         {% csrf_token %}
@@ -74,10 +124,30 @@
         </div>
 
         <div style="display: flex; gap: 1rem;">
-            <button type="submit" class="btn btn-success" id="submitBtn">Submit Pet for Approval</button>
+            <button type="submit" class="btn btn-success" id="submitBtn">
+                {% if pet.profile_status == 'rejected' %}
+                Update & Resubmit for Approval
+                {% else %}
+                Update Pet Profile
+                {% endif %}
+            </button>
             <a href="{% url 'client_dashboard' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
+
+    <!-- Remove Profile Section -->
+    <div class="remove-profile-section">
+        <hr style="margin: 2rem 0;">
+        <h3>Profile Management</h3>
+        <p>If you need to remove this pet profile from your account, you can do so below.</p>
+
+        <a href="{% url 'delete_pet' pet.id %}" class="btn btn-outline-danger">
+            Remove Profile from List
+        </a>
+        <div class="form-help" style="margin-top: 0.5rem;">
+            <small>Note: You can only remove profiles that don't have existing appointments.</small>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

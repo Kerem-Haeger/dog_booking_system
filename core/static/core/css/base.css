@@ -380,8 +380,7 @@ body {
 .footer {
     background-color: #343a40;
     color: #fff;
-    text-align: center;
-    padding: 2rem 0 1rem 0;
+    padding: 1rem 0;
     margin-top: auto;
     border-top: 3px solid #006bb3;
 }
@@ -392,58 +391,85 @@ body {
     padding: 0 1rem;
 }
 
-.footer-brand {
-    margin-bottom: 1rem;
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
-.footer-brand h3 {
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: #fff;
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 600;
+    flex: 1;
 }
 
-.footer-brand p {
+.footer-logo {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.footer-separator {
     color: #dee2e6;
-    margin: 0;
+}
+
+.footer-tagline {
+    color: #dee2e6;
     font-size: 0.9rem;
 }
 
-.footer-social {
-    margin-bottom: 1rem;
+.footer-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
 }
 
-.footer-social a {
+.footer-social {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-social .social-link {
     color: #dee2e6;
     text-decoration: none;
-    margin: 0 1rem;
-    font-size: 1rem;
+    font-size: 1.5rem;
     transition: color 0.3s ease;
 }
 
-.footer-social a:hover {
+.footer-social .social-link:hover {
     color: #006bb3;
 }
 
-.footer-copyright {
-    border-top: 1px solid #495057;
-    padding-top: 1rem;
+.footer-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     color: #adb5bd;
     font-size: 0.85rem;
+    flex: 1;
 }
 
 /* Responsive Footer */
 @media (max-width: 768px) {
-    .footer {
-        padding: 1.5rem 0 1rem 0;
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
     }
 
-    .footer-brand h3 {
-        font-size: 1.3rem;
+    .footer-left {
+        flex-direction: row;
+        gap: 0.25rem;
     }
 
-    .footer-social a {
-        margin: 0 0.5rem;
-        font-size: 0.9rem;
+    .footer-social .social-link {
+        font-size: 1.25rem;
+    }
+
+    .footer-social {
+        gap: 1rem;
     }
 }

@@ -1,6 +1,6 @@
 # Import all views for backward compatibility
 from .client_views import (
-    client_dashboard, add_pet, book_appointment, cancel_appointment
+    client_dashboard, add_pet, edit_pet, delete_pet, book_appointment, cancel_appointment
 )
 from .employee_views import employee_dashboard
 from .manager_views import (
@@ -58,6 +58,8 @@ __all__ = [
     'redirect_by_role',
     'client_dashboard',
     'add_pet',
+    'edit_pet',
+    'delete_pet',
     'book_appointment',
     'cancel_appointment',
     'employee_dashboard',

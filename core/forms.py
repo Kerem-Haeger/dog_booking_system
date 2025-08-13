@@ -48,6 +48,29 @@ class PetProfileForm(forms.ModelForm):
             return sanitized.strip()
         return breed
 
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        if date_of_birth:
+            today = timezone.now().date()
+            
+            # Check if birth date is in the future
+            if date_of_birth > today:
+                raise forms.ValidationError(
+                    "Birth date cannot be in the future."
+                )
+            
+            # Optional: Check if birth date is too far in the past
+            # (e.g., older than 30 years)
+            max_age_years = 30
+            min_birth_date = today.replace(year=today.year - max_age_years)
+            if date_of_birth < min_birth_date:
+                raise forms.ValidationError(
+                    f"Birth date cannot be more than {max_age_years} "
+                    f"years ago."
+                )
+        
+        return date_of_birth
+
     def clean_grooming_preferences(self):
         preferences = self.cleaned_data.get('grooming_preferences')
         if preferences:

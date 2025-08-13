@@ -65,7 +65,8 @@
                 <button class="slider-prev" onclick="slideAppointments(-1)">‹</button>
                 <div class="slider-dots">
                     {% for appt in upcoming_appointments %}
-                    <span class="dot {% if forloop.first %}active{% endif %}" onclick="showAppointment({{ forloop.counter0 }})"></span>
+                    <span class="dot {% if forloop.first %}active{% endif %}"
+                        onclick="showAppointment({{ forloop.counter0 }})"></span>
                     {% endfor %}
                 </div>
                 <button class="slider-next" onclick="slideAppointments(1)">›</button>
@@ -176,6 +177,10 @@
                     <div class="pet-info">
                         <div class="pet-name">{{ pet.name }}</div>
                         <div class="pet-breed">{{ pet.breed }}</div>
+                        <div class="pet-actions">
+                            <a href="{% url 'edit_pet' pet.id %}" class="pet-action-btn edit"
+                                title="Edit Details">✏️</a>
+                        </div>
                     </div>
                     <div class="pet-status-badge {{ pet.profile_status }}">
                         {{ pet.profile_status|title }}
@@ -197,7 +202,11 @@
 <script src="{% static 'core/js/base.js' %}"></script>
 <script>
     let currentAppointment = 0;
-    const totalAppointments = {{ upcoming_appointments|length }};
+    const totalAppointments = {
+        {
+            upcoming_appointments | length
+        }
+    };
 
     function slideAppointments(direction) {
         const cards = document.querySelectorAll('.appointment-card.compact');

@@ -1,0 +1,136 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Delete Pet - Dog Booking System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .delete-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+    }
+
+    .pet-details {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+    }
+
+    .pet-details h3 {
+        margin: 0 0 0.5rem 0;
+        color: #343a40;
+    }
+
+    .pet-detail-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .pet-detail-item strong {
+        color: #495057;
+        margin-right: 0.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        text-decoration: none;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <h1>🗑️ Delete Pet Profile</h1>
+
+    <div class="delete-warning">
+        <strong>⚠️ Warning:</strong>
+        This action cannot be undone. The pet profile will be permanently deleted from your account.
+    </div>
+
+    <div class="pet-details">
+        <h3>{{ pet.name }}</h3>
+        <div class="pet-detail-item">
+            <strong>Breed:</strong> {{ pet.breed }}
+        </div>
+        <div class="pet-detail-item">
+            <strong>Date of Birth:</strong> {{ pet.date_of_birth }}
+        </div>
+        <div class="pet-detail-item">
+            <strong>Status:</strong>
+            <span class="pet-status-badge {{ pet.profile_status }}">
+                {{ pet.profile_status|title }}
+            </span>
+        </div>
+        {% if pet.grooming_preferences %}
+        <div class="pet-detail-item">
+            <strong>Grooming Preferences:</strong> {{ pet.grooming_preferences }}
+        </div>
+        {% endif %}
+        <div class="pet-detail-item">
+            <strong>Added:</strong> {{ pet.created_at|date:"M j, Y" }}
+        </div>
+    </div>
+
+    <p>Are you sure you want to delete <strong>{{ pet.name }}</strong>'s profile?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="action-buttons">
+            <button type="submit" class="btn-danger">
+                Yes, Delete Pet Profile
+            </button>
+            <a href="{% url 'client_dashboard' %}" class="btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -432,6 +432,12 @@
     border-radius: 6px;
 }
 
+.pet-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 .pet-info .pet-name {
     font-weight: 600;
     color: #2c3e50;
@@ -440,6 +446,33 @@
 .pet-info .pet-breed {
     font-size: 0.9rem;
     color: #6c757d;
+}
+
+.pet-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.pet-action-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.pet-action-btn.edit:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pet-action-btn.delete:hover {
+    background-color: #dc3545;
+    color: white;
 }
 
 .pet-status-badge {

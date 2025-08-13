@@ -6,6 +6,7 @@
     <title>{% block title %}Dog Booking System{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -85,20 +86,25 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-content">
-                <div class="footer-brand">
+                <div class="footer-left">
                     <span class="footer-logo">Riverdog Studio</span>
-                    <p class="footer-tagline">Professional Dog Grooming Services</p>
+                    <span class="footer-separator">•</span>
+                    <span class="footer-tagline">Professional Dog Grooming Services</span>
                 </div>
-                <div class="footer-social">
-                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                        <span class="social-icon">📘</span> Facebook
-                    </a>
-                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="social-link">
-                        <span class="social-icon">📷</span> Instagram
-                    </a>
+                <div class="footer-center">
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"
+                            class="social-link">
+                            <i class="fa-brands fa-square-facebook"></i>
+                        </a>
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"
+                            class="social-link">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="footer-copyright">
-                    <p>&copy; 2025 Kerem Haeger. All rights reserved.</p>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; 2025 Kerem Haeger</span>
                 </div>
             </div>
         </div>
