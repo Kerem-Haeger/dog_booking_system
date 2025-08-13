@@ -5,10 +5,9 @@
     display: none;
 }
 
-/* Dashboard Toggles */
-.past-appointments-content.hidden-content,
-.rejected-appointments-content.hidden-content {
-    display: none;
+/* Visible Content */
+.visible-content {
+    display: block !important;
 }
 
 /* Client Dashboard Styles */
@@ -90,15 +89,19 @@
 
 .appointment-card.compact {
     display: none;
+    /* Hide all by default */
     background: #f8f9fa;
     border-radius: 8px;
     padding: 1.5rem;
     border-left: 4px solid #28a745;
     transition: all 0.3s ease;
+    position: relative;
+    width: 100%;
 }
 
 .appointment-card.compact.active {
     display: flex;
+    /* Show only active */
     align-items: center;
     gap: 1.5rem;
 }

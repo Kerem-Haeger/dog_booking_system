@@ -45,6 +45,8 @@ urlpatterns = [
      path('manager/services/<int:service_id>/edit/', views.edit_service, name='edit_service'),
      path('manager/services/<int:service_id>/pricing/', views.edit_service_pricing, name='edit_service_pricing'),
      path('manager/services/<int:service_id>/toggle/', views.toggle_service_status, name='toggle_service_status'),
+     path('manager/services/<int:service_id>/delete/', views.delete_service,
+          name='delete_service'),
      path('ajax/get-service-price/', get_service_price,
           name='get_service_price'),
      path('ajax/calendar-events/', get_calendar_events,

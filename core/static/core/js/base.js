@@ -135,7 +135,9 @@ function initializeTooltips() {
 
                 // Show tooltip
                 setTimeout(() => {
-                    tooltip.style.opacity = '1';
+                    if (tooltip) {
+                        tooltip.style.opacity = '1';
+                    }
                 }, 10);
 
                 // Hide original title to prevent browser tooltip

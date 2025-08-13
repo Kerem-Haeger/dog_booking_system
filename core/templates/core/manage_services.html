@@ -60,6 +60,11 @@
                     </button>
                     {% endif %}
                 </form>
+
+                <a href="{% url 'delete_service' service.id %}" class="btn btn-small btn-danger"
+                    onclick="return confirm('This will permanently delete the service and all related data. Continue?');">
+                    🗑️ Delete
+                </a>
             </div>
         </div>
         {% endfor %}

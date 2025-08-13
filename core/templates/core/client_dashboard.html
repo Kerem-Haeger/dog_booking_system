@@ -4,8 +4,8 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
-<link rel="stylesheet" href="{% static 'core/css/appointments.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}?v=6.0">
+<link rel="stylesheet" href="{% static 'core/css/appointments.css' %}?v=6.0">
 {% endblock %}
 
 {% block content %}
@@ -73,14 +73,14 @@
 
             {% if upcoming_appointments|length > 1 %}
             <div class="slider-controls">
-                <button class="slider-prev" onclick="slideAppointments(-1)">‹</button>
+                <button class="slider-prev">‹</button>
                 <div class="slider-dots">
                     {% for appt in upcoming_appointments %}
                     <span class="dot {% if forloop.first %}active{% endif %}"
                         onclick="showAppointment({{ forloop.counter0 }})"></span>
                     {% endfor %}
                 </div>
-                <button class="slider-next" onclick="slideAppointments(1)">›</button>
+                <button class="slider-next">›</button>
             </div>
             {% endif %}
             {% else %}
@@ -92,13 +92,16 @@
         </div>
 
         <!-- Past Appointments (Collapsed by default) -->
-        {% if past_appointments %}
+        <!-- DEBUG: Always show this section -->
         <div class="past-appointments-section">
-            <button class="section-toggle" onclick="togglePastAppointments()">
+            <button class="section-toggle" data-target="past">
                 <span>📋 Past Appointments ({{ past_appointments|length }})</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="past-appointments-content hidden-content">
+                <p style="color: red; font-weight: bold;">DEBUG: Found {{ past_appointments|length }} past appointments
+                </p>
+                {% if past_appointments %}
                 {% for appt in past_appointments|slice:":5" %}
                 <div class="appointment-card past compact">
                     <div class="appointment-time small">
@@ -116,6 +119,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% else %}
+                <p>No past appointments to display</p>
+                {% endif %}
                 {% if past_appointments|length > 5 %}
                 <div class="show-more">
                     <button class="btn-link">Show {{ past_appointments|length|add:"-5" }} more...</button>
@@ -123,16 +129,18 @@
                 {% endif %}
             </div>
         </div>
-        {% endif %}
 
         <!-- Rejected Appointments (Collapsed by default) -->
-        {% if rejected_appointments %}
+        <!-- DEBUG: Always show this section -->
         <div class="rejected-appointments-section">
-            <button class="section-toggle" onclick="toggleRejectedAppointments()">
+            <button class="section-toggle" data-target="rejected">
                 <span>❌ Rejected Appointments ({{ rejected_appointments|length }})</span>
                 <span class="toggle-icon-rejected">▼</span>
             </button>
             <div class="rejected-appointments-content hidden-content">
+                <p style="color: red; font-weight: bold;">DEBUG: Found {{ rejected_appointments|length }} rejected
+                    appointments</p>
+                {% if rejected_appointments %}
                 {% for appt in rejected_appointments|slice:":5" %}
                 <div class="appointment-card rejected compact">
                     <div class="appointment-time small rejected">
@@ -151,6 +159,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% else %}
+                <p>No rejected appointments to display</p>
+                {% endif %}
                 {% if rejected_appointments|length > 5 %}
                 <div class="show-more">
                     <button class="btn-link">Show {{ rejected_appointments|length|add:"-5" }} more...</button>
@@ -158,7 +169,6 @@
                 {% endif %}
             </div>
         </div>
-        {% endif %}
     </div>
 
     <!-- Sidebar -->
@@ -210,85 +220,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'core/js/base.js' %}"></script>
-<script>
-    let currentAppointment = 0;
-    const totalAppointments = {
-        {
-            upcoming_appointments | length
-        }
-    };
-
-    function slideAppointments(direction) {
-        const cards = document.querySelectorAll('.appointment-card.compact');
-        const dots = document.querySelectorAll('.slider-dots .dot');
-
-        // Remove active class from current
-        if (cards[currentAppointment]) {
-            cards[currentAppointment].classList.remove('active');
-            if (dots[currentAppointment]) {
-                dots[currentAppointment].classList.remove('active');
-            }
-        }
-
-        // Calculate new index
-        currentAppointment += direction;
-        if (currentAppointment >= totalAppointments) currentAppointment = 0;
-        if (currentAppointment < 0) currentAppointment = totalAppointments - 1;
-
-        // Add active class to new
-        if (cards[currentAppointment]) {
-            cards[currentAppointment].classList.add('active');
-            if (dots[currentAppointment]) {
-                dots[currentAppointment].classList.add('active');
-            }
-        }
-    }
-
-    function showAppointment(index) {
-        const cards = document.querySelectorAll('.appointment-card.compact');
-        const dots = document.querySelectorAll('.slider-dots .dot');
-
-        // Remove active from all
-        cards.forEach(card => card.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-
-        // Add active to selected
-        currentAppointment = index;
-        if (cards[index]) {
-            cards[index].classList.add('active');
-            dots[index].classList.add('active');
-        }
-    }
-
-    function togglePastAppointments() {
-        const content = document.querySelector('.past-appointments-content');
-        const icon = document.querySelector('.toggle-icon');
-
-        if (content && icon) {
-            if (content.classList.contains('hidden-content')) {
-                content.classList.remove('hidden-content');
-                icon.textContent = '▲';
-            } else {
-                content.classList.add('hidden-content');
-                icon.textContent = '▼';
-            }
-        }
-    }
-
-    function toggleRejectedAppointments() {
-        const content = document.querySelector('.rejected-appointments-content');
-        const icon = document.querySelector('.toggle-icon-rejected');
-
-        if (content && icon) {
-            if (content.classList.contains('hidden-content')) {
-                content.classList.remove('hidden-content');
-                icon.textContent = '▲';
-            } else {
-                content.classList.add('hidden-content');
-                icon.textContent = '▼';
-            }
-        }
-    }
-</script>
+<script src="{% static 'core/js/base.js' %}?v=15.0"></script>
+<script src="{% static 'core/js/client-dashboard-simple.js' %}?v=15.0"></script>
 {% endblock %}

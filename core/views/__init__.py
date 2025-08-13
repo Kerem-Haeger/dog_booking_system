@@ -7,7 +7,7 @@ from .employee_views import employee_dashboard
 from .manager_views import (
     manager_dashboard, approve_pets, approve_appointments, approve_users,
     manage_services, create_service, edit_service, edit_service_pricing,
-    toggle_service_status
+    toggle_service_status, delete_service
 )
 from .api_views import (
     fetch_available_slots, get_service_price, get_calendar_events,
@@ -74,6 +74,7 @@ __all__ = [
     'edit_service',
     'edit_service_pricing',
     'toggle_service_status',
+    'delete_service',
     'fetch_available_slots',
     'get_service_price',
     'get_calendar_events',

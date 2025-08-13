@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
+from datetime import date
 
 from ..models import (
     UserProfile, PetProfile, Appointment, EmployeeCalendar, Service, ServicePrice
@@ -47,6 +48,18 @@ def approve_pets(request):
     all_pets = PetProfile.objects.select_related('user').prefetch_related(
         'appointment_set'
     ).exclude(profile_status='pending').order_by('-verified_at', 'name')
+    
+    # Calculate age for each pet
+    for pet in all_pets:
+        if pet.date_of_birth:
+            today = date.today()
+            birth_date = pet.date_of_birth
+            age = today.year - birth_date.year - (
+                (today.month, today.day) < (birth_date.month, birth_date.day)
+            )
+            pet.calculated_age = age
+        else:
+            pet.calculated_age = None
 
     if request.method == 'POST':
         for pet in pending_pets:
@@ -562,6 +575,54 @@ def toggle_service_status(request, service_id):
         )
     
     return redirect('manage_services')
+
+
+@user_passes_test(is_manager)
+def delete_service(request, service_id):
+    """Allow manager to permanently delete a service"""
+    service = get_object_or_404(Service, id=service_id)
+    
+    if request.method == 'POST':
+        service_name = service.name
+        
+        # Count related appointments
+        related_appointments = Appointment.objects.filter(service=service)
+        appointment_count = related_appointments.count()
+        
+        # Log the deletion action before deleting
+        log_audit_action(
+            user=request.user,
+            action='service_deleted',
+            details={
+                'service_name': service_name,
+                'service_description': service.description,
+                'related_appointments': appointment_count,
+                'reason': 'Manager deletion'
+            },
+            request=request
+        )
+        
+        # Delete the service (this will cascade to related appointments and prices)
+        service.delete()
+        
+        messages.success(
+            request,
+            f'Service "{service_name}" has been permanently deleted.'
+        )
+        return redirect('manage_services')
+    
+    # Get impact information for the confirmation page
+    related_appointments = Appointment.objects.filter(service=service)
+    appointment_count = related_appointments.count()
+    active_appointments = related_appointments.exclude(status='canceled')
+    
+    context = {
+        'service': service,
+        'appointment_count': appointment_count,
+        'active_appointments_count': active_appointments.count(),
+        'service_prices': service.prices.all()
+    }
+    return render(request, 'core/delete_service.html', context)
 
 
 @user_passes_test(is_manager)
