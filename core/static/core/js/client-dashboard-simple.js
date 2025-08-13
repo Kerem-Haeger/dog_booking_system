@@ -93,53 +93,37 @@ function initializeToggleSections() {
 
 // Toggle past appointments visibility
 function togglePastAppointments() {
-    console.log('togglePastAppointments called');
     const content = document.querySelector('.past-appointments-content');
     const icon = document.querySelector('.toggle-icon');
-
-    console.log('content:', content);
-    console.log('icon:', icon);
 
     if (content && icon) {
         if (content.classList.contains('hidden-content')) {
             content.classList.remove('hidden-content');
             content.classList.add('visible-content');
             icon.textContent = '▲';
-            console.log('Showing past appointments');
         } else {
             content.classList.remove('visible-content');
             content.classList.add('hidden-content');
             icon.textContent = '▼';
-            console.log('Hiding past appointments');
         }
-    } else {
-        console.log('Could not find content or icon elements');
     }
 }
 
 // Toggle rejected appointments visibility
 function toggleRejectedAppointments() {
-    console.log('toggleRejectedAppointments called');
     const content = document.querySelector('.rejected-appointments-content');
     const icon = document.querySelector('.toggle-icon-rejected');
-
-    console.log('content:', content);
-    console.log('icon:', icon);
 
     if (content && icon) {
         if (content.classList.contains('hidden-content')) {
             content.classList.remove('hidden-content');
             content.classList.add('visible-content');
             icon.textContent = '▲';
-            console.log('Showing rejected appointments');
         } else {
             content.classList.remove('visible-content');
             content.classList.add('hidden-content');
             icon.textContent = '▼';
-            console.log('Hiding rejected appointments');
         }
-    } else {
-        console.log('Could not find content or icon elements');
     }
 }
 

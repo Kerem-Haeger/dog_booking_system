@@ -92,16 +92,13 @@
         </div>
 
         <!-- Past Appointments (Collapsed by default) -->
-        <!-- DEBUG: Always show this section -->
+        {% if past_appointments %}
         <div class="past-appointments-section">
             <button class="section-toggle" data-target="past">
                 <span>📋 Past Appointments ({{ past_appointments|length }})</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="past-appointments-content hidden-content">
-                <p style="color: red; font-weight: bold;">DEBUG: Found {{ past_appointments|length }} past appointments
-                </p>
-                {% if past_appointments %}
                 {% for appt in past_appointments|slice:":5" %}
                 <div class="appointment-card past compact">
                     <div class="appointment-time small">
@@ -119,9 +116,6 @@
                     </div>
                 </div>
                 {% endfor %}
-                {% else %}
-                <p>No past appointments to display</p>
-                {% endif %}
                 {% if past_appointments|length > 5 %}
                 <div class="show-more">
                     <button class="btn-link">Show {{ past_appointments|length|add:"-5" }} more...</button>
@@ -129,18 +123,16 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
 
         <!-- Rejected Appointments (Collapsed by default) -->
-        <!-- DEBUG: Always show this section -->
+        {% if rejected_appointments %}
         <div class="rejected-appointments-section">
             <button class="section-toggle" data-target="rejected">
                 <span>❌ Rejected Appointments ({{ rejected_appointments|length }})</span>
                 <span class="toggle-icon-rejected">▼</span>
             </button>
             <div class="rejected-appointments-content hidden-content">
-                <p style="color: red; font-weight: bold;">DEBUG: Found {{ rejected_appointments|length }} rejected
-                    appointments</p>
-                {% if rejected_appointments %}
                 {% for appt in rejected_appointments|slice:":5" %}
                 <div class="appointment-card rejected compact">
                     <div class="appointment-time small rejected">
@@ -159,9 +151,6 @@
                     </div>
                 </div>
                 {% endfor %}
-                {% else %}
-                <p>No rejected appointments to display</p>
-                {% endif %}
                 {% if rejected_appointments|length > 5 %}
                 <div class="show-more">
                     <button class="btn-link">Show {{ rejected_appointments|length|add:"-5" }} more...</button>
@@ -169,6 +158,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
     </div>
 
     <!-- Sidebar -->
@@ -220,6 +210,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'core/js/base.js' %}?v=15.0"></script>
-<script src="{% static 'core/js/client-dashboard-simple.js' %}?v=15.0"></script>
+<script src="{% static 'core/js/base.js' %}?v=16.0"></script>
+<script src="{% static 'core/js/client-dashboard-simple.js' %}?v=16.0"></script>
 {% endblock %}
