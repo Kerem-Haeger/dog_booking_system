@@ -7,6 +7,11 @@ from .views.api_views import (
      get_available_employees, reassign_appointment_ajax
 )
 from .views.auth_views import register_view
+from .views.manager_views import (
+    edit_pet as manager_edit_pet,
+    delete_pet as manager_delete_pet,
+    update_pet_status
+)
 
 urlpatterns = [
      path('redirect-by-role/', views.redirect_by_role,
@@ -28,6 +33,12 @@ urlpatterns = [
      path('manager/approve-appointments/', views.approve_appointments,
           name='approve_appointments'),
      path('manager/pets/pending/', views.approve_pets, name='approve_pets'),
+     path('manager/pets/<int:pet_id>/edit/', manager_edit_pet,
+          name='manager_edit_pet'),
+     path('manager/pets/<int:pet_id>/delete/', manager_delete_pet,
+          name='manager_delete_pet'),
+     path('manager/pets/<int:pet_id>/update-status/', update_pet_status,
+          name='update_pet_status'),
      path('manager/users/pending/', views.approve_users, name='approve_users'),
      path('manager/services/', views.manage_services, name='manage_services'),
      path('manager/services/create/', views.create_service, name='create_service'),

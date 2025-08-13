@@ -8,7 +8,7 @@ from ..models import (
 )
 from ..forms import (
     PetApprovalForm, AppointmentApprovalForm, UserApprovalForm, 
-    ServiceForm, ServicePriceForm
+    ServiceForm, ServicePriceForm, PetProfileManagerForm
 )
 from ..utils import log_audit_action
 from .base import is_manager
@@ -562,3 +562,128 @@ def toggle_service_status(request, service_id):
         )
     
     return redirect('manage_services')
+
+
+@user_passes_test(is_manager)
+def edit_pet(request, pet_id):
+    """Allow manager to edit pet details"""
+    pet = get_object_or_404(PetProfile, id=pet_id)
+    
+    if request.method == 'POST':
+        form = PetProfileManagerForm(request.POST, instance=pet)
+        if form.is_valid():
+            updated_pet = form.save()
+            
+            # Log the edit action
+            log_audit_action(
+                user=request.user,
+                action='pet_edited',
+                details={
+                    'pet_name': updated_pet.name,
+                    'pet_owner': updated_pet.user.username,
+                    'changes': form.changed_data
+                },
+                target_user=updated_pet.user,
+                request=request
+            )
+            
+            messages.success(
+                request,
+                f'Pet "{updated_pet.name}" has been updated successfully.'
+            )
+            return redirect('approve_pets')
+        else:
+            messages.error(
+                request,
+                'Please correct the errors below.'
+            )
+    else:
+        form = PetProfileManagerForm(instance=pet)
+    
+    context = {
+        'form': form,
+        'pet': pet,
+        'action': 'Edit'
+    }
+    return render(request, 'core/manager_edit_pet.html', context)
+
+
+@user_passes_test(is_manager)
+def delete_pet(request, pet_id):
+    """Allow manager to delete a pet profile"""
+    pet = get_object_or_404(PetProfile, id=pet_id)
+    
+    if request.method == 'POST':
+        pet_name = pet.name
+        pet_owner = pet.user.username
+        
+        # Log the deletion action before deleting
+        log_audit_action(
+            user=request.user,
+            action='pet_deleted',
+            details={
+                'pet_name': pet_name,
+                'pet_owner': pet_owner,
+                'pet_breed': pet.breed,
+                'reason': 'Manager deletion'
+            },
+            target_user=pet.user,
+            request=request
+        )
+        
+        pet.delete()
+        
+        messages.success(
+            request,
+            f'Pet "{pet_name}" has been permanently deleted.'
+        )
+        return redirect('approve_pets')
+    
+    context = {
+        'pet': pet,
+        'appointments_count': pet.appointment_set.count()
+    }
+    return render(request, 'core/manager_delete_pet.html', context)
+
+
+@user_passes_test(is_manager)
+def update_pet_status(request, pet_id):
+    """Allow manager to update pet status"""
+    pet = get_object_or_404(PetProfile, id=pet_id)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        valid_statuses = [choice[0] for choice in PetProfile.STATUS_CHOICES]
+        
+        if new_status in valid_statuses:
+            old_status = pet.profile_status
+            pet.profile_status = new_status
+            
+            # Update verification timestamp if status is being set to verified
+            if new_status == 'verified' and old_status != 'verified':
+                pet.verified_at = timezone.now()
+            
+            pet.save()
+            
+            # Log the status change
+            log_audit_action(
+                user=request.user,
+                action='pet_status_updated',
+                details={
+                    'pet_name': pet.name,
+                    'pet_owner': pet.user.username,
+                    'old_status': old_status,
+                    'new_status': new_status
+                },
+                target_user=pet.user,
+                request=request
+            )
+            
+            messages.success(
+                request,
+                f'Pet "{pet.name}" status updated to {new_status}.'
+            )
+        else:
+            messages.error(request, 'Invalid status provided.')
+    
+    return redirect('approve_pets')
