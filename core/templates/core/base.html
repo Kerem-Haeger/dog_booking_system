@@ -78,13 +78,13 @@
                                 <i class="fas fa-calendar-check"></i> Appointments Calendar
                             </a>
                             <a href="{% url 'approve_pets' %}">
-                                <i class="fas fa-paw"></i> Approve Pets
+                                <i class="fas fa-paw"></i> Manage Pets
                                 {% if pending_pets_count > 0 %}
                                 <span class="notification-badge">{{ pending_pets_count }}</span>
                                 {% endif %}
                             </a>
                             <a href="{% url 'approve_users' %}">
-                                <i class="fas fa-users"></i> Approve Users
+                                <i class="fas fa-users"></i> Manage Users
                             </a>
                             <a href="{% url 'manage_services' %}">
                                 <i class="fas fa-cogs"></i> Manage Services
