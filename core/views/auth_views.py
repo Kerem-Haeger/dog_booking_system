@@ -25,8 +25,8 @@ def register_view(request):
                     
                     messages.success(
                         request, 
-                        f'Account created successfully for {user.username}! '
-                        'You can now log in.'
+                        f'Account created successfully! We are reviewing your profile '
+                        'and will approve it shortly. Please check back later to access your dashboard.'
                     )
                     return redirect('login')
                     

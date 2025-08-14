@@ -85,8 +85,13 @@
             {% endif %}
             {% else %}
             <div class="empty-appointments">
+                {% if pets %}
                 <p>No upcoming appointments</p>
                 <a href="{% url 'book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+                {% else %}
+                <p>Please add a pet to pamper first</p>
+                <a href="{% url 'add_pet' %}" class="btn btn-primary">Add Your First Pet</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -167,10 +172,17 @@
         <div class="dashboard-card sidebar-card priority">
             <h3 class="section-title">⚡ Quick Actions</h3>
             <div class="quick-actions-compact">
+                {% if pets %}
                 <a href="{% url 'book_appointment' %}" class="action-button primary">
                     <span class="icon">📅</span>
                     <span class="text">Book Appointment</span>
                 </a>
+                {% else %}
+                <div class="action-button primary disabled" title="Please add a pet first">
+                    <span class="icon">📅</span>
+                    <span class="text">Book Appointment</span>
+                </div>
+                {% endif %}
                 <a href="{% url 'add_pet' %}" class="action-button secondary">
                     <span class="icon">🐕</span>
                     <span class="text">Add Pet</span>

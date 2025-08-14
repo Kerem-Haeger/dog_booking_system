@@ -18,7 +18,7 @@ from .auth_views import register_view
 
 # Keep the redirect function in the main views.py for now
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from ..models import UserProfile
 
@@ -46,10 +46,7 @@ def redirect_by_role(request):
     elif role == 'manager':
         return redirect('manager_dashboard')
     elif role == 'pending':
-        return HttpResponse(
-            "Your account is pending approval by a manager. "
-            "You will be able to access the system once approved."
-        )
+        return render(request, 'core/pending_approval.html')
     else:
         return HttpResponse("Unknown role.")
 

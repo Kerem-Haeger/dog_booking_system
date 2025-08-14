@@ -1,0 +1,170 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Account Pending Approval - Dog Booking System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pending-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 3rem;
+        background: var(--card-background, #ffffff);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color, #e5e7eb);
+        text-align: center;
+    }
+
+    .pending-icon {
+        font-size: 4rem;
+        color: #f59e0b;
+        margin-bottom: 1.5rem;
+    }
+
+    .pending-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-color, #1f2937);
+        margin-bottom: 1rem;
+    }
+
+    .pending-message {
+        color: var(--secondary-text, #6b7280);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .pending-details {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .pending-details h3 {
+        color: #92400e;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pending-details ul {
+        color: #92400e;
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .pending-details li {
+        margin-bottom: 0.5rem;
+    }
+
+    .pending-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-logout {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-logout:hover {
+        background: #e5e7eb;
+        color: #374151;
+        text-decoration: none;
+    }
+
+    .btn-contact {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-contact:hover {
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+    }
+
+    .status-info {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #0c4a6e;
+    }
+
+    @media (max-width: 640px) {
+        .pending-container {
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .pending-title {
+            font-size: 1.5rem;
+        }
+
+        .pending-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pending-container">
+    <div class="pending-icon">⏳</div>
+    <h1 class="pending-title">Account Pending Approval</h1>
+    <p class="pending-message">
+        Thank you for registering with Riverdog Studio! Your account has been created successfully,
+        but it requires approval from our team before you can access the booking system.
+    </p>
+
+    <div class="pending-details">
+        <h3><i class="fas fa-info-circle"></i> What happens next?</h3>
+        <ul>
+            <li>Our team will review your registration within 24 hours</li>
+            <li>You'll receive an email notification once approved</li>
+            <li>After approval, you can log in and start booking grooming services</li>
+            <li>You'll be able to add your pets and schedule appointments</li>
+        </ul>
+    </div>
+
+    <div class="pending-actions">
+        <a href="{% url 'logout' %}" class="btn-action btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out
+        </a>
+        <a href="mailto:support@riverdogstudio.com" class="btn-action btn-contact">
+            <i class="fas fa-envelope"></i>
+            Contact Support
+        </a>
+    </div>
+
+    <div class="status-info">
+        <strong>Current Status:</strong> Pending Manager Approval<br>
+        <strong>Account Created:</strong> {{ user.date_joined|date:"F j, Y \a\t g:i A" }}
+    </div>
+</div>
+{% endblock %}
