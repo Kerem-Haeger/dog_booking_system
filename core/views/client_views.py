@@ -27,7 +27,9 @@ def client_dashboard(request):
     
     past_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
-        appointment_time__lt=now
+        appointment_time__lt=now,
+        # Include past approved appointments (service was delivered)
+        status__in=['completed', 'canceled', 'approved']
     ).order_by('-appointment_time')  # Most recent first
     
     rejected_appointments = Appointment.objects.filter(
@@ -250,7 +252,7 @@ def cancel_appointment(request, appointment_id):
     
     if request.method == 'POST':
         # Cancel the appointment
-        appointment.status = 'cancelled'
+        appointment.status = 'canceled'
         appointment.save()
         
         # Log audit action
@@ -315,10 +317,10 @@ def edit_appointment(request, appointment_id):
         return redirect('client_dashboard')
     
     # Check if appointment can be edited
-    if appointment.status in ['cancelled', 'completed']:
+    if appointment.status in ['canceled', 'completed']:
         messages.error(
             request,
-            "Cannot edit cancelled or completed appointments."
+            "Cannot edit canceled or completed appointments."
         )
         return redirect('client_dashboard')
     

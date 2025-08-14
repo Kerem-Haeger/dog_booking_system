@@ -8,26 +8,127 @@
 {% endblock %}
 
 {% block content %}
-<h1>Employee Dashboard</h1>
+<div class="dashboard-container employee-dashboard">
+    <div class="dashboard-header-card">
+        <h1 class="dashboard-title">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+        <p class="dashboard-subtitle">Today is {{ today|date:"l, F j, Y" }}</p>
+    </div>
 
-<div class="employee-preview">
-    <h2>👋 Welcome to your workspace!</h2>
-    <p>Your employee features are coming soon. You'll be able to:</p>
+    <!-- Today's Schedule Section -->
+    <div class="dashboard-card">
+        <h2 class="section-title">Today's Schedule</h2>
+        {% if today_appointments %}
+        <div class="appointment-list">
+            {% for appointment in today_appointments %}
+            <div class="appointment-card employee-appointment">
+                <div class="appointment-time">
+                    <strong>{{ appointment.appointment_time|time:"g:i A" }}</strong>
+                </div>
+                <div class="appointment-details">
+                    <h4>{{ appointment.pet_profile.name }}</h4>
+                    <p>{{ appointment.service.service_name }}</p>
+                    <p class="client-info">Owner: {{ appointment.pet_profile.user.first_name }}
+                        {{ appointment.pet_profile.user.last_name }}</p>
+                </div>
+                <div class="appointment-status">
+                    <span class="status-badge status-{{ appointment.status|lower }}">
+                        {{ appointment.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No appointments scheduled for today.</p>
+        </div>
+        {% endif %}
+    </div>
 
-    <div class="feature-grid">
-        <div class="feature-card primary">
-            <div class="feature-title primary">📅 View My Schedule</div>
-            <div class="feature-description">See your assigned appointments and availability</div>
-        </div>
-        <div class="feature-card success">
-            <div class="feature-title success">✅ Update Appointment Status</div>
-            <div class="feature-description">Mark appointments as completed or add notes</div>
-        </div>
-        <div class="feature-card warning">
-            <div class="feature-title warning">⏰ Manage Availability</div>
-            <div class="feature-description">Set your working hours and time off</div>
+    <!-- Quick Actions Section -->
+    <div class="dashboard-card">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="feature-grid">
+            <div class="feature-card primary">
+                <div class="feature-title primary">Update Appointment Status</div>
+                <div class="feature-description">
+                    {% if pending_status_updates > 0 %}
+                    You have {{ pending_status_updates }} appointment{{ pending_status_updates|pluralize }} that may
+                    need status updates.
+                    {% else %}
+                    All appointments are up to date.
+                    {% endif %}
+                </div>
+                <a href="#" class="btn btn-primary btn-sm mt-2">Update Status</a>
+            </div>
+
+            <div class="feature-card success">
+                <div class="feature-title success">Request Time Off</div>
+                <div class="feature-description">
+                    Submit a time-off request for manager approval. Requests are processed within 24 hours.
+                </div>
+                <a href="#" class="btn btn-success btn-sm mt-2">Request Time Off</a>
+            </div>
+
+            <div class="feature-card warning">
+                <div class="feature-title warning">View Full Schedule</div>
+                <div class="feature-description">
+                    See your complete schedule for the week and manage your availability.
+                </div>
+                <a href="#" class="btn btn-warning btn-sm mt-2">View Schedule</a>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- Upcoming Appointments Section -->
+    <div class="dashboard-card">
+        <h2 class="section-title">Upcoming This Week</h2>
+        {% if upcoming_appointments %}
+        <div class="upcoming-list">
+            {% for appointment in upcoming_appointments %}
+            <div class="upcoming-item">
+                <div class="upcoming-date">
+                    {{ appointment.appointment_time|date:"M j" }}
+                    <small>{{ appointment.appointment_time|date:"D" }}</small>
+                </div>
+                <div class="upcoming-details">
+                    <strong>{{ appointment.appointment_time|time:"g:i A" }}</strong> -
+                    {{ appointment.pet_profile.name }}
+                    <br><small>{{ appointment.service.service_name }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No upcoming appointments this week.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Time Off Requests Section -->
+    <div class="dashboard-card">
+        <h2 class="section-title">Recent Time Off Requests</h2>
+        {% if recent_time_off %}
+        <div class="time-off-list">
+            {% for request in recent_time_off %}
+            <div class="time-off-item">
+                <div class="time-off-dates">
+                    {{ request.start_time|date:"M j" }} - {{ request.end_time|date:"M j" }}
+                </div>
+                <div class="time-off-status">
+                    <span class="status-badge status-{{ request.status|lower }}">
+                        {{ request.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No recent time-off requests.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

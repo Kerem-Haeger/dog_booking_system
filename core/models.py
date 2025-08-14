@@ -161,6 +161,7 @@ class Appointment(models.Model):
         ('approved', 'Approved'),
         ('completed', 'Completed'),
         ('canceled', 'Canceled'),
+        ('rejected', 'Rejected'),
     ]
     pet_profile = models.ForeignKey(
         PetProfile,
@@ -213,8 +214,8 @@ class Appointment(models.Model):
         """Check if this appointment can be edited by the client"""
         from django.utils import timezone
         
-        # Cannot edit completed or cancelled appointments
-        if self.status in ['cancelled', 'completed']:
+        # Cannot edit completed or canceled appointments
+        if self.status in ['canceled', 'completed']:
             return False
         
         # Cannot edit if max edits reached
@@ -231,11 +232,11 @@ class Appointment(models.Model):
     
     @property
     def can_cancel(self):
-        """Check if this appointment can be cancelled by the client"""
+        """Check if this appointment can be canceled by the client"""
         from django.utils import timezone
         
-        # Cannot cancel completed or already cancelled appointments
-        if self.status in ['cancelled', 'completed']:
+        # Cannot cancel completed or already canceled appointments
+        if self.status in ['canceled', 'completed']:
             return False
         
         # Cannot cancel within 24 hours

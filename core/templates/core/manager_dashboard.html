@@ -8,12 +8,15 @@
 {% endblock %}
 
 {% block content %}
-<h1>Manager Dashboard</h1>
+<div class="dashboard-header-card">
+    <h1 class="dashboard-title">Manager Dashboard</h1>
+    <p class="dashboard-subtitle">Manage appointments, staff, and business operations</p>
+</div>
 
 <div class="manager-dashboard">
     <!-- Requests Section -->
-    <div class="dashboard-section requests-section">
-        <h2>📋 Pending Requests</h2>
+    <div class="dashboard-card dashboard-section requests-section">
+        <h2 class="section-title">📋 Pending Requests</h2>
         <div class="request-cards">
             <!-- Appointment Requests -->
             <div class="request-card {% if pending_appt_count > 0 %}has-requests{% else %}empty{% endif %}">
@@ -82,8 +85,8 @@
     </div>
 
     <!-- Quick Actions Section -->
-    <div class="dashboard-section actions-section">
-        <h2>📊 Quick Actions</h2>
+    <div class="dashboard-card dashboard-section actions-section">
+        <h2 class="section-title">📊 Quick Actions</h2>
         <div class="quick-actions">
             <a href="{% url 'approve_appointments' %}" class="action-link">
                 <span class="action-icon">📅</span>

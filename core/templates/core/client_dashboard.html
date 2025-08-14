@@ -12,15 +12,15 @@
 <div class="client-dashboard">
     <!-- Main Content Area -->
     <div class="main-content">
-        <div class="dashboard-header">
-            <h1>My Dashboard</h1>
-            <p class="welcome-text">Welcome back! Here's what's coming up for your pets.</p>
+        <div class="dashboard-header-card">
+            <h1 class="dashboard-title">My Dashboard</h1>
+            <p class="dashboard-subtitle">Welcome back! Here's what's coming up for your pets.</p>
         </div>
 
         <!-- Upcoming Appointments (Primary Focus) -->
-        <div class="appointments-primary">
+        <div class="dashboard-card appointments-primary">
             <div class="section-header">
-                <h2>🕒 Upcoming Appointments</h2>
+                <h2 class="section-title">🕒 Upcoming Appointments</h2>
                 {% if upcoming_appointments %}
                 <span class="appointment-count">{{ upcoming_appointments|length }}</span>
                 {% endif %}
@@ -164,8 +164,8 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Quick Actions (Priority) -->
-        <div class="sidebar-card priority">
-            <h3>⚡ Quick Actions</h3>
+        <div class="dashboard-card sidebar-card priority">
+            <h3 class="section-title">⚡ Quick Actions</h3>
             <div class="quick-actions-compact">
                 <a href="{% url 'book_appointment' %}" class="action-button primary">
                     <span class="icon">📅</span>
@@ -179,8 +179,8 @@
         </div>
 
         <!-- My Pets -->
-        <div class="sidebar-card">
-            <h3>🐾 My Pets</h3>
+        <div class="dashboard-card sidebar-card">
+            <h3 class="section-title">🐾 My Pets</h3>
             {% if pets %}
             <div class="pets-compact">
                 {% for pet in pets %}
