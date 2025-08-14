@@ -1,0 +1,298 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Delete User - Manager Dashboard{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Delete User Account</h1>
+        <div class="action-links">
+            <a href="{% url 'manage_users' %}" class="btn btn-outline">
+                Back to User Management
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-section">
+            <div class="warning-card">
+                <div class="warning-header">
+                    <i class="warning-icon">⚠️</i>
+                    <h2>Confirm User Deletion</h2>
+                </div>
+
+                <div class="warning-content">
+                    <p class="warning-text">
+                        You are about to permanently delete the user account for
+                        <strong>{{ target_user.username }}</strong> ({{ target_user.email }}).
+                    </p>
+
+                    <div class="user-summary">
+                        <h3>User Information</h3>
+                        <ul>
+                            <li><strong>Username:</strong> {{ target_user.username }}</li>
+                            <li><strong>Email:</strong> {{ target_user.email }}</li>
+                            <li><strong>Role:</strong> {{ target_profile.get_role_display }}</li>
+                            <li><strong>Joined:</strong> {{ target_user.date_joined|date:"M d, Y" }}</li>
+                            {% if target_user.last_login %}
+                            <li><strong>Last Login:</strong> {{ target_user.last_login|date:"M d, Y" }}</li>
+                            {% else %}
+                            <li><strong>Last Login:</strong> Never</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    {% if pets %}
+                    <div class="impact-section">
+                        <h3>Pet Profiles ({{ pets.count }})</h3>
+                        <p>The following pet profiles will also be deleted:</p>
+                        <ul class="impact-list">
+                            {% for pet in pets %}
+                            <li>
+                                <span class="pet-name">{{ pet.name }}</span>
+                                <span class="status-badge status-{{ pet.status }}">
+                                    {{ pet.get_status_display }}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if future_appointments %}
+                    <div class="impact-section critical">
+                        <h3>Future Appointments ({{ future_appointments.count }})</h3>
+                        <p class="critical-warning">
+                            ⚠️ This user has upcoming appointments that will be cancelled:
+                        </p>
+                        <ul class="impact-list">
+                            {% for appointment in future_appointments %}
+                            <li>
+                                <span class="appointment-info">
+                                    {{ appointment.pet_profile.name }} -
+                                    {{ appointment.service.name }} on
+                                    {{ appointment.appointment_time|date:"M d, Y g:i A" }}
+                                </span>
+                                <span class="status-badge status-{{ appointment.status }}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="consequence-warning">
+                        <h3>⚠️ This action cannot be undone</h3>
+                        <p>Deleting this user will:</p>
+                        <ul>
+                            <li>Permanently remove the user account</li>
+                            <li>Delete all associated pet profiles</li>
+                            <li>Cancel all future appointments</li>
+                            <li>Remove appointment history</li>
+                            <li>Create an audit log entry for tracking</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'manage_users' %}" class="btn btn-outline btn-large">
+                        Cancel
+                    </a>
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-large"
+                            onclick="return confirm('Are you absolutely sure you want to delete {{ target_user.username }}? This cannot be undone!')">
+                            Delete User Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .warning-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--card-background);
+        border: 2px solid #dc3545;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .warning-header {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .warning-icon {
+        font-size: 2rem;
+    }
+
+    .warning-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .warning-content {
+        padding: 2rem;
+    }
+
+    .warning-text {
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .user-summary {
+        background: var(--background-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-summary h3 {
+        margin: 0 0 1rem 0;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .user-summary ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .user-summary li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-summary li:last-child {
+        border-bottom: none;
+    }
+
+    .impact-section {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .impact-section.critical {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .impact-section h3 {
+        margin: 0 0 1rem 0;
+        color: #856404;
+        font-size: 1.1rem;
+    }
+
+    .impact-section.critical h3 {
+        color: #721c24;
+    }
+
+    .critical-warning {
+        color: #721c24;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .impact-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .impact-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .impact-list li:last-child {
+        border-bottom: none;
+    }
+
+    .pet-name,
+    .appointment-info {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .consequence-warning {
+        background: #f8d7da;
+        border: 2px solid #dc3545;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .consequence-warning h3 {
+        color: #721c24;
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+    }
+
+    .consequence-warning p {
+        color: #721c24;
+        margin-bottom: 1rem;
+    }
+
+    .consequence-warning ul {
+        color: #721c24;
+        margin: 0;
+    }
+
+    .consequence-warning li {
+        margin-bottom: 0.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        padding: 2rem;
+        border-top: 1px solid var(--border-color);
+        background: var(--background-color);
+    }
+
+    .btn-large {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .warning-card {
+            margin: 0 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn-large {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

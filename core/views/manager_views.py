@@ -266,14 +266,60 @@ def approve_appointments(request):
 
 @user_passes_test(is_manager)
 def approve_users(request):
-    """Allow managers to approve or reject pending user registrations"""
+    """Allow managers to approve or reject pending users and manage all users"""
+    # Get pending users
     pending_users = UserProfile.objects.filter(
         role='pending'
     ).select_related('user').order_by('created_at')
+    
+    # Get all users except the current manager for comprehensive management
+    all_users = UserProfile.objects.exclude(
+        user=request.user
+    ).select_related('user').prefetch_related(
+        'user__pets'
+    ).order_by('role', 'user__username')
 
     if request.method == 'POST':
-        # Handle bulk actions
-        if 'bulk_approve_clients' in request.POST:
+        # Check if it's a role update (comprehensive management)
+        if 'role_update' in request.POST:
+            # Handle role updates for all users
+            for user_profile in all_users:
+                role_field = f'role_{user_profile.id}'
+                if role_field in request.POST:
+                    new_role = request.POST.get(role_field)
+                    valid_roles = [
+                        choice[0] for choice in UserProfile.USER_ROLES
+                    ]
+                    
+                    if (new_role in valid_roles and 
+                            new_role != user_profile.role):
+                        old_role = user_profile.role
+                        user_profile.role = new_role
+                        user_profile.save()
+                        
+                        # Log the role change
+                        log_audit_action(
+                            user=request.user,
+                            action='user_role_updated',
+                            details={
+                                'target_user': user_profile.user.username,
+                                'old_role': old_role,
+                                'new_role': new_role
+                            },
+                            target_user=user_profile.user,
+                            request=request
+                        )
+                        
+                        messages.success(
+                            request,
+                            f'Updated {user_profile.user.username} role '
+                            f'from {old_role} to {new_role}.'
+                        )
+            
+            return redirect('approve_users')
+        
+        # Handle bulk actions for pending users
+        elif 'bulk_approve_clients' in request.POST:
             for user_profile in pending_users:
                 user_profile.role = 'client'
                 user_profile.save()
@@ -323,7 +369,7 @@ def approve_users(request):
             )
             return redirect('approve_users')
         
-        # Handle individual user actions
+        # Handle individual user actions for pending users
         else:
             for user_profile in pending_users:
                 # Check for individual approve/reject buttons
@@ -385,10 +431,23 @@ def approve_users(request):
     for user_profile in pending_users:
         form = UserApprovalForm(prefix=str(user_profile.id))
         user_forms.append((user_profile, form))
+    
+    # Group all users by role for better organization
+    users_by_role = {}
+    for user_profile in all_users:
+        role = user_profile.role
+        if role not in users_by_role:
+            users_by_role[role] = []
+        users_by_role[role].append(user_profile)
 
-    return render(request, 'core/approve_users.html', {
+    context = {
         'user_forms': user_forms,
-    })
+        'all_users': all_users,
+        'users_by_role': users_by_role,
+        'role_choices': UserProfile.USER_ROLES,
+    }
+
+    return render(request, 'core/approve_users.html', context)
 
 
 @user_passes_test(is_manager)
