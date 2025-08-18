@@ -45,41 +45,6 @@
         {% endif %}
     </div>
 
-    <!-- Quick Actions Section -->
-    <div class="dashboard-card">
-        <h2 class="section-title">Quick Actions</h2>
-        <div class="feature-grid">
-            <div class="feature-card primary">
-                <div class="feature-title primary">Update Appointment Status</div>
-                <div class="feature-description">
-                    {% if pending_status_updates > 0 %}
-                    You have {{ pending_status_updates }} appointment{{ pending_status_updates|pluralize }} that may
-                    need status updates.
-                    {% else %}
-                    All appointments are up to date.
-                    {% endif %}
-                </div>
-                <a href="#" class="btn btn-primary btn-sm mt-2">Update Status</a>
-            </div>
-
-            <div class="feature-card success">
-                <div class="feature-title success">Request Time Off</div>
-                <div class="feature-description">
-                    Submit a time-off request for manager approval. Requests are processed within 24 hours.
-                </div>
-                <a href="#" class="btn btn-success btn-sm mt-2">Request Time Off</a>
-            </div>
-
-            <div class="feature-card warning">
-                <div class="feature-title warning">View Full Schedule</div>
-                <div class="feature-description">
-                    See your complete schedule for the week and manage your availability.
-                </div>
-                <a href="#" class="btn btn-warning btn-sm mt-2">View Schedule</a>
-            </div>
-        </div>
-    </div>
-
     <!-- Upcoming Appointments Section -->
     <div class="dashboard-card">
         <h2 class="section-title">Upcoming This Week</h2>
@@ -102,31 +67,6 @@
         {% else %}
         <div class="empty-state">
             <p>No upcoming appointments this week.</p>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Time Off Requests Section -->
-    <div class="dashboard-card">
-        <h2 class="section-title">Recent Time Off Requests</h2>
-        {% if recent_time_off %}
-        <div class="time-off-list">
-            {% for request in recent_time_off %}
-            <div class="time-off-item">
-                <div class="time-off-dates">
-                    {{ request.start_time|date:"M j" }} - {{ request.end_time|date:"M j" }}
-                </div>
-                <div class="time-off-status">
-                    <span class="status-badge status-{{ request.status|lower }}">
-                        {{ request.get_status_display }}
-                    </span>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <p>No recent time-off requests.</p>
         </div>
         {% endif %}
     </div>

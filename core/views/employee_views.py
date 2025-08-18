@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
-from ..models import Appointment, TimeOffRequest, UserProfile
+from ..models import Appointment, UserProfile
 
 
 @login_required
@@ -32,24 +32,10 @@ def employee_dashboard(request):
         appointment_time__lte=next_week
     ).order_by('appointment_time')[:5]
     
-    # Get recent time-off requests
-    recent_time_off = TimeOffRequest.objects.filter(
-        user_profile=user_profile
-    ).order_by('-requested_at')[:3]
-    
-    # Count pending appointments that need status updates
-    pending_status_updates = Appointment.objects.filter(
-        employee=user_profile,
-        appointment_time__lte=timezone.now(),
-        status__in=['pending', 'approved']
-    ).count()
-    
     context = {
         'user_profile': user_profile,
         'today_appointments': today_appointments,
         'upcoming_appointments': upcoming_appointments,
-        'recent_time_off': recent_time_off,
-        'pending_status_updates': pending_status_updates,
         'today': today,
     }
     
