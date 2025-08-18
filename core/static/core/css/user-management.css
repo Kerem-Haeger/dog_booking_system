@@ -1,5 +1,12 @@
 /* User Management Styles */
 
+/* Increase max-width for management pages to utilize more screen space */
+body .main-content {
+    max-width: 1400px !important;
+    width: 100%;
+    margin: 0 auto;
+}
+
 /* Role-specific status badge styles */
 .role-client {
     background: #e3f2fd;
