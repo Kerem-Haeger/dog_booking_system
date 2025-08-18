@@ -42,22 +42,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    function toggleWarning() {
-        const warning = document.getElementById('cancelWarning');
-        if (warning) {
-            warning.classList.toggle('hidden');
-        }
-    }
-
-    // Prevent base.js from auto-dismissing our custom confirmation
-    document.addEventListener('DOMContentLoaded', function () {
-        // Remove our custom confirmation from automatic alert processing
-        const cancelWarning = document.getElementById('cancelWarning');
-        if (cancelWarning) {
-            // Remove any alert classes that might trigger auto-dismiss
-            cancelWarning.classList.remove('alert', 'alert-warning');
-        }
-    });
-</script>
+<script src="{% static 'core/js/ui-components.js' %}"></script>
 {% endblock %}

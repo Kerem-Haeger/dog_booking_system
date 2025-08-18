@@ -68,95 +68,12 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="{% static 'core/js/base.js' %}"></script>
+<script src="{% static 'core/js/appointment-booking.js' %}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const serviceField = document.getElementById("id_service");
-        const timeSlotInput = document.getElementById("id_time_slot");
-
-        const calendarEl = document.getElementById('calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            allDaySlot: false,
-            selectable: true,
-            slotMinTime: "09:00:00",
-            slotMaxTime: "18:01:00",
-            timeZone: 'UTC',
-            hiddenDays: [0], // Sundays closed!
-            validRange: {
-                start: new Date() // Prevent navigation to past dates
-            },
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            height: 'auto',
-            events: function (info, successCallback, failureCallback) {
-                const serviceId = serviceField.value;
-                if (!serviceId) return;
-
-                fetch(
-                        `/ajax/available-slots/?service_id=${serviceId}&start=${info.startStr}&end=${info.endStr}`
-                    )
-                    .then(response => response.json())
-                    .then(data => {
-                        successCallback(data);
-                    })
-                    .catch(error => {
-                        console.error("Error loading slots:", error);
-                        failureCallback(error);
-                    });
-            },
-            eventClick: function (info) {
-                timeSlotInput.value = info.event.start.toISOString();
-                calendar.getEvents().forEach(e => e.setProp('backgroundColor', '#3788d8'));
-                info.event.setProp('backgroundColor', '#28a745');
-
-                showToast('Time slot selected: ' + info.event.start.toLocaleString());
-            }
-        });
-
-        calendar.render();
-
-        // Refetch slots when service changes
-        serviceField.addEventListener("change", () => {
-            calendar.refetchEvents();
-            updatePrice();
-        });
-
-        // Price update functionality
-        const petField = document.getElementById("id_pet_profile");
-        const priceDisplay = document.getElementById("price-display");
-
-        function updatePrice() {
-            const petId = petField.value;
-            const serviceId = serviceField.value;
-
-            if (!petId || !serviceId) {
-                priceDisplay.innerHTML = "<strong>Price:</strong> Please choose your pet and service first!";
-                priceDisplay.className = "price-display";
-                return;
-            }
-
-            fetch(`/ajax/get-service-price/?pet_id=${petId}&service_id=${serviceId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.price) {
-                        priceDisplay.innerHTML = `<strong>Price:</strong> £${data.price}`;
-                        priceDisplay.className = "price-display price-available";
-                    } else {
-                        priceDisplay.innerHTML =
-                            "<strong>Price:</strong> Not available for this selection.";
-                        priceDisplay.className = "price-display price-unavailable";
-                    }
-                })
-                .catch(error => {
-                    priceDisplay.innerHTML = "<strong>Price:</strong> Error fetching price.";
-                    priceDisplay.className = "price-display price-error";
-                });
-        }
-
-        petField.addEventListener("change", updatePrice);
-    });
+    // Set up URLs for the booking JavaScript
+    window.bookingUrls = {
+        available_slots: "/ajax/available-slots/",
+        get_price: "/ajax/get-service-price/"
+    };
 </script>
 {% endblock %}

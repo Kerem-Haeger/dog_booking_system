@@ -96,6 +96,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'core/js/ui-components.js' %}"></script>
 <script>
     function confirmDelete() {
         const userName = "{{ user_profile.user.get_full_name|default:user_profile.user.username }}";

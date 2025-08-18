@@ -93,151 +93,17 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="{% static 'core/js/appointment-booking.js' %}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const serviceField = document.getElementById("id_service");
-        const petField = document.getElementById("id_pet_profile");
-        const timeSlotInput = document.getElementById("id_time_slot");
-        const priceDisplay = document.getElementById("price-display");
-        const submitBtn = document.getElementById("submit-btn");
-        const form = document.querySelector(".booking-form");
+    // Set up URLs and options for the booking JavaScript
+    window.bookingUrls = {
+        available_slots: "/ajax/available-slots/",
+        get_price: "/ajax/get-service-price/"
+    };
 
-        // Make pet field readonly but not disabled (so it submits with form)
-        petField.style.pointerEvents = 'none';
-        petField.style.backgroundColor = '#f8f9fa';
-        petField.style.color = '#6c757d';
-
-        // Form submission validation
-        form.addEventListener('submit', function (e) {
-            if (!timeSlotInput.value) {
-                e.preventDefault();
-                showToast('Please select a new time slot from the calendar', 'error');
-                return false;
-            }
-
-            // Disable submit button to prevent double submission
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        });
-
-        const calendarEl = document.getElementById('calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            allDaySlot: false,
-            selectable: true,
-            slotMinTime: "09:00:00",
-            slotMaxTime: "18:01:00",
-            timeZone: 'UTC',
-            hiddenDays: [0], // Sundays closed
-            validRange: {
-                start: new Date() // Prevent navigation to past dates
-            },
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            height: 'auto',
-            events: function (info, successCallback, failureCallback) {
-                const serviceId = serviceField.value;
-                if (!serviceId) return;
-
-                fetch(
-                        `/ajax/available-slots/?service_id=${serviceId}&start=${info.startStr}&end=${info.endStr}`
-                    )
-                    .then(response => response.json())
-                    .then(data => {
-                        successCallback(data);
-                    })
-                    .catch(error => {
-                        console.error("Error loading slots:", error);
-                        failureCallback(error);
-                    });
-            },
-            eventClick: function (info) {
-                timeSlotInput.value = info.event.start.toISOString();
-                calendar.getEvents().forEach(e => e.setProp('backgroundColor', '#3788d8'));
-                info.event.setProp('backgroundColor', '#28a745');
-
-                showToast('New time slot selected: ' + info.event.start.toLocaleString());
-            }
-        });
-
-        calendar.render();
-
-        // Refetch slots when service changes
-        serviceField.addEventListener("change", () => {
-            calendar.refetchEvents();
-            updatePrice();
-        });
-
-        // Price update functionality
-        function updatePrice() {
-            const petId = petField.value;
-            const serviceId = serviceField.value;
-
-            if (!petId || !serviceId) {
-                priceDisplay.innerHTML = "<strong>Price:</strong> Please select a service.";
-                priceDisplay.className = "price-display";
-                return;
-            }
-
-            fetch(`/ajax/get-service-price/?pet_id=${petId}&service_id=${serviceId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.price) {
-                        priceDisplay.innerHTML = `<strong>New Price:</strong> £${data.price}`;
-                        priceDisplay.className = "price-display price-available";
-                    } else {
-                        priceDisplay.innerHTML =
-                            "<strong>Price:</strong> Not available for this selection.";
-                        priceDisplay.className = "price-display price-unavailable";
-                    }
-                })
-                .catch(error => {
-                    priceDisplay.innerHTML = "<strong>Price:</strong> Error fetching price.";
-                    priceDisplay.className = "price-display price-error";
-                });
-        }
-
-        // Initialize price display
-        updatePrice();
-
-        // Set current appointment time as selected (if calendar is showing current week)
-        const currentTime = new Date('{{ appointment.appointment_time|date:"c" }}');
-
-        // Show toast helper function
-        function showToast(message, type = 'success') {
-            // Simple toast notification
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
-            toast.textContent = message;
-
-            const bgColor = type === 'error' ? '#dc3545' : '#28a745';
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${bgColor};
-                color: white;
-                padding: 1rem;
-                border-radius: 4px;
-                z-index: 1000;
-                transition: opacity 0.3s;
-                max-width: 300px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            `;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    if (document.body.contains(toast)) {
-                        document.body.removeChild(toast);
-                    }
-                }, 300);
-            }, 4000);
-        }
-    });
+    window.bookingOptions = {
+        isEditMode: true,
+        currentAppointmentTime: '{{ appointment.appointment_time|date:"c" }}'
+    };
 </script>
 {% endblock %}
