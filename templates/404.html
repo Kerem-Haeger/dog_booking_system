@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found - Riverdog Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">🐕</div>
+    <div class="error-code">404</div>
+    <h1 class="error-title">Oops! This Page Went to the Dog Park</h1>
+    <p class="error-message">
+        We can't seem to find the page you're looking for. It might have wandered off to chase squirrels!
+        Don't worry though - we'll help you get back on track.
+    </p>
+
+    <div class="error-suggestions">
+        <h3><i class="fas fa-lightbulb"></i> Here's what you can try:</h3>
+        <ul>
+            <li>Check the URL for any spelling mistakes (typos happen to the best of us!)</li>
+            <li>Use the navigation menu above to find what you're looking for</li>
+            <li>Go back to your dashboard and start fresh</li>
+            <li>If you think this is a mistake, let us know!</li>
+        </ul>
+    </div>
+
+    <div class="error-actions">
+        {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'client' %}
+        <a href="{% url 'client_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to My Dashboard
+        </a>
+        {% elif user.userprofile.role == 'employee' %}
+        <a href="{% url 'employee_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Employee Dashboard
+        </a>
+        {% elif user.userprofile.role == 'manager' %}
+        <a href="{% url 'manager_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Manager Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'redirect_by_role' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-action btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+        </a>
+        {% endif %}
+
+        <a href="javascript:history.back()" class="btn-action btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Go Back
+        </a>
+    </div>
+
+    <div class="cute-footer">
+        <span>🐶</span>
+        <span>No pets were harmed in the making of this error page!</span>
+        <span>🐱</span>
+    </div>
+</div>
+{% endblock %}

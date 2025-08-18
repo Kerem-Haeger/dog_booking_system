@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Access Forbidden - Riverdog Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon wiggle">🚫</div>
+    <div class="error-code forbidden-error">403</div>
+    <h1 class="error-title">Woof! This Area is Off-Limits</h1>
+    <p class="error-message">
+        Sorry, but this area is like the groomer's supply closet - for authorized personnel only!
+        It looks like you don't have permission to access this page.
+    </p>
+
+    <div class="error-details">
+        <h3><i class="fas fa-shield-alt"></i> Why can't I access this?</h3>
+        <ul>
+            <li>You might not be logged in to your account</li>
+            <li>Your account might not have the required permissions</li>
+            <li>This page might be restricted to certain user types (clients, employees, managers)</li>
+            <li>Your session might have expired</li>
+        </ul>
+    </div>
+
+    <div class="error-actions">
+        {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'client' %}
+        <a href="{% url 'client_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to My Dashboard
+        </a>
+        {% elif user.userprofile.role == 'employee' %}
+        <a href="{% url 'employee_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Employee Dashboard
+        </a>
+        {% elif user.userprofile.role == 'manager' %}
+        <a href="{% url 'manager_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Manager Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'redirect_by_role' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="btn-action btn-secondary">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out & Try Again
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-action btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+        </a>
+
+        <a href="javascript:history.back()" class="btn-action btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Go Back
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="cute-footer">
+        <span>🔒</span>
+        <span>Even the best guard dogs have areas they can't enter!</span>
+        <span>🐕‍🦺</span>
+    </div>
+</div>
+{% endblock %}

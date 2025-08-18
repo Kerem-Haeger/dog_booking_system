@@ -10,7 +10,9 @@ from .views.auth_views import register_view
 from .views.manager_views import (
     edit_pet as manager_edit_pet,
     delete_pet as manager_delete_pet,
-    update_pet_status
+    update_pet_status,
+    update_user_role,
+    delete_user
 )
 
 urlpatterns = [
@@ -40,6 +42,10 @@ urlpatterns = [
      path('manager/pets/<int:pet_id>/update-status/', update_pet_status,
           name='update_pet_status'),
      path('manager/users/pending/', views.approve_users, name='approve_users'),
+     path('manager/users/<int:user_id>/update-role/', update_user_role,
+          name='update_user_role'),
+     path('manager/users/<int:user_id>/delete/', delete_user,
+          name='delete_user'),
      path('manager/services/', views.manage_services, name='manage_services'),
      path('manager/services/create/', views.create_service, name='create_service'),
      path('manager/services/<int:service_id>/edit/', views.edit_service, name='edit_service'),

@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Server Error - Riverdog Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon shake">🙈</div>
+    <div class="error-code server-error">500</div>
+    <h1 class="error-title">Ruff! Something Went Wrong</h1>
+    <p class="error-message">
+        Our server had a little "accident" - kind of like when a puppy gets too excited!
+        Don't worry, our tech team is on it faster than a dog chasing a tennis ball.
+    </p>
+
+    <div class="error-details">
+        <h3><i class="fas fa-tools"></i> What happened?</h3>
+        <p>
+            Our server encountered an unexpected error while processing your request.
+            This has been automatically reported to our team, and we're working to fix it right away!
+        </p>
+    </div>
+
+    <div class="error-actions">
+        {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'client' %}
+        <a href="{% url 'client_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to My Dashboard
+        </a>
+        {% elif user.userprofile.role == 'employee' %}
+        <a href="{% url 'employee_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Employee Dashboard
+        </a>
+        {% elif user.userprofile.role == 'manager' %}
+        <a href="{% url 'manager_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Manager Dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'redirect_by_role' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-action btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+        </a>
+        {% endif %}
+
+        <a href="javascript:location.reload()" class="btn-action btn-secondary">
+            <i class="fas fa-redo"></i>
+            Try Again
+        </a>
+    </div>
+
+    <div class="cute-footer">
+        <span>🛠️</span>
+        <span>Our team is fetching a solution as we speak!</span>
+        <span>🐕‍🦺</span>
+    </div>
+</div>
+{% endblock %}

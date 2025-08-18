@@ -1,0 +1,316 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Delete User - Dog Booking System{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Delete User Account</h1>
+    <p class="dashboard-subtitle">Permanently remove user from the system</p>
+</div>
+
+<div class="delete-container">
+    <div class="warning-card">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+            <h2>Are you sure you want to delete this user?</h2>
+            <p>This action cannot be undone. The user account and all associated data will be permanently removed.</p>
+        </div>
+    </div>
+
+    <div class="user-info-card">
+        <h3>User Information</h3>
+        <div class="user-details">
+            <div class="detail-row">
+                <label>Full Name:</label>
+                <span>{{ user_profile.user.get_full_name|default:"Not provided" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Username:</label>
+                <span>{{ user_profile.user.username }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Email:</label>
+                <span>{{ user_profile.user.email }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Role:</label>
+                <span class="role-badge {{ user_profile.role }}">{{ user_profile.role|capfirst }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Phone:</label>
+                <span>{{ user_profile.phone|default:"Not provided" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Date Joined:</label>
+                <span>{{ user_profile.user.date_joined|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Last Login:</label>
+                <span>{{ user_profile.user.last_login|date:"M d, Y H:i"|default:"Never" }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if pets_count > 0 or appointments_count > 0 %}
+    <div class="impact-warning">
+        <div class="impact-icon">⚠️</div>
+        <div class="impact-content">
+            <h4>Impact of Deletion</h4>
+            {% if pets_count > 0 %}
+            <p>This user has <strong>{{ pets_count }}</strong> pet profile(s) in the system.</p>
+            {% endif %}
+            {% if appointments_count > 0 %}
+            <p>This user has <strong>{{ appointments_count }}</strong> appointment(s) in the system.</p>
+            {% endif %}
+            <p><strong>Deleting this user will also remove:</strong></p>
+            <ul>
+                {% if pets_count > 0 %}
+                <li>All {{ pets_count }} pet profile(s)</li>
+                {% endif %}
+                {% if appointments_count > 0 %}
+                <li>All {{ appointments_count }} appointment(s)</li>
+                {% endif %}
+                <li>All user preferences and settings</li>
+                <li>All audit logs where this user is referenced</li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="action-buttons">
+        <form method="post" class="delete-form" onsubmit="return confirmDelete()">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                🗑️ Yes, Delete User
+            </button>
+        </form>
+        <a href="{% url 'approve_users' %}" class="btn btn-secondary">
+            ❌ Cancel
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .warning-card {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .warning-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .warning-content h2 {
+        color: #dc2626;
+        margin: 0 0 8px 0;
+        font-size: 18px;
+    }
+
+    .warning-content p {
+        color: #991b1b;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .user-info-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .user-info-card h3 {
+        margin: 0 0 16px 0;
+        color: #374151;
+        font-size: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+    }
+
+    .detail-row label {
+        font-weight: 600;
+        color: #374151;
+        min-width: 120px;
+    }
+
+    .detail-row span {
+        color: #6b7280;
+        text-align: right;
+        flex: 1;
+    }
+
+    .role-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .role-badge.manager {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .role-badge.employee {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .role-badge.client {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .impact-warning {
+        background: #fffbeb;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .impact-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .impact-content h4 {
+        color: #d97706;
+        margin: 0 0 8px 0;
+        font-size: 16px;
+    }
+
+    .impact-content p {
+        color: #92400e;
+        margin: 0 0 8px 0;
+        line-height: 1.5;
+    }
+
+    .impact-content ul {
+        color: #92400e;
+        margin: 8px 0 0 20px;
+        padding: 0;
+    }
+
+    .impact-content li {
+        margin-bottom: 4px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .delete-form {
+        display: inline-block;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #4b5563;
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .delete-container {
+            margin: 0 16px;
+            padding: 16px;
+        }
+
+        .warning-card,
+        .impact-warning {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .detail-row span {
+            text-align: left;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmDelete() {
+        const userName = "{{ user_profile.user.get_full_name|default:user_profile.user.username }}";
+        const message =
+            `Are you absolutely sure you want to delete the user "${userName}"? This action cannot be undone and will remove all associated pets, appointments, and data.`;
+        return confirm(message);
+    }
+</script>
+{% endblock %}

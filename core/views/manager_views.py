@@ -807,3 +807,93 @@ def update_pet_status(request, pet_id):
             messages.error(request, 'Invalid status provided.')
     
     return redirect('approve_pets')
+
+
+@user_passes_test(is_manager)
+def update_user_role(request, user_id):
+    """Allow manager to update a single user's role"""
+    user_profile = get_object_or_404(UserProfile, id=user_id)
+    
+    if request.method == 'POST':
+        new_role = request.POST.get('role')
+        
+        if new_role in [choice[0] for choice in UserProfile.USER_ROLES]:
+            old_role = user_profile.role
+            user_profile.role = new_role
+            user_profile.save()
+            
+            # Log the role change
+            log_audit_action(
+                user=request.user,
+                action='user_role_updated',
+                details={
+                    'old_role': old_role,
+                    'new_role': new_role,
+                    'target_username': user_profile.user.username
+                },
+                target_user=user_profile.user,
+                request=request
+            )
+            
+            user_display_name = (user_profile.user.get_full_name() or 
+                                 user_profile.user.username)
+            messages.success(
+                request,
+                f'Role for {user_display_name} updated from {old_role} to {new_role}.'
+            )
+        else:
+            messages.error(request, 'Invalid role selected.')
+    
+    return redirect('approve_users')
+
+
+@user_passes_test(is_manager)
+def delete_user(request, user_id):
+    """Allow manager to delete a user account"""
+    user_profile = get_object_or_404(UserProfile, id=user_id)
+    user = user_profile.user
+    
+    if request.method == 'POST':
+        username = user.username
+        full_name = user.get_full_name() or username
+        
+        # Check for related data
+        pets_count = user.pets.count()
+        appointments_count = sum(
+            pet.appointment_set.count() for pet in user.pets.all()
+        )
+        
+        # Log the deletion action before deleting
+        log_audit_action(
+            user=request.user,
+            action='user_deleted',
+            details={
+                'username': username,
+                'full_name': full_name,
+                'role': user_profile.role,
+                'pets_count': pets_count,
+                'appointments_count': appointments_count,
+                'reason': 'Manager deletion'
+            },
+            target_user=user,
+            request=request
+        )
+        
+        # Delete user (cascades to UserProfile and related data)
+        user.delete()
+        
+        messages.success(
+            request,
+            f'User "{full_name}" has been permanently deleted along with '
+            f'{pets_count} pet(s) and {appointments_count} appointment(s).'
+        )
+        return redirect('approve_users')
+    
+    context = {
+        'user_profile': user_profile,
+        'pets_count': user.pets.count(),
+        'appointments_count': sum(
+            pet.appointment_set.count() for pet in user.pets.all()
+        ),
+    }
+    return render(request, 'core/manager_delete_user.html', context)

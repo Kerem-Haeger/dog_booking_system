@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Bad Request - Riverdog Studio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/error_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">🤔</div>
+    <div class="error-code">400</div>
+    <h1 class="error-title">Woof! That Request Was a Bit Ruff</h1>
+    <p class="error-message">
+        Something about your request didn't quite sit right with our server - kind of like when a dog
+        tilts their head in confusion! Let's get this sorted out.
+    </p>
+
+    <div class="error-details">
+        <h3><i class="fas fa-exclamation-triangle"></i> What might have gone wrong?</h3>
+        <ul>
+            <li>Missing or incorrect form data</li>
+            <li>Invalid file upload format or size</li>
+            <li>Malformed request parameters</li>
+            <li>Character encoding issues in your input</li>
+        </ul>
+    </div>
+
+    <div class="error-suggestions">
+        <h3><i class="fas fa-lightbulb"></i> How to fix this:</h3>
+        <ul>
+            <li>Double-check all required fields are filled out correctly</li>
+            <li>Make sure uploaded files are in the correct format and not too large</li>
+            <li>Try refreshing the page and submitting again</li>
+            <li>If you copied and pasted anything, try typing it manually</li>
+            <li>Clear your browser cache and cookies if the problem persists</li>
+        </ul>
+    </div>
+
+    <div class="error-actions">
+        {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'client' %}
+        <a href="{% url 'client_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% elif user.userprofile.role == 'employee' %}
+        <a href="{% url 'employee_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% elif user.userprofile.role == 'manager' %}
+        <a href="{% url 'manager_dashboard' %}" class="btn-action btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Dashboard
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-action btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+        </a>
+        {% endif %}
+
+        <a href="javascript:history.back()" class="btn-action btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Go Back & Try Again
+        </a>
+    </div>
+
+    <div class="cute-footer">
+        <span>🎾</span>
+        <span>Sometimes the best fetch attempts need a second try!</span>
+        <span>🐕</span>
+    </div>
+</div>
+{% endblock %}
