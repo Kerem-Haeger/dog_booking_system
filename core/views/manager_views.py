@@ -11,7 +11,6 @@ from ..forms import (
     PetApprovalForm, AppointmentApprovalForm, UserApprovalForm, 
     ServiceForm, ServicePriceForm, PetProfileManagerForm
 )
-from ..utils import log_audit_action
 from .base import is_manager
 
 
@@ -72,33 +71,8 @@ def approve_pets(request):
                     pet.profile_status = 'verified'
                     pet.size = size
                     pet.verified_at = timezone.now()
-                    
-                    # Log audit action
-                    log_audit_action(
-                        user=request.user,
-                        action='pet_approved',
-                        target_user=pet.user,
-                        details={
-                            'pet_id': pet.id,
-                            'pet_name': pet.name,
-                            'assigned_size': size
-                        },
-                        request=request
-                    )
                 elif decision == 'reject':
                     pet.profile_status = 'rejected'
-                    
-                    # Log audit action
-                    log_audit_action(
-                        user=request.user,
-                        action='pet_rejected',
-                        target_user=pet.user,
-                        details={
-                            'pet_id': pet.id,
-                            'pet_name': pet.name
-                        },
-                        request=request
-                    )
 
                 pet.save()
 
@@ -165,22 +139,6 @@ def approve_appointments(request):
                         available_time=False
                     )
 
-                # Log audit action
-                log_audit_action(
-                    user=request.user,
-                    action='appointment_approved',
-                    target_user=selected_appointment.pet_profile.user,
-                    details={
-                        'appointment_id': selected_appointment.id,
-                        'pet_name': selected_appointment.pet_profile.name,
-                        'service': selected_appointment.service.name,
-                        'employee': selected_employee.user.username,
-                        'appointment_time':
-                            selected_appointment.appointment_time.isoformat()
-                    },
-                    request=request
-                )
-
                 success_msg = (f"Appointment approved and assigned to "
                                f"{selected_employee.user.username}. "
                                f"Page refreshed to update availability.")
@@ -191,21 +149,6 @@ def approve_appointments(request):
         elif decision == 'reject':
             selected_appointment.status = 'rejected'
             selected_appointment.save()
-            
-            # Log audit action
-            log_audit_action(
-                user=request.user,
-                action='appointment_rejected',
-                target_user=selected_appointment.pet_profile.user,
-                details={
-                    'appointment_id': selected_appointment.id,
-                    'pet_name': selected_appointment.pet_profile.name,
-                    'service': selected_appointment.service.name,
-                    'appointment_time':
-                        selected_appointment.appointment_time.isoformat()
-                },
-                request=request
-            )
             
             messages.warning(request, "Appointment was rejected.")
 
@@ -297,19 +240,6 @@ def approve_users(request):
                         user_profile.role = new_role
                         user_profile.save()
                         
-                        # Log the role change
-                        log_audit_action(
-                            user=request.user,
-                            action='user_role_updated',
-                            details={
-                                'target_user': user_profile.user.username,
-                                'old_role': old_role,
-                                'new_role': new_role
-                            },
-                            target_user=user_profile.user,
-                            request=request
-                        )
-                        
                         messages.success(
                             request,
                             f'Updated {user_profile.user.username} role '
@@ -323,19 +253,6 @@ def approve_users(request):
             for user_profile in pending_users:
                 user_profile.role = 'client'
                 user_profile.save()
-                
-                # Log audit action
-                log_audit_action(
-                    user=request.user,
-                    action='user_approved',
-                    details={
-                        'approved_user': user_profile.user.username,
-                        'assigned_role': 'client',
-                        'method': 'bulk_approval'
-                    },
-                    target_user=user_profile.user,
-                    request=request
-                )
             
             messages.success(
                 request,
@@ -345,19 +262,6 @@ def approve_users(request):
         
         elif 'bulk_reject' in request.POST:
             count = pending_users.count()
-            
-            # Log audit actions before deletion
-            for user_profile in pending_users:
-                log_audit_action(
-                    user=request.user,
-                    action='user_rejected',
-                    details={
-                        'rejected_user': user_profile.user.username,
-                        'reason': 'Bulk rejection by manager'
-                    },
-                    target_user=user_profile.user,
-                    request=request
-                )
             
             # Delete all pending users
             for user_profile in pending_users:
@@ -384,18 +288,6 @@ def approve_users(request):
                     user_profile.role = role
                     user_profile.save()
                     
-                    # Log audit action
-                    log_audit_action(
-                        user=request.user,
-                        action='user_approved',
-                        details={
-                            'approved_user': user_profile.user.username,
-                            'assigned_role': role
-                        },
-                        target_user=user_profile.user,
-                        request=request
-                    )
-                    
                     messages.success(
                         request,
                         f'User {user_profile.user.username} approved as {role}.'
@@ -404,18 +296,6 @@ def approve_users(request):
                 
                 elif reject_key in request.POST:
                     username = user_profile.user.username
-                    
-                    # Log audit action before deletion
-                    log_audit_action(
-                        user=request.user,
-                        action='user_rejected',
-                        details={
-                            'rejected_user': username,
-                            'reason': 'Individual rejection by manager'
-                        },
-                        target_user=user_profile.user,
-                        request=request
-                    )
                     
                     # Delete the user account
                     user_profile.user.delete()
@@ -468,18 +348,6 @@ def create_service(request):
         if form.is_valid():
             service = form.save()
             
-            # Log audit action
-            log_audit_action(
-                user=request.user,
-                action='service_created',
-                details={
-                    'service_name': service.name,
-                    'duration': str(service.duration),
-                    'allowed_times': service.allowed_start_times
-                },
-                request=request
-            )
-            
             messages.success(
                 request,
                 f'Service "{service.name}" created successfully!'
@@ -501,21 +369,7 @@ def edit_service(request, service_id):
     if request.method == 'POST':
         form = ServiceForm(request.POST, instance=service)
         if form.is_valid():
-            old_name = service.name
             service = form.save()
-            
-            # Log audit action
-            log_audit_action(
-                user=request.user,
-                action='service_updated',
-                details={
-                    'service_name': service.name,
-                    'old_name': old_name if old_name != service.name else None,
-                    'duration': str(service.duration),
-                    'is_active': service.is_active
-                },
-                request=request
-            )
             
             messages.success(
                 request,
@@ -574,19 +428,6 @@ def edit_service_pricing(request, service_id):
             else:
                 price_obj.save()
                 
-                # Log audit action
-                action = 'service_pricing_updated' if price_instance else 'service_pricing_added'
-                log_audit_action(
-                    user=request.user,
-                    action=action,
-                    details={
-                        'service_name': service.name,
-                        'size': price_obj.get_size_display(),
-                        'price': str(price_obj.price)
-                    },
-                    request=request
-                )
-                
                 action_text = 'updated' if price_instance else 'added'
                 messages.success(
                     request,
@@ -617,17 +458,6 @@ def toggle_service_status(request, service_id):
         
         status = "activated" if service.is_active else "deactivated"
         
-        # Log audit action
-        log_audit_action(
-            user=request.user,
-            action='service_status_changed',
-            details={
-                'service_name': service.name,
-                'new_status': 'active' if service.is_active else 'inactive'
-            },
-            request=request
-        )
-        
         messages.success(
             request,
             f'Service "{service.name}" has been {status}!'
@@ -647,19 +477,6 @@ def delete_service(request, service_id):
         # Count related appointments
         related_appointments = Appointment.objects.filter(service=service)
         appointment_count = related_appointments.count()
-        
-        # Log the deletion action before deleting
-        log_audit_action(
-            user=request.user,
-            action='service_deleted',
-            details={
-                'service_name': service_name,
-                'service_description': service.description,
-                'related_appointments': appointment_count,
-                'reason': 'Manager deletion'
-            },
-            request=request
-        )
         
         # Delete the service (this will cascade to related appointments and prices)
         service.delete()
@@ -694,19 +511,6 @@ def edit_pet(request, pet_id):
         if form.is_valid():
             updated_pet = form.save()
             
-            # Log the edit action
-            log_audit_action(
-                user=request.user,
-                action='pet_edited',
-                details={
-                    'pet_name': updated_pet.name,
-                    'pet_owner': updated_pet.user.username,
-                    'changes': form.changed_data
-                },
-                target_user=updated_pet.user,
-                request=request
-            )
-            
             messages.success(
                 request,
                 f'Pet "{updated_pet.name}" has been updated successfully.'
@@ -735,21 +539,6 @@ def delete_pet(request, pet_id):
     
     if request.method == 'POST':
         pet_name = pet.name
-        pet_owner = pet.user.username
-        
-        # Log the deletion action before deleting
-        log_audit_action(
-            user=request.user,
-            action='pet_deleted',
-            details={
-                'pet_name': pet_name,
-                'pet_owner': pet_owner,
-                'pet_breed': pet.breed,
-                'reason': 'Manager deletion'
-            },
-            target_user=pet.user,
-            request=request
-        )
         
         pet.delete()
         
@@ -785,20 +574,6 @@ def update_pet_status(request, pet_id):
             
             pet.save()
             
-            # Log the status change
-            log_audit_action(
-                user=request.user,
-                action='pet_status_updated',
-                details={
-                    'pet_name': pet.name,
-                    'pet_owner': pet.user.username,
-                    'old_status': old_status,
-                    'new_status': new_status
-                },
-                target_user=pet.user,
-                request=request
-            )
-            
             messages.success(
                 request,
                 f'Pet "{pet.name}" status updated to {new_status}.'
@@ -821,19 +596,6 @@ def update_user_role(request, user_id):
             old_role = user_profile.role
             user_profile.role = new_role
             user_profile.save()
-            
-            # Log the role change
-            log_audit_action(
-                user=request.user,
-                action='user_role_updated',
-                details={
-                    'old_role': old_role,
-                    'new_role': new_role,
-                    'target_username': user_profile.user.username
-                },
-                target_user=user_profile.user,
-                request=request
-            )
             
             user_display_name = (user_profile.user.get_full_name() or 
                                  user_profile.user.username)
@@ -861,22 +623,6 @@ def delete_user(request, user_id):
         pets_count = user.pets.count()
         appointments_count = sum(
             pet.appointment_set.count() for pet in user.pets.all()
-        )
-        
-        # Log the deletion action before deleting
-        log_audit_action(
-            user=request.user,
-            action='user_deleted',
-            details={
-                'username': username,
-                'full_name': full_name,
-                'role': user_profile.role,
-                'pets_count': pets_count,
-                'appointments_count': appointments_count,
-                'reason': 'Manager deletion'
-            },
-            target_user=user,
-            request=request
         )
         
         # Delete user (cascades to UserProfile and related data)

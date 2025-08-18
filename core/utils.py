@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
-from .models import UserProfile, EmployeeCalendar, TimeOffRequest, AuditLog
+from .models import UserProfile, EmployeeCalendar, TimeOffRequest
 
 
 def appointments_overlap(appointment1_start, appointment1_end, appointment2_start, appointment2_end):
@@ -41,32 +41,6 @@ def get_overlapping_appointments(target_appointment):
             overlapping_appointments.append(appt)
     
     return overlapping_appointments
-
-
-def get_client_ip(request):
-    """Get client IP address from request"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
-
-def log_audit_action(user, action, details=None, target_user=None,
-                     request=None):
-    """Log an audit action for security tracking"""
-    ip_address = None
-    if request:
-        ip_address = get_client_ip(request)
-    
-    AuditLog.objects.create(
-        user=user,
-        target_user=target_user,
-        action=action,
-        details=details or {},
-        ip_address=ip_address
-    )
 
 
 def get_available_slots(service, date_obj):

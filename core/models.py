@@ -4,51 +4,6 @@ from django.contrib.auth.models import User
 import json
 
 
-class AuditLog(models.Model):
-    """Track important actions for security and compliance"""
-    ACTION_CHOICES = [
-        ('pet_approved', 'Pet Approved'),
-        ('pet_rejected', 'Pet Rejected'),
-        ('appointment_approved', 'Appointment Approved'),
-        ('appointment_rejected', 'Appointment Rejected'),
-        ('appointment_reassigned', 'Appointment Reassigned'),
-        ('appointment_cancelled', 'Appointment Cancelled'),
-        ('appointment_edited', 'Appointment Edited'),
-        ('login_attempt', 'Login Attempt'),
-    ]
-    
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        help_text="User who performed the action"
-    )
-    target_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name='audit_target',
-        help_text="User affected by the action (if applicable)"
-    )
-    action = models.CharField(max_length=50, choices=ACTION_CHOICES)
-    details = models.JSONField(
-        default=dict,
-        help_text="Additional details about the action"
-    )
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        ordering = ['-timestamp']
-        indexes = [
-            models.Index(fields=['action', 'timestamp']),
-            models.Index(fields=['user', 'timestamp']),
-        ]
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.action} at {self.timestamp}"
-
-
 # UserProfile model (used for roles)
 class UserProfile(models.Model):
     USER_ROLES = [

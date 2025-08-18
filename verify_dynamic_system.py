@@ -116,7 +116,6 @@ def main():
     print("   ✅ Time slots use service-specific allowed_start_times")
     print("   ✅ Pricing is dynamic per service and size")
     print("   ✅ Service management includes full CRUD operations")
-    print("   ✅ System includes audit logging for changes")
     
     print("\n🎉 CONCLUSION: The system is FULLY DYNAMIC and SCALABLE!")
     print("   Managers can add, edit, price, and manage services entirely")

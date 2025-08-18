@@ -7,7 +7,6 @@ from django_ratelimit.decorators import ratelimit
 
 from ..models import PetProfile, Appointment, ServicePrice
 from ..forms import PetProfileForm, AppointmentForm
-from ..utils import log_audit_action
 
 
 @login_required
@@ -255,20 +254,6 @@ def cancel_appointment(request, appointment_id):
         appointment.status = 'canceled'
         appointment.save()
         
-        # Log audit action
-        log_audit_action(
-            user=request.user,
-            action='appointment_cancelled',
-            details={
-                'appointment_id': appointment.id,
-                'pet_name': appointment.pet_profile.name,
-                'service': appointment.service.name,
-                'appointment_time': appointment.appointment_time.isoformat(),
-                'hours_before': time_until_appointment.total_seconds() / 3600
-            },
-            request=request
-        )
-        
         formatted_time = appointment.appointment_time.strftime(
             "%H:%M on %d/%m/%Y"
         )
@@ -327,10 +312,6 @@ def edit_appointment(request, appointment_id):
     if request.method == 'POST':
         form = AppointmentForm(request.POST, user=request.user, instance=appointment)
         if form.is_valid():
-            # Store original values for comparison
-            original_time = appointment.appointment_time
-            original_service = appointment.service
-            
             updated_appointment = form.save(commit=False)
             
             # Ensure pet profile doesn't change (security measure)
@@ -393,23 +374,6 @@ def edit_appointment(request, appointment_id):
             updated_appointment.status = 'pending'
             updated_appointment.edit_count += 1
             updated_appointment.save()
-
-            # Log audit action
-            log_audit_action(
-                user=request.user,
-                action='appointment_edited',
-                details={
-                    'appointment_id': appointment.id,
-                    'pet_name': appointment.pet_profile.name,
-                    'original_service': original_service.name,
-                    'new_service': service.name,
-                    'original_time': original_time.isoformat(),
-                    'new_time': combined_datetime.isoformat(),
-                    'edit_count': updated_appointment.edit_count,
-                    'hours_before': time_until_appointment.total_seconds() / 3600
-                },
-                request=request
-            )
 
             formatted_time = updated_appointment.appointment_time.strftime(
                 "%H:%M on %d/%m/%Y"
