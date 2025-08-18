@@ -25,7 +25,9 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.username
+        # Return full name if available, otherwise username
+        full_name = self.user.get_full_name()
+        return full_name if full_name.strip() else self.user.username
 
 
 # Pet Profile model (linked to client)
