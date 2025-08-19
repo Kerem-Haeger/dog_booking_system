@@ -1,12 +1,5 @@
 /* User Management Styles */
 
-/* Increase max-width for management pages to utilize more screen space */
-body .main-content {
-    max-width: 1400px !important;
-    width: 100%;
-    margin: 0 auto;
-}
-
 /* Role-specific status badge styles */
 .role-client {
     background: #e3f2fd;
@@ -61,6 +54,41 @@ body .main-content {
     color: #374151;
 }
 
+/* Tab system styles */
+.tabs-container {
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.tab-button.active,
+.tab-button:hover {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* Bulk actions section */
 .bulk-actions {
     margin-bottom: 2rem;
@@ -76,50 +104,46 @@ body .main-content {
     align-items: center;
 }
 
-/* User management form styles */
-.user-management-form {
-    width: 100%;
-}
-
-.role-section {
-    margin-bottom: 2rem;
-}
-
-.role-title {
-    color: var(--text-secondary);
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--border-color);
-}
-
-/* User approval grid - make it a vertical list instead of horizontal grid */
-#pending-tab .users-grid {
+/* User grid layout - shared styles */
+.users-grid {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-#pending-tab .user-card {
+/* All users list layout */
+.users-list .collapsible-list {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-card {
     background: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 1rem;
     transition: var(--transition);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Pending user approvals - specific styling */
+#pending-tab .users-grid {
+    max-width: 1200px;
+}
+
+#pending-tab .user-card {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-#pending-tab .user-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* User info section for pending approvals */
 #pending-tab .user-info {
     flex: 1;
     margin-bottom: 0;
@@ -147,7 +171,6 @@ body .main-content {
     font-weight: 500;
 }
 
-/* User approval form for pending users */
 #pending-tab .user-approval-form {
     display: flex;
     flex-direction: column;
@@ -190,36 +213,7 @@ body .main-content {
     transition: all 0.2s ease;
 }
 
-/* Manage Users page styles (All Users tab and separate manage users page) */
-.users-grid:not(#pending-tab .users-grid) {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.user-card:not(#pending-tab .user-card) {
-    background: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    transition: var(--transition);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.user-card:not(#pending-tab .user-card):hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.user-info:not(#pending-tab .user-info) {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-}
-
+/* General user layout styles */
 .user-details {
     flex: 1;
 }
@@ -241,237 +235,6 @@ body .main-content {
     color: var(--text-muted);
     font-size: 0.75rem;
     margin: 0.1rem 0;
-}
-
-.user-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 120px;
-    max-width: 140px;
-}
-
-.role-selector label {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.15rem;
-    display: block;
-    font-weight: 500;
-}
-
-.role-selector select {
-    width: 100%;
-    padding: 0.35rem 0.4rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-size: 0.8rem;
-    background: white;
-}
-
-.user-pets {
-    border-top: 1px solid var(--border-color);
-    padding-top: 0.75rem;
-    margin-top: 0.75rem;
-}
-
-.user-pets h5 {
-    margin: 0 0 0.35rem 0;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.pet-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.pet-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.15rem 0;
-    font-size: 0.75rem;
-}
-
-.pet-name {
-    color: var(--text-primary);
-    font-weight: 500;
-}
-
-.text-muted {
-    color: var(--text-muted) !important;
-}
-
-/* Responsive design for manage users */
-@media (max-width: 768px) {
-
-    /* Pending approvals responsive */
-    #pending-tab .users-grid {
-        max-width: 100%;
-    }
-
-    #pending-tab .user-card {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-    }
-
-    #pending-tab .user-approval-form {
-        min-width: 100%;
-    }
-
-    #pending-tab .user-actions {
-        flex-direction: column;
-    }
-
-    /* Manage users page responsive */
-    .users-grid:not(#pending-tab .users-grid) {
-        max-width: 100%;
-    }
-
-    .user-info:not(#pending-tab .user-info) {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .user-actions:not(#pending-tab .user-actions) {
-        width: 100%;
-        max-width: none;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .role-selector {
-        flex: 1;
-        min-width: 120px;
-    }
-}
-
-/* User grid layout */
-.users-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-}
-
-.user-card {
-    background: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    transition: var(--transition);
-}
-
-.user-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-hover);
-}
-
-.user-info h3 {
-    margin: 0 0 1rem 0;
-    color: var(--text-primary);
-}
-
-.user-detail-item {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.user-approval-form {
-    margin-top: 1rem;
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-}
-
-.user-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-/* Tab system styles */
-.tabs-container {
-    margin-bottom: 2rem;
-}
-
-.tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.tab-button {
-    background: none;
-    border: none;
-    padding: 1rem 2rem;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 1rem;
-    border-bottom: 2px solid transparent;
-    transition: var(--transition);
-}
-
-.tab-button.active,
-.tab-button:hover {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Form sections */
-.form-actions {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-}
-
-.role-form {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.role-form label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-/* Pets section */
-.pets-section {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.pets-section h5 {
-    margin: 0 0 0.5rem 0;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.pet-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.85rem;
-}
-
-.pet-item:last-child {
-    border-bottom: none;
 }
 
 /* User display layout - matching pets layout */
@@ -501,9 +264,102 @@ body .main-content {
     align-items: center;
 }
 
-/* User summary in collapsible headers - matching pets structure */
 .user-summary {
     flex: 1;
+}
+
+/* User actions and forms */
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.user-approval-form {
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.role-selector label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.15rem;
+    display: block;
+    font-weight: 500;
+}
+
+.role-selector select {
+    width: 100%;
+    padding: 0.35rem 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.8rem;
+    background: white;
+}
+
+.role-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.role-form label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    min-width: 40px;
+}
+
+/* Pets section */
+.user-pets {
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.pets-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.pets-section h5,
+.user-pets h5 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pet-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.15rem 0;
+    font-size: 0.75rem;
+}
+
+.pet-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+}
+
+.pet-item:last-child {
+    border-bottom: none;
+}
+
+.pet-name {
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
 /* Collapsible elements */
@@ -556,7 +412,7 @@ body .main-content {
     margin-right: 0.5rem;
 }
 
-/* Detailed user actions */
+/* User actions detailed */
 .user-actions-detailed {
     margin-top: 1rem;
     padding-top: 1rem;
@@ -573,18 +429,6 @@ body .main-content {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-.role-form {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.role-form label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    min-width: 40px;
 }
 
 .action-buttons {
@@ -611,28 +455,6 @@ body .main-content {
     transition: all 0.2s ease;
 }
 
-.btn-success {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-success:hover {
-    background-color: #218838;
-    transform: translateY(-1px);
-}
-
-.btn-danger {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
-    color: white;
-    text-decoration: none;
-    transform: translateY(-1px);
-}
-
 .text-muted {
     color: var(--text-muted) !important;
 }
@@ -640,7 +462,7 @@ body .main-content {
 /* Responsive design */
 @media (max-width: 768px) {
     .users-grid {
-        grid-template-columns: 1fr;
+        max-width: 100%;
     }
 
     .bulk-form {
@@ -651,6 +473,21 @@ body .main-content {
     .tab-button {
         padding: 0.75rem 1rem;
         font-size: 0.9rem;
+    }
+
+    /* Pending approvals responsive */
+    #pending-tab .user-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    #pending-tab .user-approval-form {
+        min-width: 100%;
+    }
+
+    #pending-tab .user-actions {
+        flex-direction: column;
     }
 
     /* User layout responsive - matching pets layout */
@@ -669,5 +506,10 @@ body .main-content {
 
     .crud-buttons {
         gap: 12px;
+    }
+
+    .role-selector {
+        flex: 1;
+        min-width: 120px;
     }
 }

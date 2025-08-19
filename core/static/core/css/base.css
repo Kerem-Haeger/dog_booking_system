@@ -210,6 +210,12 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Management pages need more space */
+body:has([class*="management"]) .main-content,
+body:has([class*="approve"]) .main-content {
+    max-width: 1400px !important;
+}
+
 /* Message Alerts */
 .messages {
     margin-bottom: 1rem;

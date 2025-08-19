@@ -395,27 +395,6 @@
     transition: all 0.2s ease;
 }
 
-.btn-danger {
-    background: #dc2626;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #b91c1c;
-    transform: translateY(-1px);
-}
-
-.btn-secondary {
-    background: #6b7280;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #4b5563;
-    color: white;
-    text-decoration: none;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
     .delete-container {

@@ -80,26 +80,6 @@
     display: inline-block;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-success {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-warning {
-    background-color: #ffc107;
-    color: #212529;
-}
-
 /* Service Information Display */
 .service-info {
     margin-bottom: 20px;

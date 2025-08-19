@@ -1,9 +1,18 @@
 /* Pet Management Page Styles */
 
-/* Increase max-width for management pages to utilize more screen space */
-body .main-content {
-    max-width: 1400px !important;
-    width: 100%;
+/* Pet grid layout for pending pets */
+.pets-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* All pets list layout */
+.pets-list .collapsible-list {
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -59,7 +68,7 @@ body .main-content {
 
 .search-container {
     flex: 1;
-    max-width: 400px;
+    max-width: 600px;
 }
 
 /* Collapsible list styling */
@@ -325,15 +334,6 @@ body .main-content {
     transition: all 0.2s ease;
 }
 
-.btn-primary {
-    background: #059669;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #047857;
-}
-
 .btn-outline {
     background: white;
     color: #374151;
@@ -344,27 +344,6 @@ body .main-content {
     background: #f9fafb;
     color: #374151;
     text-decoration: none;
-}
-
-.btn-danger {
-    background: #dc2626;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #b91c1c;
-    color: white;
-    text-decoration: none;
-}
-
-/* Status badges */
-.status-badge.verified {
-    background: #d1fae5;
-    color: #047857;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
 }
 
 /* Disabled button styling */
@@ -453,7 +432,7 @@ body .main-content {
 
 /* Manager Edit Pet Form Styles */
 .edit-pet-form .form-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     background: white;
     padding: 30px;
@@ -573,16 +552,6 @@ body .main-content {
     gap: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.edit-pet-form .btn-primary {
-    background: #059669;
-    color: white;
-}
-
-.edit-pet-form .btn-primary:hover {
-    background: #047857;
-    transform: translateY(-1px);
 }
 
 .edit-pet-form .btn-secondary {

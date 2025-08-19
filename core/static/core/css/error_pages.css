@@ -192,34 +192,6 @@
     font-size: 0.95rem;
 }
 
-.btn-primary {
-    background: #3b82f6;
-    color: white;
-    border: 2px solid #3b82f6;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: white;
-    text-decoration: none;
-    transform: translateY(-1px);
-}
-
-.btn-secondary {
-    background: white;
-    color: #374151;
-    border: 2px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #374151;
-    text-decoration: none;
-    transform: translateY(-1px);
-}
-
 .cute-footer {
     background: #fef3c7;
     border: 1px solid #fde68a;
