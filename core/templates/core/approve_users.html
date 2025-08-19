@@ -104,25 +104,25 @@
                     data-search-content="{{ user_profile.user.username|lower }} {{ user_profile.user.email|lower }} {{ user_profile.role|lower }} {{ user_profile.user.first_name|lower }} {{ user_profile.user.last_name|lower }}">
                     <div class="collapsible-header" data-user-id="{{ user_profile.id }}">
                         <div class="user-summary">
-                            <div class="user-info-section">
-                                <div class="user-name-status">
-                                    <h4>
-                                        {% if user_profile.user.first_name or user_profile.user.last_name %}
-                                        {{ user_profile.user.first_name }} {{ user_profile.user.last_name }}
-                                        {% else %}
-                                        {{ user_profile.user.username }}
-                                        {% endif %}
-                                    </h4>
-                                </div>
-                                <div class="user-basic-info">
-                                    <span class="user-email">{{ user_profile.user.email }}</span>
-                                    <span class="user-joined">Joined:
-                                        {{ user_profile.user.date_joined|date:"M d, Y" }}</span>
-                                </div>
-                            </div>
-                            <div class="user-badge-section">
+                            <div class="user-name-status">
+                                <h4>
+                                    {% if user_profile.user.first_name or user_profile.user.last_name %}
+                                    {{ user_profile.user.first_name }} {{ user_profile.user.last_name }}
+                                    {% else %}
+                                    {{ user_profile.user.username }}
+                                    {% endif %}
+                                </h4>
                                 <span
                                     class="status-badge role-{{ user_profile.role }}">{{ user_profile.get_role_display }}</span>
+                            </div>
+                            <div class="user-basic-info">
+                                <span class="user-email">{{ user_profile.user.email }}</span>
+                                <span class="user-joined">Joined:
+                                    {{ user_profile.user.date_joined|date:"M d, Y" }}</span>
+                                {% if user_profile.user.last_login %}
+                                <span class="user-last-login">Last Login:
+                                    {{ user_profile.user.last_login|date:"M d, Y" }}</span>
+                                {% endif %}
                             </div>
                         </div>
                         <button class="collapse-toggle" type="button">
