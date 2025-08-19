@@ -11,7 +11,7 @@ from ..models import (
     Service, PetProfile, ServicePrice, Appointment, UserProfile, EmployeeCalendar
 )
 from ..utils import get_available_slots
-from .base import is_manager
+from .roles import is_manager
 
 
 @require_GET

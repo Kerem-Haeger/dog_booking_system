@@ -11,7 +11,7 @@ from ..forms import (
     PetApprovalForm, AppointmentApprovalForm, UserApprovalForm, 
     ServiceForm, ServicePriceForm, PetProfileManagerForm
 )
-from .base import is_manager
+from .roles import is_manager
 
 
 @login_required

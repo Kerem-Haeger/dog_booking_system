@@ -13,7 +13,7 @@ from .api_views import (
     fetch_available_slots, get_service_price, get_calendar_events,
     debug_appointments
 )
-from .base import is_manager, is_client, is_employee
+from .roles import is_manager, is_client, is_employee
 from .auth_views import register_view
 
 # Keep the redirect function in the main views.py for now
