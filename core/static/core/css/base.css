@@ -204,16 +204,10 @@ body {
 .main-content {
     flex: 1;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 250px;
     padding: 2rem 1rem;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Management pages need more space */
-body:has([class*="management"]) .main-content,
-body:has([class*="approve"]) .main-content {
-    max-width: 1400px !important;
 }
 
 /* Message Alerts */
