@@ -106,10 +106,10 @@
 
 /* User grid layout - shared styles */
 .users-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
-    max-width: 1200px;
+    max-width: 500px;
     margin: 0 auto;
 }
 
@@ -462,7 +462,7 @@
 /* Responsive design */
 @media (max-width: 768px) {
     .users-grid {
-        max-width: 100%;
+        max-width: 90%;
     }
 
     .bulk-form {

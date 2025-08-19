@@ -204,7 +204,8 @@ body {
 .main-content {
     flex: 1;
     align-self: center;
-    max-width: 1200px;
+    max-width: 1000px;
+    min-width: 750px;
     margin: 0 50px;
     padding: 2rem 1rem;
     background-color: white;
@@ -461,6 +462,7 @@ body {
 
     .main-content {
         padding: 1rem;
+        min-width: none;
     }
 
     .grid-2-col {
