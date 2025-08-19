@@ -245,6 +245,7 @@ class ApprovalFormManager {
             const approveBtn = form.querySelector(this.options.approveButtonSelector);
 
             if (sizeSelect && approveBtn) {
+                // Enable/disable approve button based on size selection
                 sizeSelect.addEventListener('change', () => {
                     approveBtn.disabled = !sizeSelect.value;
                 });

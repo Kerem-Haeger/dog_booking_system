@@ -367,6 +367,30 @@ body .main-content {
     font-weight: 500;
 }
 
+/* Disabled button styling */
+.approve-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #9ca3af !important;
+    border-color: #9ca3af !important;
+}
+
+.approve-btn:disabled:hover {
+    background-color: #9ca3af !important;
+    border-color: #9ca3af !important;
+    transform: none;
+}
+
+/* Status badges */
+.status-badge.verified {
+    background: #d1fae5;
+    color: #047857;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
 .status-badge.pending {
     background: #fef3c7;
     color: #d97706;

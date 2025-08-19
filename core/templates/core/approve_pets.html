@@ -31,7 +31,12 @@
                         <strong>Breed:</strong> {{ pet.breed }}
                     </div>
                     <div class="pet-detail-item">
-                        <strong>Owner:</strong> {{ pet.user.username }}
+                        <strong>Owner:</strong>
+                        {% if pet.user.first_name or pet.user.last_name %}
+                        {{ pet.user.first_name }} {{ pet.user.last_name }}
+                        {% else %}
+                        {{ pet.user.username }}
+                        {% endif %}
                     </div>
                     <div class="pet-detail-item">
                         <strong>Date of Birth:</strong> {{ pet.date_of_birth }}
@@ -90,7 +95,7 @@
         <div class="collapsible-list">
             {% for pet in all_pets %}
             <div class="collapsible-item"
-                data-search-content="{{ pet.name|lower }} {{ pet.breed|lower }} {{ pet.user.username|lower }}">
+                data-search-content="{{ pet.name|lower }} {{ pet.breed|lower }} {% if pet.user.first_name or pet.user.last_name %}{{ pet.user.first_name|lower }} {{ pet.user.last_name|lower }}{% else %}{{ pet.user.username|lower }}{% endif %}">
                 <div class="collapsible-header" data-pet-id="{{ pet.id }}">
                     <div class="pet-summary">
                         <div class="pet-name-status">
@@ -99,7 +104,13 @@
                         </div>
                         <div class="pet-basic-info">
                             <span class="pet-breed">{{ pet.breed }}</span>
-                            <span class="pet-owner">Owner: {{ pet.user.username }}</span>
+                            <span class="pet-owner">Owner:
+                                {% if pet.user.first_name or pet.user.last_name %}
+                                {{ pet.user.first_name }} {{ pet.user.last_name }}
+                                {% else %}
+                                {{ pet.user.username }}
+                                {% endif %}
+                            </span>
                             {% if pet.size %}
                             <span class="pet-size">{{ pet.size|title }}</span>
                             {% endif %}

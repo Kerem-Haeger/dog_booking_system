@@ -48,6 +48,280 @@ body .main-content {
     align-items: center;
 }
 
+/* User management form styles */
+.user-management-form {
+    width: 100%;
+}
+
+.role-section {
+    margin-bottom: 2rem;
+}
+
+.role-title {
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* User approval grid - make it a vertical list instead of horizontal grid */
+#pending-tab .users-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#pending-tab .user-card {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#pending-tab .user-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* User info section for pending approvals */
+#pending-tab .user-info {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+#pending-tab .user-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+#pending-tab .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+#pending-tab .user-detail-item {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+#pending-tab .user-detail-item strong {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* User approval form for pending users */
+#pending-tab .user-approval-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 150px;
+}
+
+#pending-tab .form-group {
+    margin-bottom: 0;
+}
+
+#pending-tab .form-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    display: block;
+    font-weight: 500;
+}
+
+#pending-tab .form-control {
+    padding: 0.4rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+#pending-tab .user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#pending-tab .user-actions .btn {
+    flex: 1;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    text-align: center;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Manage Users page styles (All Users tab and separate manage users page) */
+.users-grid:not(#pending-tab .users-grid) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.user-card:not(#pending-tab .user-card) {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-card:not(#pending-tab .user-card):hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-info:not(#pending-tab .user-info) {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-details h4 {
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.user-email {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.user-meta {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin: 0.1rem 0;
+}
+
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 120px;
+    max-width: 140px;
+}
+
+.role-selector label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.15rem;
+    display: block;
+    font-weight: 500;
+}
+
+.role-selector select {
+    width: 100%;
+    padding: 0.35rem 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.8rem;
+    background: white;
+}
+
+.user-pets {
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.user-pets h5 {
+    margin: 0 0 0.35rem 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.pet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pet-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.15rem 0;
+    font-size: 0.75rem;
+}
+
+.pet-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Responsive design for manage users */
+@media (max-width: 768px) {
+
+    /* Pending approvals responsive */
+    #pending-tab .users-grid {
+        max-width: 100%;
+    }
+
+    #pending-tab .user-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    #pending-tab .user-approval-form {
+        min-width: 100%;
+    }
+
+    #pending-tab .user-actions {
+        flex-direction: column;
+    }
+
+    /* Manage users page responsive */
+    .users-grid:not(#pending-tab .users-grid) {
+        max-width: 100%;
+    }
+
+    .user-info:not(#pending-tab .user-info) {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .user-actions:not(#pending-tab .user-actions) {
+        width: 100%;
+        max-width: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .role-selector {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
 /* User grid layout */
 .users-grid {
     display: grid;

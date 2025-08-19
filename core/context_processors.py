@@ -1,4 +1,4 @@
-from .models import PetProfile, Appointment
+from .models import PetProfile, Appointment, UserProfile
 
 
 def navigation_context(request):
@@ -15,6 +15,9 @@ def navigation_context(request):
             ).count()
             context['pending_appointments_count'] = Appointment.objects.filter(
                 status='pending'
+            ).count()
+            context['pending_users_count'] = UserProfile.objects.filter(
+                role='pending'
             ).count()
     
     return context
