@@ -39,4 +39,4 @@ def employee_dashboard(request):
         'today': today,
     }
     
-    return render(request, 'core/employee_dashboard.html', context)
+    return render(request, 'core/dashboard/employee_dashboard.html', context)

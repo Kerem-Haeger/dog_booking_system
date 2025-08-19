@@ -26,7 +26,7 @@ def manager_dashboard(request):
     pending_user_count = UserProfile.objects.filter(
         role='pending'
     ).count()
-    return render(request, 'core/manager_dashboard.html', {
+    return render(request, 'core/dashboard/manager_dashboard.html', {
         'pending_count': pending_count,
         'pending_appt_count': pending_appt_count,
         'pending_user_count': pending_user_count,
@@ -88,7 +88,7 @@ def approve_pets(request):
         'pet_forms': pet_forms,
         'all_pets': all_pets
     }
-    return render(request, 'core/approve_pets.html', context)
+    return render(request, 'core/pets/approve_pets.html', context)
 
 
 @user_passes_test(is_manager)
@@ -199,7 +199,7 @@ def approve_appointments(request):
         role='employee'
     ).select_related('user')
 
-    return render(request, 'core/appointments_dashboard.html', {
+    return render(request, 'core/appointments/appointments_dashboard.html', {
         'appointment_forms': appointment_forms,
         'approved_appointments': approved_appointments,
         'rejected_appointments': rejected_appointments,
@@ -327,7 +327,7 @@ def approve_users(request):
         'role_choices': UserProfile.USER_ROLES,
     }
 
-    return render(request, 'core/approve_users.html', context)
+    return render(request, 'core/users/approve_users.html', context)
 
 
 @user_passes_test(is_manager)
@@ -335,7 +335,7 @@ def manage_services(request):
     """Service management dashboard for managers"""
     services = Service.objects.all().order_by('name')
     
-    return render(request, 'core/manage_services.html', {
+    return render(request, 'core/services/manage_services.html', {
         'services': services,
     })
 
@@ -356,7 +356,7 @@ def create_service(request):
     else:
         form = ServiceForm()
     
-    return render(request, 'core/create_service.html', {
+    return render(request, 'core/services/create_service.html', {
         'form': form,
     })
 
@@ -379,7 +379,7 @@ def edit_service(request, service_id):
     else:
         form = ServiceForm(instance=service)
     
-    return render(request, 'core/edit_service.html', {
+    return render(request, 'core/services/edit_service.html', {
         'form': form,
         'service': service,
     })
@@ -440,7 +440,7 @@ def edit_service_pricing(request, service_id):
         else:
             form = ServicePriceForm()
     
-    return render(request, 'core/edit_service_pricing.html', {
+    return render(request, 'core/services/edit_service_pricing.html', {
         'service': service,
         'form': form,
         'prices': prices,
@@ -498,7 +498,7 @@ def delete_service(request, service_id):
         'active_appointments_count': active_appointments.count(),
         'service_prices': service.prices.all()
     }
-    return render(request, 'core/delete_service.html', context)
+    return render(request, 'core/services/delete_service.html', context)
 
 
 @user_passes_test(is_manager)
@@ -529,7 +529,7 @@ def edit_pet(request, pet_id):
         'pet': pet,
         'action': 'Edit'
     }
-    return render(request, 'core/manager_edit_pet.html', context)
+    return render(request, 'core/pets/manager_edit_pet.html', context)
 
 
 @user_passes_test(is_manager)
@@ -552,7 +552,7 @@ def delete_pet(request, pet_id):
         'pet': pet,
         'appointments_count': pet.appointment_set.count()
     }
-    return render(request, 'core/manager_delete_pet.html', context)
+    return render(request, 'core/pets/manager_delete_pet.html', context)
 
 
 @user_passes_test(is_manager)
@@ -642,4 +642,4 @@ def delete_user(request, user_id):
             pet.appointment_set.count() for pet in user.pets.all()
         ),
     }
-    return render(request, 'core/manager_delete_user.html', context)
+    return render(request, 'core/users/manager_delete_user.html', context)

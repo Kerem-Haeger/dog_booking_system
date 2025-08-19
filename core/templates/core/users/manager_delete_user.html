@@ -38,10 +38,6 @@
                 <span class="role-badge {{ user_profile.role }}">{{ user_profile.role|capfirst }}</span>
             </div>
             <div class="detail-row">
-                <label>Phone:</label>
-                <span>{{ user_profile.phone|default:"Not provided" }}</span>
-            </div>
-            <div class="detail-row">
                 <label>Date Joined:</label>
                 <span>{{ user_profile.user.date_joined|date:"M d, Y H:i" }}</span>
             </div>

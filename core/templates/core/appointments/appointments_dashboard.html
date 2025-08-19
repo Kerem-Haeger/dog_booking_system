@@ -22,11 +22,11 @@
     <p><strong>Client:</strong>
         {{ appointment.pet_profile.user.get_full_name|default:appointment.pet_profile.user.username }}</p>
 
-    <form method="post" class="appointment-form">
+    <form method="post" class="appointment-form appointment-approval-form">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-        <button type="submit" name="decision" value="approve" class="approve-btn">✅
+        <button type="submit" name="decision" value="approve" class="approve-btn" disabled>✅
             Approve</button>
         <button type="submit" name="decision" value="reject" class="reject-btn">❌
             Reject</button>
@@ -100,6 +100,7 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script src="{% static 'core/js/calendar-colors.js' %}"></script>
 <script src="{% static 'core/js/appointments-dashboard.js' %}"></script>
+<script src="{% static 'core/js/ui-components.js' %}"></script>
 
 <script>
     // Set up URLs for the dashboard JavaScript

@@ -410,4 +410,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // URLs will be set from the template
         appointmentDashboard = new AppointmentsDashboard(calendarEl, window.dashboardUrls);
     }
+
+    // Initialize appointment approval form management
+    if (typeof ApprovalFormManager !== 'undefined') {
+        new ApprovalFormManager({
+            formSelector: '.appointment-approval-form',
+            sizeSelectSelector: 'select', // This will target the employee select field
+            approveButtonSelector: '.approve-btn'
+        });
+    }
 });

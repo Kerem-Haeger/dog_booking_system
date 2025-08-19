@@ -510,6 +510,26 @@
     margin-right: 5px;
 }
 
+/* Disabled approve button styling */
+.appointment-form .approve-btn:disabled,
+.approve-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+    border: 1px solid #6c757d !important;
+    box-shadow: none !important;
+}
+
+.appointment-form .approve-btn:disabled:hover,
+.approve-btn:disabled:hover {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+    border-color: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 .reject-btn {
     background: #dc3545;
     color: white;

@@ -38,7 +38,7 @@ def client_dashboard(request):
 
     # The can_cancel and can_edit properties are already defined in the model
 
-    return render(request, 'core/client_dashboard.html', {
+    return render(request, 'core/dashboard/client_dashboard.html', {
         'pets': pets,
         'upcoming_appointments': upcoming_appointments,
         'past_appointments': past_appointments,
@@ -62,7 +62,7 @@ def add_pet(request):
     else:
         form = PetProfileForm()
 
-    return render(request, 'core/add_pet.html', {'form': form})
+    return render(request, 'core/pets/add_pet.html', {'form': form})
 
 
 @login_required
@@ -111,7 +111,7 @@ def edit_pet(request, pet_id):
     else:
         form = PetProfileForm(instance=pet)
 
-    return render(request, 'core/edit_pet.html', {
+    return render(request, 'core/pets/edit_pet.html', {
         'form': form,
         'pet': pet
     })
@@ -151,7 +151,7 @@ def delete_pet(request, pet_id):
         )
         return redirect('client_dashboard')
     
-    return render(request, 'core/delete_pet.html', {
+    return render(request, 'core/pets/delete_pet.html', {
         'pet': pet,
         'future_appointments': future_appointments
     })
@@ -190,13 +190,13 @@ def book_appointment(request):
                         request, 
                         "Appointments can only be booked for future dates and times."
                     )
-                    return render(request, 'core/book_appointment.html',
+                    return render(request, 'core/appointments/book_appointment.html',
                                   {'form': form})
                 
                 appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
                 messages.error(request, "Invalid time slot format.")
-                return render(request, 'core/book_appointment.html',
+                return render(request, 'core/appointments/book_appointment.html',
                               {'form': form})
 
             try:
@@ -206,7 +206,7 @@ def book_appointment(request):
                 error_msg = (f"No price found for {service.name} "
                              f"and {pet_size} dogs.")
                 messages.error(request, error_msg)
-                return render(request, 'core/book_appointment.html',
+                return render(request, 'core/appointments/book_appointment.html',
                               {'form': form})
 
             appointment.status = 'pending'
@@ -224,7 +224,8 @@ def book_appointment(request):
     else:
         form = AppointmentForm(user=request.user)
 
-    return render(request, 'core/book_appointment.html', {'form': form})
+    return render(request, 'core/appointments/book_appointment.html', 
+                  {'form': form})
 
 
 @login_required
@@ -263,7 +264,7 @@ def cancel_appointment(request, appointment_id):
         )
         return redirect('client_dashboard')
     
-    return render(request, 'core/cancel_appointment.html', {
+    return render(request, 'core/appointments/cancel_appointment.html', {
         'appointment': appointment,
         'time_until_appointment': time_until_appointment
     })
@@ -340,7 +341,7 @@ def edit_appointment(request, appointment_id):
                         request, 
                         "Appointments can only be scheduled for future times."
                     )
-                    return render(request, 'core/edit_appointment.html', {
+                    return render(request, 'core/appointments/edit_appointment.html', {
                         'form': form, 'appointment': appointment,
                         'edits_remaining': 3 - appointment.edit_count,
                         'time_until_appointment': time_until_appointment
@@ -349,7 +350,7 @@ def edit_appointment(request, appointment_id):
                 updated_appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
                 messages.error(request, "Invalid time slot format.")
-                return render(request, 'core/edit_appointment.html', {
+                return render(request, 'core/appointments/edit_appointment.html', {
                     'form': form, 'appointment': appointment,
                     'edits_remaining': 3 - appointment.edit_count,
                     'time_until_appointment': time_until_appointment
@@ -364,7 +365,7 @@ def edit_appointment(request, appointment_id):
                     request, 
                     f"No price found for {service.name} and {pet_size} dogs."
                 )
-                return render(request, 'core/edit_appointment.html', {
+                return render(request, 'core/appointments/edit_appointment.html', {
                     'form': form, 'appointment': appointment,
                     'edits_remaining': 3 - appointment.edit_count,
                     'time_until_appointment': time_until_appointment
@@ -402,7 +403,7 @@ def edit_appointment(request, appointment_id):
         form = AppointmentForm(user=request.user, instance=appointment)
 
     edits_remaining = 3 - appointment.edit_count
-    return render(request, 'core/edit_appointment.html', {
+    return render(request, 'core/appointments/edit_appointment.html', {
         'form': form,
         'appointment': appointment,
         'edits_remaining': edits_remaining,

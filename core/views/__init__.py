@@ -46,7 +46,7 @@ def redirect_by_role(request):
     elif role == 'manager':
         return redirect('manager_dashboard')
     elif role == 'pending':
-        return render(request, 'core/pending_approval.html')
+        return render(request, 'core/users/pending_approval.html')
     else:
         return HttpResponse("Unknown role.")
 
