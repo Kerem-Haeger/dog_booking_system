@@ -152,7 +152,7 @@
 }
 
 .main-content {
-    min-width: 0;
+    /* min-width: 0; */
     /* Prevents grid overflow */
 }
 
