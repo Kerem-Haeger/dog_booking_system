@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login
 from django.db import transaction
 from ..forms import CustomUserRegistrationForm
 from ..models import UserProfile
@@ -12,7 +11,8 @@ def register_view(request):
         form = CustomUserRegistrationForm(request.POST)
         if form.is_valid():
             try:
-                # Use transaction to ensure both User and UserProfile are created
+                # Use transaction to ensure both User and UserProfile
+                # are created
                 with transaction.atomic():
                     # Create the user
                     user = form.save()
@@ -24,17 +24,19 @@ def register_view(request):
                     )
                     
                     messages.success(
-                        request, 
-                        f'Account created successfully! We are reviewing your profile '
-                        'and will approve it shortly. Please check back later to access your dashboard.'
+                        request,
+                        'Account created successfully! We are reviewing your '
+                        'profile and will approve it shortly. Please check '
+                        'back later to access your dashboard.'
                     )
                     return redirect('login')
                     
-            except Exception as e:
+            except Exception:
                 # If anything goes wrong, show error message
                 messages.error(
                     request,
-                    'There was an error creating your account. Please try again.'
+                    'There was an error creating your account. '
+                    'Please try again.'
                 )
                 # Re-display the form with errors
                 
