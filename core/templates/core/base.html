@@ -30,84 +30,83 @@
                 <a href="{% url 'logout' %}" class="logout-btn" aria-label="Log out of your account">Logout</a>
             </div>
         </div>
+        <nav class="nav">
+            <div class="nav-container">
+                <ul class="nav-list">
+                    {% if user.userprofile.role == 'client' %}
+                    <li class="nav-item">
+                        <div class="simple-dropdown">
+                            <button type="button" class="dropdown-btn" onclick="toggleDropdown('client-menu')">
+                                <i class="fas fa-paw"></i> My Pet Care <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-content" id="client-menu">
+                                <a href="{% url 'client_dashboard' %}" aria-label="Go to My Dashboard">
+                                    <i class="fas fa-home"></i> My Dashboard
+                                </a>
+                                <a href="{% url 'add_pet' %}" aria-label="Go to Add My Pet">
+                                    <i class="fas fa-plus"></i> Add My Pet
+                                </a>
+                                <a href="{% url 'book_appointment' %}" aria-label="Go to Book Grooming">
+                                    <i class="fas fa-calendar-plus"></i> Book Grooming
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    {% elif user.userprofile.role == 'employee' %}
+                    <li class="nav-item">
+                        <div class="simple-dropdown">
+                            <button type="button" class="dropdown-btn" onclick="toggleDropdown('employee-menu')">
+                                <i class="fas fa-user-tie"></i> Staff Tools <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-content" id="employee-menu">
+                                <a href="{% url 'employee_dashboard' %}" aria-label="Go to Employee Dashboard">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    {% elif user.userprofile.role == 'manager' %}
+                    <li class="nav-item">
+                        <div class="simple-dropdown">
+                            <button type="button" class="dropdown-btn" onclick="toggleDropdown('manager-menu')">
+                                <i class="fas fa-user-cog"></i> Admin Center <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-content" id="manager-menu">
+                                <a href="{% url 'manager_dashboard' %}" aria-label="Go to Manager Dashboard">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <a href="{% url 'approve_appointments' %}" aria-label="Go to Manage Appointments">
+                                    <i class="fas fa-calendar-check"></i> Manage Appointments
+                                    {% if pending_appointments_count > 0 %}
+                                    <span class="notification-badge">{{ pending_appointments_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'approve_pets' %}" aria-label="Go to Manage Pets">
+                                    <i class="fas fa-paw"></i> Manage Pets
+                                    {% if pending_pets_count > 0 %}
+                                    <span class="notification-badge">{{ pending_pets_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'approve_users' %}" aria-label="Go to Manage Users">
+                                    <i class="fas fa-users"></i> Manage Users
+                                    {% if pending_users_count > 0 %}
+                                    <span class="notification-badge">{{ pending_users_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'manage_services' %}" aria-label="Go to Manage Services">
+                                    <i class="fas fa-cogs"></i> Manage Services
+                                </a>
+                                <a href="{% url 'create_service' %}" aria-label="Go to Create Service">
+                                    <i class="fas fa-plus"></i> Create Service
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
     </header>
-
-    <nav class="nav">
-        <div class="nav-container">
-            <ul class="nav-list">
-                {% if user.userprofile.role == 'client' %}
-                <li class="nav-item">
-                    <div class="simple-dropdown">
-                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('client-menu')">
-                            <i class="fas fa-paw"></i> My Pet Care <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-content" id="client-menu">
-                            <a href="{% url 'client_dashboard' %}" aria-label="Go to My Dashboard">
-                                <i class="fas fa-home"></i> My Dashboard
-                            </a>
-                            <a href="{% url 'add_pet' %}" aria-label="Go to Add My Pet">
-                                <i class="fas fa-plus"></i> Add My Pet
-                            </a>
-                            <a href="{% url 'book_appointment' %}" aria-label="Go to Book Grooming">
-                                <i class="fas fa-calendar-plus"></i> Book Grooming
-                            </a>
-                        </div>
-                    </div>
-                </li>
-                {% elif user.userprofile.role == 'employee' %}
-                <li class="nav-item">
-                    <div class="simple-dropdown">
-                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('employee-menu')">
-                            <i class="fas fa-user-tie"></i> Staff Tools <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-content" id="employee-menu">
-                            <a href="{% url 'employee_dashboard' %}" aria-label="Go to Employee Dashboard">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </div>
-                    </div>
-                </li>
-                {% elif user.userprofile.role == 'manager' %}
-                <li class="nav-item">
-                    <div class="simple-dropdown">
-                        <button type="button" class="dropdown-btn" onclick="toggleDropdown('manager-menu')">
-                            <i class="fas fa-user-cog"></i> Admin Center <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-content" id="manager-menu">
-                            <a href="{% url 'manager_dashboard' %}" aria-label="Go to Manager Dashboard">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                            <a href="{% url 'approve_appointments' %}" aria-label="Go to Manage Appointments">
-                                <i class="fas fa-calendar-check"></i> Manage Appointments
-                                {% if pending_appointments_count > 0 %}
-                                <span class="notification-badge">{{ pending_appointments_count }}</span>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'approve_pets' %}" aria-label="Go to Manage Pets">
-                                <i class="fas fa-paw"></i> Manage Pets
-                                {% if pending_pets_count > 0 %}
-                                <span class="notification-badge">{{ pending_pets_count }}</span>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'approve_users' %}" aria-label="Go to Manage Users">
-                                <i class="fas fa-users"></i> Manage Users
-                                {% if pending_users_count > 0 %}
-                                <span class="notification-badge">{{ pending_users_count }}</span>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'manage_services' %}" aria-label="Go to Manage Services">
-                                <i class="fas fa-cogs"></i> Manage Services
-                            </a>
-                            <a href="{% url 'create_service' %}" aria-label="Go to Create Service">
-                                <i class="fas fa-plus"></i> Create Service
-                            </a>
-                        </div>
-                    </div>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
     {% endif %}
 
     <main class="main-content">
