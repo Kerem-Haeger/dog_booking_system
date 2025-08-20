@@ -230,7 +230,7 @@ Although I implemented an issue tracker to follow Agile principles, I acknowledg
 ## Acknowledgments
 
 - Code Institute and mentor support  
-- Industry professionals for input on business logic and user flow  
+- My partner Saskia, whose business this idea is based on
 - Django and open-source communities for their documentation and libraries
 
 ---
