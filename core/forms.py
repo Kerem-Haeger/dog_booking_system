@@ -11,7 +11,6 @@ from .models import (
     Appointment,
     Service,
     ServicePrice,
-    Voucher
     )
 
 
@@ -51,13 +50,13 @@ class PetProfileForm(forms.ModelForm):
         date_of_birth = self.cleaned_data.get('date_of_birth')
         if date_of_birth:
             today = timezone.now().date()
-            
+
             # Check if birth date is in the future
             if date_of_birth > today:
                 raise forms.ValidationError(
                     "Birth date cannot be in the future."
                 )
-            
+
             # Optional: Check if birth date is too far in the past
             # (e.g., older than 30 years)
             max_age_years = 30
@@ -67,7 +66,7 @@ class PetProfileForm(forms.ModelForm):
                     f"Birth date cannot be more than {max_age_years} "
                     f"years ago."
                 )
-        
+
         return date_of_birth
 
 
@@ -75,7 +74,14 @@ class PetProfileManagerForm(forms.ModelForm):
     """Manager/Employee form for editing pet profiles including grooming preferences"""
     class Meta:
         model = PetProfile
-        fields = ['name', 'breed', 'date_of_birth', 'grooming_preferences', 'size', 'profile_status']
+        fields = [
+            'name',
+            'breed',
+            'date_of_birth',
+            'grooming_preferences',
+            'size',
+            'profile_status'
+        ]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
             'grooming_preferences': forms.Textarea(attrs={'rows': 3}),
@@ -133,7 +139,7 @@ class AppointmentForm(forms.ModelForm):
         self.fields['pet_profile'].queryset = PetProfile.objects.filter(
             user=user, profile_status='verified'
         )
-        
+
         # Filter to show only active services
         self.fields['service'].queryset = Service.objects.filter(
             is_active=True
@@ -143,69 +149,69 @@ class AppointmentForm(forms.ModelForm):
         cleaned_data = super().clean()
         pet_profile = cleaned_data.get('pet_profile')
         time_slot = cleaned_data.get('time_slot')
-        
+
         if pet_profile and time_slot:
             try:
                 # Parse the time slot to get the date
                 if time_slot.endswith("Z"):
                     time_slot = time_slot.rstrip("Z")
-                
+
                 combined_datetime = timezone.make_aware(
                     datetime.fromisoformat(time_slot)
                 )
-                
+
                 # Check if appointment is in the future
                 if combined_datetime <= timezone.now():
                     raise forms.ValidationError(
                         "Appointments can only be booked for future dates and times."
                     )
-                
+
                 # Check daily appointment limit (max 2 per day)
                 same_day_count = Appointment.objects.filter(
                     pet_profile__user=pet_profile.user,
                     appointment_time__date=combined_datetime.date(),
                     status__in=['pending', 'approved']
                 ).count()
-                
+
                 if same_day_count >= 2:
                     raise forms.ValidationError(
                         "Maximum 2 appointments allowed per day."
                     )
-                    
+
             except (ValueError, TypeError):
                 pass  # Let time_slot validation handle the error
-        
+
         return cleaned_data
 
     def clean_appointment_time(self):
         appt_datetime = self.cleaned_data['appointment_time']
         now = timezone.now()
-        
+
         # Must be in the future
         if appt_datetime.date() < now.date():
             raise forms.ValidationError(
                 "Appointment date must be in the future."
             )
-        
+
         # Business hours validation (9 AM - 6 PM)
         if appt_datetime.hour < 9 or appt_datetime.hour >= 18:
             raise forms.ValidationError(
                 "Appointments are only available between 9 AM and 6 PM."
             )
-        
+
         # No appointments on Sundays (weekday 6)
         if appt_datetime.weekday() == 6:
             raise forms.ValidationError(
                 "Appointments are not available on Sundays."
             )
-        
+
         # Maximum advance booking (3 months)
         max_advance = now + timedelta(days=90)
         if appt_datetime > max_advance:
             raise forms.ValidationError(
                 "Cannot book more than 3 months in advance."
             )
-        
+
         return appt_datetime
 
 
@@ -225,7 +231,7 @@ class UserApprovalForm(forms.Form):
         ('employee', 'Employee'),
         ('manager', 'Manager'),
     ]
-    
+
     role = forms.ChoiceField(
         choices=ROLE_CHOICES,
         initial='client',
@@ -235,7 +241,7 @@ class UserApprovalForm(forms.Form):
 
 class ServiceForm(forms.ModelForm):
     """Form for creating and editing services"""
-    
+
     class Meta:
         model = Service
         fields = ['name', 'description', 'duration', 'allowed_start_times', 'is_active']
@@ -246,7 +252,7 @@ class ServiceForm(forms.ModelForm):
                 'help_text': 'Comma-separated start times'
             }),
         }
-    
+
     def clean_name(self):
         name = self.cleaned_data.get('name')
         if name:
@@ -258,14 +264,14 @@ class ServiceForm(forms.ModelForm):
                 )
             return sanitized.strip()
         return name
-    
+
     def clean_allowed_start_times(self):
         times_str = self.cleaned_data.get('allowed_start_times')
         if not times_str or not times_str.strip():
             raise forms.ValidationError(
                 "Please specify at least one allowed start time."
             )
-        
+
         # Validate time format
         times = [t.strip() for t in times_str.split(',')]
         for time_str in times:
@@ -276,33 +282,33 @@ class ServiceForm(forms.ModelForm):
                 raise forms.ValidationError(
                     f"Invalid time format: '{time_str}'. Use HH:MM format (e.g., 09:00)."
                 )
-        
+
         return times_str
-    
+
     def clean_duration(self):
         duration = self.cleaned_data.get('duration')
         if duration:
             # Convert to total seconds for validation
             total_seconds = duration.total_seconds()
-            
+
             # Minimum 15 minutes
             if total_seconds < 15 * 60:
                 raise forms.ValidationError(
                     "Service duration must be at least 15 minutes."
                 )
-            
+
             # Maximum 8 hours
             if total_seconds > 8 * 60 * 60:
                 raise forms.ValidationError(
                     "Service duration cannot exceed 8 hours."
                 )
-        
+
         return duration
 
 
 class ServicePriceForm(forms.ModelForm):
     """Form for managing service pricing"""
-    
+
     class Meta:
         model = ServicePrice
         fields = ['size', 'price']
@@ -312,7 +318,7 @@ class ServicePriceForm(forms.ModelForm):
                 'min': '0.01'
             })
         }
-    
+
     def clean_price(self):
         price = self.cleaned_data.get('price')
         if price is not None:
@@ -329,54 +335,57 @@ class ServicePriceForm(forms.ModelForm):
 
 class CustomUserRegistrationForm(UserCreationForm):
     """Extended registration form with additional user information"""
-    
+
     first_name = forms.CharField(
         max_length=30,
         required=True,
         help_text="Enter your first name"
     )
-    
+
     last_name = forms.CharField(
         max_length=30,
         required=True,
         help_text="Enter your last name"
     )
-    
+
     email = forms.EmailField(
         required=False,
         help_text="Optional: Enter your email address"
     )
-    
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Customize username field
         self.fields['username'].max_length = 20
-        self.fields['username'].help_text = "Required. 20 characters or fewer. Letters, digits, spaces and special characters allowed."
-    
+        self.fields['username'].help_text = (
+            "Required. 20 characters or fewer. "
+            "Letters, digits, and special characters allowed."
+        )
+
     def clean_username(self):
         """Validate username length and uniqueness"""
         username = self.cleaned_data.get('username')
-        
+
         if len(username) > 20:
             raise ValidationError("Username cannot be longer than 20 characters.")
-        
+
         # Check if username already exists (case-insensitive)
         if User.objects.filter(username__iexact=username).exists():
             raise ValidationError("A user with this username already exists.")
-        
+
         return username
-    
+
     def clean_email(self):
         """Validate email if provided"""
         email = self.cleaned_data.get('email')
-        
+
         if email:
             # Check if email already exists (case-insensitive)
             if User.objects.filter(email__iexact=email).exists():
                 raise ValidationError("A user with this email already exists.")
-        
+
         return email

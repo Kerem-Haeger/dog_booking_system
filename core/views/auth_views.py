@@ -16,13 +16,13 @@ def register_view(request):
                 with transaction.atomic():
                     # Create the user
                     user = form.save()
-                    
+
                     # Create UserProfile with 'pending' role
                     UserProfile.objects.create(
                         user=user,
                         role='pending'
                     )
-                    
+
                     messages.success(
                         request,
                         'Account created successfully! We are reviewing your '
@@ -30,7 +30,7 @@ def register_view(request):
                         'back later to access your dashboard.'
                     )
                     return redirect('login')
-                    
+
             except Exception:
                 # If anything goes wrong, show error message
                 messages.error(
@@ -39,8 +39,8 @@ def register_view(request):
                     'Please try again.'
                 )
                 # Re-display the form with errors
-                
+
     else:
         form = CustomUserRegistrationForm()
-    
+
     return render(request, 'registration/register.html', {'form': form})

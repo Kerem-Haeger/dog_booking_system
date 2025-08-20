@@ -6,7 +6,7 @@ def navigation_context(request):
     Context processor to provide navigation-related data to all templates
     """
     context = {}
-    
+
     if request.user.is_authenticated and hasattr(request.user, 'userprofile'):
         if request.user.userprofile.role == 'manager':
             # Add pending counts for manager notification badges
@@ -19,5 +19,5 @@ def navigation_context(request):
             context['pending_users_count'] = UserProfile.objects.filter(
                 role='pending'
             ).count()
-    
+
     return context

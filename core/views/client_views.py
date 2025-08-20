@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime
 from django_ratelimit.decorators import ratelimit
 
 from ..models import PetProfile, Appointment, ServicePrice
@@ -13,24 +13,24 @@ from ..forms import PetProfileForm, AppointmentForm
 def client_dashboard(request):
     """Dashboard view for clients showing their pets and appointments"""
     pets = PetProfile.objects.filter(user=request.user)
-    
+
     # Get current datetime
     now = timezone.now()
-    
+
     # Separate upcoming, past, and rejected appointments
     upcoming_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
         appointment_time__gte=now,
         status__in=['pending', 'approved']  # Exclude rejected from upcoming
     ).order_by('appointment_time')  # Nearest first
-    
+
     past_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
         appointment_time__lt=now,
         # Include past approved appointments (service was delivered)
         status__in=['completed', 'canceled', 'approved']
     ).order_by('-appointment_time')  # Most recent first
-    
+
     rejected_appointments = Appointment.objects.filter(
         pet_profile__user=request.user,
         status='rejected'
@@ -122,7 +122,7 @@ def edit_pet(request, pet_id):
 def delete_pet(request, pet_id):
     """Allow clients to delete their pet profiles, canceling future appointments"""
     pet = get_object_or_404(PetProfile, id=pet_id, user=request.user)
-    
+
     # Check for future appointments that will be cancelled
     from django.utils import timezone
     future_appointments = Appointment.objects.filter(
@@ -130,11 +130,11 @@ def delete_pet(request, pet_id):
         appointment_time__gt=timezone.now(),
         status__in=['pending', 'approved']
     )
-    
+
     if request.method == 'POST':
         pet_name = pet.name
         future_count = future_appointments.count()
-        
+
         # Cancel all future appointments for this pet
         if future_count > 0:
             future_appointments.update(status='canceled')
@@ -142,7 +142,7 @@ def delete_pet(request, pet_id):
                 request,
                 f"Cancelled {future_count} future appointment(s) for {pet_name}."
             )
-        
+
         # Delete the pet profile
         pet.delete()
         messages.success(
@@ -150,7 +150,7 @@ def delete_pet(request, pet_id):
             f"Pet profile for {pet_name} has been removed from your account."
         )
         return redirect('client_dashboard')
-    
+
     return render(request, 'core/pets/delete_pet.html', {
         'pet': pet,
         'future_appointments': future_appointments
@@ -183,16 +183,16 @@ def book_appointment(request):
                 combined_datetime = timezone.make_aware(
                     datetime.fromisoformat(time_slot_str)
                 )
-                
+
                 # Additional security check: ensure appointment is in the future
                 if combined_datetime <= timezone.now():
                     messages.error(
-                        request, 
+                        request,
                         "Appointments can only be booked for future dates and times."
                     )
                     return render(request, 'core/appointments/book_appointment.html',
                                   {'form': form})
-                
+
                 appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
                 messages.error(request, "Invalid time slot format.")
@@ -224,7 +224,7 @@ def book_appointment(request):
     else:
         form = AppointmentForm(user=request.user)
 
-    return render(request, 'core/appointments/book_appointment.html', 
+    return render(request, 'core/appointments/book_appointment.html',
                   {'form': form})
 
 
@@ -236,11 +236,11 @@ def cancel_appointment(request, appointment_id):
         id=appointment_id,
         pet_profile__user=request.user
     )
-    
+
     # Check if appointment is more than 24 hours in the future
     now = timezone.now()
     time_until_appointment = appointment.appointment_time - now
-    
+
     # 24 hours in seconds
     if time_until_appointment.total_seconds() <= 24 * 60 * 60:
         messages.error(
@@ -249,12 +249,12 @@ def cancel_appointment(request, appointment_id):
             "Please contact the business directly."
         )
         return redirect('client_dashboard')
-    
+
     if request.method == 'POST':
         # Cancel the appointment
         appointment.status = 'canceled'
         appointment.save()
-        
+
         formatted_time = appointment.appointment_time.strftime(
             "%H:%M on %d/%m/%Y"
         )
@@ -263,7 +263,7 @@ def cancel_appointment(request, appointment_id):
             f"Appointment for {formatted_time} has been cancelled."
         )
         return redirect('client_dashboard')
-    
+
     return render(request, 'core/appointments/cancel_appointment.html', {
         'appointment': appointment,
         'time_until_appointment': time_until_appointment
@@ -279,11 +279,11 @@ def edit_appointment(request, appointment_id):
         id=appointment_id,
         pet_profile__user=request.user
     )
-    
+
     # Check if appointment is more than 24 hours in the future
     now = timezone.now()
     time_until_appointment = appointment.appointment_time - now
-    
+
     if time_until_appointment.total_seconds() <= 24 * 60 * 60:
         messages.error(
             request,
@@ -291,7 +291,7 @@ def edit_appointment(request, appointment_id):
             "Please contact the business directly."
         )
         return redirect('client_dashboard')
-    
+
     # Check edit count limit
     if appointment.edit_count >= 3:
         messages.error(
@@ -301,7 +301,7 @@ def edit_appointment(request, appointment_id):
             "changes."
         )
         return redirect('client_dashboard')
-    
+
     # Check if appointment can be edited
     if appointment.status in ['canceled', 'completed']:
         messages.error(
@@ -309,15 +309,15 @@ def edit_appointment(request, appointment_id):
             "Cannot edit canceled or completed appointments."
         )
         return redirect('client_dashboard')
-    
+
     if request.method == 'POST':
         form = AppointmentForm(request.POST, user=request.user, instance=appointment)
         if form.is_valid():
             updated_appointment = form.save(commit=False)
-            
+
             # Ensure pet profile doesn't change (security measure)
             updated_appointment.pet_profile = appointment.pet_profile
-            
+
             service = updated_appointment.service
             time_slot_str = form.cleaned_data.get('time_slot')
 
@@ -328,17 +328,17 @@ def edit_appointment(request, appointment_id):
 
                 # Parse the datetime string
                 parsed_datetime = datetime.fromisoformat(time_slot_str)
-                
+
                 # Check if it's naive or aware
                 if timezone.is_naive(parsed_datetime):
                     combined_datetime = timezone.make_aware(parsed_datetime)
                 else:
                     combined_datetime = parsed_datetime
-                
+
                 # Security check: ensure appointment is in the future
                 if combined_datetime <= timezone.now():
                     messages.error(
-                        request, 
+                        request,
                         "Appointments can only be scheduled for future times."
                     )
                     return render(request, 'core/appointments/edit_appointment.html', {
@@ -346,7 +346,7 @@ def edit_appointment(request, appointment_id):
                         'edits_remaining': 3 - appointment.edit_count,
                         'time_until_appointment': time_until_appointment
                     })
-                
+
                 updated_appointment.appointment_time = combined_datetime
             except (ValueError, TypeError):
                 messages.error(request, "Invalid time slot format.")
@@ -362,7 +362,7 @@ def edit_appointment(request, appointment_id):
                 updated_appointment.final_price = service.get_price_for_size(pet_size)
             except ServicePrice.DoesNotExist:
                 messages.error(
-                    request, 
+                    request,
                     f"No price found for {service.name} and {pet_size} dogs."
                 )
                 return render(request, 'core/appointments/edit_appointment.html', {
@@ -379,7 +379,7 @@ def edit_appointment(request, appointment_id):
             formatted_time = updated_appointment.appointment_time.strftime(
                 "%H:%M on %d/%m/%Y"
             )
-            
+
             edits_remaining = 3 - updated_appointment.edit_count
             if edits_remaining > 0:
                 messages.success(
@@ -394,7 +394,7 @@ def edit_appointment(request, appointment_id):
                     "approval. No more edits allowed - contact us for further "
                     "changes."
                 )
-            
+
             return redirect('client_dashboard')
         else:
             messages.error(request, "Please correct the errors below.")

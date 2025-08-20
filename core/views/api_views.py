@@ -1,6 +1,5 @@
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_http_methods
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -34,23 +33,23 @@ def fetch_available_slots(request):
     all_slots = []
     today = timezone.now().date()
     current_time = timezone.now()
-    
+
     date_range = (end_date - start_date).days + 1
     for date in (start_date + timedelta(n) for n in range(date_range)):
         # Only process dates that are today or in the future
         if date < today:
             continue
-            
+
         time_strings = get_available_slots(service, date)
         for time_str in time_strings:
             start_dt = timezone.make_aware(
                 datetime.strptime(f"{date} {time_str}", "%Y-%m-%d %H:%M")
             )
-            
+
             # If it's today, only show slots that are in the future
             if date == today and start_dt <= current_time:
                 continue
-                
+
             end_dt = start_dt + service.duration
             all_slots.append({
                 "title": "Available",
@@ -159,7 +158,7 @@ def get_calendar_events(request):
 
     events = []
     now = timezone.now()
-    
+
     for appointment in appointments:
         # Calculate end time
         end_time = appointment.appointment_time + appointment.service.duration
@@ -384,11 +383,15 @@ def get_available_employees(request):
 
         # Get employees who are busy due to overlapping appointments
         from ..utils import get_overlapping_appointments
-        
+
         # Get overlapping approved appointments
         overlapping_appointments = get_overlapping_appointments(appointment)
-        busy_employee_ids_appointments = [appt.employee.id for appt in overlapping_appointments if appt.employee]
-        
+        busy_employee_ids_appointments = [
+            appt.employee.id
+            for appt in overlapping_appointments
+            if appt.employee
+        ]
+
         # Also check EmployeeCalendar for exact time conflicts (legacy support)
         busy_employee_ids_calendar = EmployeeCalendar.objects.filter(
             scheduled_time=appointment.appointment_time,

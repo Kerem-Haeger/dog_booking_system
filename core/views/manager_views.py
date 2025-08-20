@@ -7,7 +7,7 @@ from ..models import (
     UserProfile, PetProfile, Appointment, EmployeeCalendar, Service, ServicePrice
 )
 from ..forms import (
-    PetApprovalForm, AppointmentApprovalForm, UserApprovalForm, 
+    PetApprovalForm, AppointmentApprovalForm, UserApprovalForm,
     ServiceForm, ServicePriceForm, PetProfileManagerForm
 )
 from .roles import is_manager
@@ -143,7 +143,7 @@ def approve_appointments(request):
                                f"Page refreshed to update availability.")
                 messages.success(request, success_msg)
             else:
-                # Form has validation errors 
+                # Form has validation errors
                 messages.error(request, "Please correct the form errors.")
         elif decision == 'reject':
             selected_appointment.status = 'rejected'
@@ -161,7 +161,11 @@ def approve_appointments(request):
 
         # Get overlapping approved appointments
         overlapping_appointments = get_overlapping_appointments(appointment)
-        busy_employee_ids_appointments = [appt.employee.id for appt in overlapping_appointments if appt.employee]
+        busy_employee_ids_appointments = [
+            appt.employee.id
+            for appt in overlapping_appointments
+            if appt.employee
+        ]
 
         # Also check EmployeeCalendar for this exact time (legacy support)
         busy_employee_ids_calendar = EmployeeCalendar.objects.filter(
@@ -180,7 +184,10 @@ def approve_appointments(request):
         form.fields['employee'].queryset = available_employees
 
         # Add helpful info about availability
-        form.fields['employee'].help_text = f"Available employees for {appointment.appointment_time.strftime('%Y-%m-%d %H:%M')}"
+        form.fields['employee'].help_text = (
+            f"Available employees for "
+            f"{appointment.appointment_time.strftime('%Y-%m-%d %H:%M')}"
+        )
 
         appointment_forms.append((appointment, form))
 

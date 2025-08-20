@@ -42,7 +42,14 @@ admin.site.register(PetProfile, PetProfileAdmin)
 # Customizing the Appointment admin interface
 class AppointmentAdmin(admin.ModelAdmin):
     # Define which fields should appear in the list view in the admin
-    list_display = ('pet_profile', 'service', 'appointment_time', 'employee', 'status', 'created_at')
+    list_display = (
+        'pet_profile',
+        'service',
+        'appointment_time',
+        'employee',
+        'status',
+        'created_at'
+        )
 
     # Add filters to filter by status or service
     list_filter = ('status', 'service')
@@ -63,7 +70,14 @@ admin.site.register(TimeOffRequest, TimeOffRequestAdmin)
 # Customizing the Voucher admin interface
 class VoucherAdmin(admin.ModelAdmin):
     # Define which fields should appear in the list view in the admin
-    list_display = ('code', 'discount_percentage', 'expiry_date', 'is_redeemed', 'used_by_user', 'created_at')
+    list_display = (
+        'code',
+        'discount_percentage',
+        'expiry_date',
+        'is_redeemed',
+        'used_by_user',
+        'created_at'
+        )
 
     # Add filters to filter by is_redeemed
     list_filter = ('is_redeemed',)

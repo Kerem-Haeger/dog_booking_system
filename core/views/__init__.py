@@ -1,6 +1,6 @@
 # Import all views for backward compatibility
 from .client_views import (
-    client_dashboard, add_pet, edit_pet, delete_pet, book_appointment, 
+    client_dashboard, add_pet, edit_pet, delete_pet, book_appointment,
     edit_appointment, cancel_appointment
 )
 from .employee_views import employee_dashboard

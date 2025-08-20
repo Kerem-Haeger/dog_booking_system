@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-import json
 
 
 # UserProfile model (used for roles)
@@ -104,7 +103,14 @@ class Service(models.Model):
 # Model for pricing
 class ServicePrice(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="prices")
-    size = models.CharField(choices=[('small', 'Small'), ('medium', 'Medium'), ('large', 'Large')], max_length=10)
+    size = models.CharField(
+        choices=[
+            ('small', 'Small'),
+            ('medium', 'Medium'),
+            ('large', 'Large')
+            ],
+        max_length=10
+        )
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
     class Meta:
@@ -159,49 +165,49 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.pet_profile.name} - {self.service.name} at {self.appointment_time}"
-    
+
     def get_end_time(self):
         """Calculate the end time of this appointment based on service duration"""
         if self.service and self.service.duration:
             return self.appointment_time + self.service.duration
         return self.appointment_time  # Fallback if no duration is set
-    
+
     @property
     def can_edit(self):
         """Check if this appointment can be edited by the client"""
         from django.utils import timezone
-        
+
         # Cannot edit completed or canceled appointments
         if self.status in ['canceled', 'completed']:
             return False
-        
+
         # Cannot edit if max edits reached
         if self.edit_count >= 3:
             return False
-        
+
         # Cannot edit within 24 hours
         now = timezone.now()
         time_until_appointment = self.appointment_time - now
         if time_until_appointment.total_seconds() <= 24 * 60 * 60:
             return False
-        
+
         return True
-    
+
     @property
     def can_cancel(self):
         """Check if this appointment can be canceled by the client"""
         from django.utils import timezone
-        
+
         # Cannot cancel completed or already canceled appointments
         if self.status in ['canceled', 'completed']:
             return False
-        
+
         # Cannot cancel within 24 hours
         now = timezone.now()
         time_until_appointment = self.appointment_time - now
         if time_until_appointment.total_seconds() <= 24 * 60 * 60:
             return False
-        
+
         return True
 
 
@@ -223,7 +229,11 @@ class EmployeeCalendar(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user_profile.user.username} - {self.appointment.pet_profile.name} at {self.scheduled_time}"
+        return (
+            f"{self.user_profile.user.username} - "
+            f"{self.appointment.pet_profile.name} at "
+            f"{self.scheduled_time}"
+        )
 
 
 # Employee Time-Off Requests (pending approval for more than 1 hour)

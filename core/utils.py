@@ -1,16 +1,21 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.utils.timezone import make_aware
 from .models import UserProfile, EmployeeCalendar, TimeOffRequest
 
 
-def appointments_overlap(appointment1_start, appointment1_end, appointment2_start, appointment2_end):
+def appointments_overlap(
+        appointment1_start,
+        appointment1_end,
+        appointment2_start,
+        appointment2_end
+        ):
     """
     Check if two appointments overlap in time.
     Returns True if there is any overlap, False otherwise.
     """
     # Two appointments overlap if one starts before the other ends
     # and the other starts before the first one ends
-    return (appointment1_start < appointment2_end and 
+    return (appointment1_start < appointment2_end and
             appointment2_start < appointment1_end)
 
 
@@ -20,26 +25,26 @@ def get_overlapping_appointments(target_appointment):
     Returns a queryset of overlapping appointments.
     """
     from .models import Appointment  # Import here to avoid circular imports
-    
+
     target_start = target_appointment.appointment_time
     target_end = target_appointment.get_end_time()
-    
+
     # Find all approved appointments that overlap with this time range
     overlapping = Appointment.objects.filter(
         status='approved',
         employee__isnull=False
     ).exclude(id=target_appointment.id)
-    
+
     # Filter for actual overlaps - we need to check each one individually
     # because database doesn't have the calculated end time
     overlapping_appointments = []
     for appt in overlapping:
         appt_start = appt.appointment_time
         appt_end = appt.get_end_time()
-        
+
         if appointments_overlap(target_start, target_end, appt_start, appt_end):
             overlapping_appointments.append(appt)
-    
+
     return overlapping_appointments
 
 

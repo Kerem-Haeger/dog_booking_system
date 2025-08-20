@@ -9,7 +9,7 @@ from ..models import Appointment, UserProfile
 def employee_dashboard(request):
     """Dashboard view for employees"""
     user_profile = UserProfile.objects.get(user=request.user)
-    
+
     # Get today's appointments for this employee
     today = timezone.now().date()
     today_start = timezone.now().replace(
@@ -18,12 +18,12 @@ def employee_dashboard(request):
     today_end = timezone.now().replace(
         hour=23, minute=59, second=59, microsecond=999999
     )
-    
+
     today_appointments = Appointment.objects.filter(
         employee=user_profile,
         appointment_time__range=(today_start, today_end)
     ).order_by('appointment_time')
-    
+
     # Get upcoming appointments (next 7 days)
     next_week = today_start + timedelta(days=7)
     upcoming_appointments = Appointment.objects.filter(
@@ -31,12 +31,12 @@ def employee_dashboard(request):
         appointment_time__gt=today_end,
         appointment_time__lte=next_week
     ).order_by('appointment_time')[:5]
-    
+
     context = {
         'user_profile': user_profile,
         'today_appointments': today_appointments,
         'upcoming_appointments': upcoming_appointments,
         'today': today,
     }
-    
+
     return render(request, 'core/dashboard/employee_dashboard.html', context)
