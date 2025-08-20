@@ -67,7 +67,7 @@
                 Update Pet Profile
                 {% endif %}
             </button>
-            <a href="{% url 'client_dashboard' %}" class="btn btn-secondary">Cancel</a>
+            <a href="{% url 'client_dashboard' %}" class="btn btn-secondary" aria-label="Cancel">Cancel</a>
         </div>
     </form>
 
@@ -77,7 +77,7 @@
         <h3>Profile Management</h3>
         <p>If you need to remove this pet profile from your account, you can do so below.</p>
 
-        <a href="{% url 'delete_pet' pet.id %}" class="btn btn-outline-danger">
+        <a href="{% url 'delete_pet' pet.id %}" class="btn btn-outline-danger" aria-label="Remove Pet Profile">
             Remove Profile from List
         </a>
         <div class="form-help remove-profile-help">

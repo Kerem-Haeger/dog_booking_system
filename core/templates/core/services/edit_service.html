@@ -58,8 +58,9 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Update Service</button>
-            <a href="{% url 'manage_services' %}" class="btn btn-secondary">Cancel</a>
-            <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-success">Manage Pricing</a>
+            <a href="{% url 'manage_services' %}" class="btn btn-secondary" aria-label="Cancel">Cancel</a>
+            <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-success"
+                aria-label="Manage Pricing">Manage Pricing</a>
         </div>
     </form>
 

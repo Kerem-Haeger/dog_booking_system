@@ -214,11 +214,13 @@
 
                                     <!-- Action Buttons -->
                                     <div class="action-buttons">
-                                        <a href="{% url 'manager_edit_pet' pet.id %}" class="btn btn-sm btn-outline">
+                                        <a href="{% url 'manager_edit_pet' pet.id %}" class="btn btn-sm btn-outline"
+                                            aria-label="Edit Pet Details">
                                             ✏️ Edit Details
                                         </a>
                                         <a href="{% url 'manager_delete_pet' pet.id %}" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to delete this pet?')">
+                                            onclick="return confirm('Are you sure you want to delete this pet?')"
+                                            aria-label="Delete Pet">
                                             🗑️ Delete
                                         </a>
                                     </div>
@@ -240,7 +242,8 @@
 </div>
 
 <div class="back-link">
-    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary" aria-label="Back to Dashboard">⬅ Back to
+        Dashboard</a>
 </div>
 {% endblock %}
 

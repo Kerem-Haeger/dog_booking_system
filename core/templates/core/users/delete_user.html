@@ -13,7 +13,7 @@
     <div class="dashboard-header">
         <h1>Delete User Account</h1>
         <div class="action-links">
-            <a href="{% url 'manage_users' %}" class="btn btn-outline">
+            <a href="{% url 'manage_users' %}" class="btn btn-outline" aria-label="Back to User Management">
                 Back to User Management
             </a>
         </div>
@@ -101,7 +101,8 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="{% url 'manage_users' %}" class="btn btn-outline btn-large">
+                    <a href="{% url 'manage_users' %}" class="btn btn-outline btn-large"
+                        aria-label="Cancel User Deletion">
                         Cancel
                     </a>
                     <form method="post" style="display: inline;">

@@ -36,7 +36,8 @@
                     {% endif %}
                 </div>
                 {% if pending_appt_count > 0 %}
-                <a href="{% url 'approve_appointments' %}" class="request-action btn btn-primary">View Calendar</a>
+                <a href="{% url 'approve_appointments' %}" class="request-action btn btn-primary"
+                    aria-label="View Calendar">View Calendar</a>
                 {% endif %}
             </div>
 
@@ -57,7 +58,8 @@
                     {% endif %}
                 </div>
                 {% if pending_count > 0 %}
-                <a href="{% url 'approve_pets' %}" class="request-action btn btn-warning">Review Pets</a>
+                <a href="{% url 'approve_pets' %}" class="request-action btn btn-warning"
+                    aria-label="Review Pets">Review Pets</a>
                 {% endif %}
             </div>
 
@@ -78,7 +80,8 @@
                     {% endif %}
                 </div>
                 {% if pending_user_count > 0 %}
-                <a href="{% url 'approve_users' %}" class="request-action btn btn-info">Review Users</a>
+                <a href="{% url 'approve_users' %}" class="request-action btn btn-info" aria-label="Review Users">Review
+                    Users</a>
                 {% endif %}
             </div>
         </div>
@@ -88,22 +91,22 @@
     <div class="dashboard-card dashboard-section actions-section">
         <h2 class="section-title">📊 Quick Actions</h2>
         <div class="quick-actions">
-            <a href="{% url 'approve_appointments' %}" class="action-link">
+            <a href="{% url 'approve_appointments' %}" class="action-link" aria-label="Appointments Calendar">
                 <span class="action-icon">📅</span>
                 <span class="action-title">Appointments Calendar</span>
                 <div class="action-description">Manage all appointments and schedules</div>
             </a>
-            <a href="{% url 'approve_pets' %}" class="action-link">
+            <a href="{% url 'approve_pets' %}" class="action-link" aria-label="Manage Pets">
                 <span class="action-icon">🐕</span>
                 <span class="action-title">Manage Pets</span>
                 <div class="action-description">Approve or review pet profiles</div>
             </a>
-            <a href="{% url 'approve_users' %}" class="action-link">
+            <a href="{% url 'approve_users' %}" class="action-link" aria-label="Manage Users">
                 <span class="action-icon">👥</span>
                 <span class="action-title">Manage Users</span>
                 <div class="action-description">Approve registrations and manage all user accounts</div>
             </a>
-            <a href="{% url 'manage_services' %}" class="action-link">
+            <a href="{% url 'manage_services' %}" class="action-link" aria-label="Manage Services">
                 <span class="action-icon">⚙️</span>
                 <span class="action-title">Manage Services</span>
                 <div class="action-description">Add, edit, and price services</div>

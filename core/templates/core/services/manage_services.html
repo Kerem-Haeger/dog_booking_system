@@ -12,8 +12,9 @@
     <h1>Service Management</h1>
 
     <div class="service-actions">
-        <a href="{% url 'create_service' %}" class="btn btn-primary">Add New Service</a>
-        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        <a href="{% url 'create_service' %}" class="btn btn-primary" aria-label="Add New Service">Add New Service</a>
+        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary" aria-label="Back to Dashboard">← Back to
+            Dashboard</a>
     </div>
 
     {% if services %}
@@ -39,12 +40,15 @@
             </div>
 
             <div class="service-actions">
-                <a href="{% url 'edit_service' service.id %}" class="btn btn-small">Edit Service</a>
+                <a href="{% url 'edit_service' service.id %}" class="btn btn-small" aria-label="Edit Service">Edit
+                    Service</a>
 
                 {% if service.prices.all %}
-                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small">Edit Pricing</a>
+                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small"
+                    aria-label="Edit Pricing">Edit Pricing</a>
                 {% else %}
-                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small btn-success">Add Pricing</a>
+                <a href="{% url 'edit_service_pricing' service.id %}" class="btn btn-small btn-success"
+                    aria-label="Add Pricing">Add Pricing</a>
                 {% endif %}
 
                 <form method="post" action="{% url 'toggle_service_status' service.id %}" class="inline-form">
@@ -62,7 +66,8 @@
                 </form>
 
                 <a href="{% url 'delete_service' service.id %}" class="btn btn-small btn-danger"
-                    onclick="return confirm('This will permanently delete the service and all related data. Continue?');">
+                    onclick="return confirm('This will permanently delete the service and all related data. Continue?');"
+                    aria-label="Delete Service">
                     🗑️ Delete
                 </a>
             </div>
@@ -72,7 +77,8 @@
     {% else %}
     <div class="empty-services">
         <p>No services created yet.</p>
-        <a href="{% url 'create_service' %}" class="btn btn-primary">Create Your First Service</a>
+        <a href="{% url 'create_service' %}" class="btn btn-primary" aria-label="Create Your First Service">Create Your
+            First Service</a>
     </div>
     {% endif %}
 </div>

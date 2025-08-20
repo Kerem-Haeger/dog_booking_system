@@ -1,12 +1,245 @@
+
 # Dog Booking System
 
-Live Version: [Dog Booking System](https://your-deployment-url.com)
-
-Repository: [GitHub Repo](https://github.com/Kerem-Haeger/dog_booking_system)
-
-The app is developed by [Kerem Haeger](https://github.com/Kerem-Haeger).
+**Live Version:** [Dog Booking System](https://your-deployment-url.com)  
+**Repository:** [GitHub Repo](https://github.com/Kerem-Haeger/dog_booking_system)  
+**Author:** [Kerem Haeger](https://github.com/Kerem-Haeger)
 
 ![Dog Booking System](documentation/features/dashboard/dashboard.png)
+
+---
+
+## About
+
+The **Dog Booking System** is a full-featured pet grooming and service management platform tailored for grooming businesses. It simplifies the management of clients, pets, appointments, and staff through role-based access control. The primary goal is to streamline daily operations, reduce scheduling conflicts, and enhance the client experience.
+
+---
+
+## User Experience Design
+
+### Strategy
+
+The system was designed with simplicity and clarity in mind. By focusing on the specific needs of grooming businesses, it offers intuitive dashboards, smart scheduling, and seamless client interaction. Role-based interfaces ensure that each user type—manager, employee, or client—has access only to relevant tools and views.
+
+### Target Audience
+
+- **Managers**: Oversee operations, manage users and services, approve appointments and pet profiles.
+- **Employees**: View and manage their appointment schedules, update statuses, and access client/pet info.
+- **Clients**: Register pets, request services, track appointments, and manage profiles.
+
+### User Stories
+
+User stories are linked to the issue tracker in the repository and are grouped by user type. They reflect real-world goals and expected behaviors.
+
+#### First-Time Visitors
+
+| ID | Story |
+|----|-------|
+| [#1](https://github.com/Kerem-Haeger/dog_booking_system/issues/1) | Understand the purpose of the application. |
+| [#2](https://github.com/Kerem-Haeger/dog_booking_system/issues/2) | Navigate the interface with ease. |
+| [#3](https://github.com/Kerem-Haeger/dog_booking_system/issues/3) | Register an account. |
+| [#4](https://github.com/Kerem-Haeger/dog_booking_system/issues/4) | Recognize the value of the service. |
+
+#### Frequent Users
+
+| ID | Story |
+|----|-------|
+| [#5](https://github.com/Kerem-Haeger/dog_booking_system/issues/5) | Log in to a personalized dashboard. |
+| [#6](https://github.com/Kerem-Haeger/dog_booking_system/issues/6) | Log in/out securely. |
+| [#7](https://github.com/Kerem-Haeger/dog_booking_system/issues/7) | Recover forgotten passwords. |
+| [#8](https://github.com/Kerem-Haeger/dog_booking_system/issues/8) | Change password to maintain security. |
+
+#### Clients
+
+| ID | Story |
+|----|-------|
+| [#9](https://github.com/Kerem-Haeger/dog_booking_system/issues/9) | Manage pet profiles. |
+| [#10](https://github.com/Kerem-Haeger/dog_booking_system/issues/10) | Book appointments. |
+| [#11](https://github.com/Kerem-Haeger/dog_booking_system/issues/11) | View appointment history. |
+| [#12](https://github.com/Kerem-Haeger/dog_booking_system/issues/12) | Modify or cancel bookings. |
+| [#13](https://github.com/Kerem-Haeger/dog_booking_system/issues/13) | View services and pricing. |
+
+#### Managers
+
+| ID | Story |
+|----|-------|
+| [#14](https://github.com/Kerem-Haeger/dog_booking_system/issues/14) | Approve new users. |
+| [#15](https://github.com/Kerem-Haeger/dog_booking_system/issues/15) | Approve/reject pet profiles. |
+| [#16](https://github.com/Kerem-Haeger/dog_booking_system/issues/16) | Manage all appointments. |
+| [#17](https://github.com/Kerem-Haeger/dog_booking_system/issues/17) | Edit service offerings. |
+| [#18](https://github.com/Kerem-Haeger/dog_booking_system/issues/18) | Monitor calendar overview. |
+| [#19](https://github.com/Kerem-Haeger/dog_booking_system/issues/19) | Control user roles and permissions. |
+
+#### Employees
+
+| ID | Story |
+|----|-------|
+| [#20](https://github.com/Kerem-Haeger/dog_booking_system/issues/20) | View assigned appointments. |
+| [#21](https://github.com/Kerem-Haeger/dog_booking_system/issues/21) | Update appointment statuses. |
+| [#22](https://github.com/Kerem-Haeger/dog_booking_system/issues/22) | Access pet information. |
+| [#23](https://github.com/Kerem-Haeger/dog_booking_system/issues/23) | View client contact details. |
+
+---
+
+## Technologies Used
+
+### Languages
+
+- Python 3.12
+- JavaScript
+- HTML5
+- CSS3
+
+### Frameworks and Libraries
+
+- Django 4.2 (backend framework)
+- jQuery (DOM manipulation and AJAX)
+- FullCalendar 6.1 (calendar views)
+- AJAX (real-time UI updates)
+
+### Databases
+
+- SQLite (development)
+- PostgreSQL (production, hosted via Neon)
+
+### Developer Tools
+
+- Git & GitHub
+- Gunicorn (production server)
+- Psycopg2 (PostgreSQL adapter)
+- Pip3 (Python dependency manager)
+- VSCode (IDE)
+- Chrome DevTools (browser debugging)
+- Validators: W3C, JSHint, PEP8
+- Font Awesome (icons)
+
+---
+
+## Project Structure
+
+See file tree and notes in the section above.
+
+---
+
+## Features
+
+See [FEATURES.md](FEATURES.md) for a comprehensive breakdown of implemented and planned features.
+
+---
+
+## Design
+
+The application adheres to modern UI/UX design principles with an emphasis on:
+
+- Simplicity and clarity
+- Accessibility and responsiveness
+- Role-specific user flows
+
+### Visual Design
+
+- **Color Palette**: Blues and grays to promote professionalism and calm
+- **Typography**: System font stack for speed and consistency
+- **Buttons**: Semantic coloring for UX clarity
+- **Imagery**: Minimal, icon-driven design via Font Awesome
+
+### Wireframes
+
+- [Desktop](documentation/wireframes/desktop_wireframes.pdf)  
+- [Tablet](documentation/wireframes/tablet_wireframes.pdf)  
+- [Mobile](documentation/wireframes/mobile_wireframes.pdf)
+
+---
+
+## Information Architecture
+
+### Database Design
+
+- Development: SQLite  
+- Production: PostgreSQL on Neon
+
+### Data Models
+
+See the detailed model definitions and ER diagrams in this README above.
+
+---
+
+## Testing
+
+See [TESTING.md](TESTING.md) for a full overview of manual and automated tests, including:
+
+- Model tests
+- Form and view tests
+- End-to-end use case testing
+
+---
+
+## Deployment
+
+- Hosted on: **[Deployment Platform Name]**  
+- Database: **Neon** PostgreSQL (production)  
+- Live URL: [Dog Booking System](https://your-deployment-url.com)
+
+Full instructions: see [DEPLOYMENT.md](DEPLOYMENT.md)
+
+---
+
+## Future Improvements
+
+The current version of the Dog Booking System serves as a robust foundation, but several planned enhancements could significantly improve functionality, usability, and business value:
+
+- **Grooming Logs for Staff**: Implement a private logging system where employees and managers can leave internal comments or notes after each grooming session. These logs would be accessible only to staff and linked to pet profiles for future reference.
+- **Image Uploads**: Allow users to upload profile pictures for pets and include image attachments in staff logs (e.g., for before/after grooming shots or special instructions).
+- **Email Notifications**: Integrate automated email functionality for booking confirmations, appointment reminders, cancellations, and other system alerts.
+- **Expanded Employee Dashboard**: Enable employees to:
+  - Request time off (with approval workflows)
+  - View their full grooming schedule
+  - Access pet profiles for upcoming appointments
+- **Voucher System**: Introduce a system for special offers (e.g., birthday vouchers) with optional discount codes that can be tracked and managed by managers.
+
+These features are intentionally modular and designed for future scalability.
+
+---
+
+## Learning Outcomes
+
+This project was part of my Diploma in Full Stack Software Development and has helped me solidify a wide range of development and project management skills.
+
+### Key Takeaways
+
+- **Full-Stack Application Development**: I successfully built a scalable web application using Django, PostgreSQL, JavaScript, and AJAX, with a strong emphasis on user roles and database relationships.
+- **Modular and Role-Based Design**: I learned to structure logic and views in a maintainable way by separating functionality across user types (client, employee, manager).
+- **Frontend/Backend Integration**: I gained practical experience in integrating real-time frontend functionality with backend validation and security using AJAX and Django forms.
+- **Deployment**: I learned how to prepare, deploy, and maintain a Django project in a cloud-hosted environment.
+- **Security and Access Control**: Implementing custom role-based permissions, input validation, and restricted views helped me understand key principles of secure development.
+
+### Agile Reflections
+
+Although I implemented an issue tracker to follow Agile principles, I acknowledge that my issue logs are out of sync with my current development progress. This has helped me realize the importance of consistent documentation and progress tracking. I now have a better understanding of Agile workflows and plan to apply this more rigorously in future projects.
+
+---
+
+## Credits
+
+- **Django** for the framework powering the backend  
+- **Bootstrap**, **jQuery**, and **Font Awesome** for frontend functionality  
+- **Neon** for cloud-based PostgreSQL  
+- **GitHub** for version control and collaboration tools
+
+---
+
+## Acknowledgments
+
+- Code Institute and mentor support  
+- Industry professionals for input on business logic and user flow  
+- Django and open-source communities for their documentation and libraries
+
+---
+
+
+
+
+
+
 
 ## About
 

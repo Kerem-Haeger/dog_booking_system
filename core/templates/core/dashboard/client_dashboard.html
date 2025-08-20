@@ -49,12 +49,14 @@
                         <div class="appointment-actions">
                             {% if appt.can_edit %}
                             <a href="{% url 'edit_appointment' appt.id %}" class="btn-edit-small"
-                                title="Edit appointment ({{ appt.edit_count }}/3 edits used)">
+                                title="Edit appointment ({{ appt.edit_count }}/3 edits used)"
+                                aria-label="Edit Appointment">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             {% endif %}
                             {% if appt.can_cancel %}
-                            <a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-small">
+                            <a href="{% url 'cancel_appointment' appt.id %}" class="btn-cancel-small"
+                                aria-label="Cancel Appointment">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             {% elif not appt.can_cancel and appt.status == 'approved' %}
@@ -87,10 +89,12 @@
             <div class="empty-appointments">
                 {% if pets %}
                 <p>No upcoming appointments</p>
-                <a href="{% url 'book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+                <a href="{% url 'book_appointment' %}" class="btn btn-primary"
+                    aria-label="Book Your First Appointment">Book Your First Appointment</a>
                 {% else %}
                 <p>Please add a pet to pamper first</p>
-                <a href="{% url 'add_pet' %}" class="btn btn-primary">Add Your First Pet</a>
+                <a href="{% url 'add_pet' %}" class="btn btn-primary" aria-label="Add Your First Pet">Add Your First
+                    Pet</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -173,17 +177,18 @@
             <h3 class="section-title">⚡ Quick Actions</h3>
             <div class="quick-actions-compact">
                 {% if pets %}
-                <a href="{% url 'book_appointment' %}" class="action-button primary">
+                <a href="{% url 'book_appointment' %}" class="action-button primary" aria-label="Book Appointment">
                     <span class="icon">📅</span>
                     <span class="text">Book Appointment</span>
                 </a>
                 {% else %}
-                <div class="action-button primary disabled" title="Please add a pet first">
+                <div class="action-button primary disabled" title="Please add a pet first"
+                    aria-label="Please add a pet first">
                     <span class="icon">📅</span>
                     <span class="text">Book Appointment</span>
                 </div>
                 {% endif %}
-                <a href="{% url 'add_pet' %}" class="action-button secondary">
+                <a href="{% url 'add_pet' %}" class="action-button secondary" aria-label="Add Pet">
                     <span class="icon">🐕</span>
                     <span class="text">Add Pet</span>
                 </a>
@@ -201,8 +206,8 @@
                         <div class="pet-name">{{ pet.name }}</div>
                         <div class="pet-breed">{{ pet.breed }}</div>
                         <div class="pet-actions">
-                            <a href="{% url 'edit_pet' pet.id %}" class="pet-action-btn edit"
-                                title="Edit Details">✏️</a>
+                            <a href="{% url 'edit_pet' pet.id %}" class="pet-action-btn edit" title="Edit Details"
+                                aria-label="Edit Details">✏️</a>
                         </div>
                     </div>
                     <div class="pet-status-badge {{ pet.profile_status }}">
@@ -213,7 +218,7 @@
             </div>
             {% else %}
             <p class="empty-text">No pets added yet</p>
-            <a href="{% url 'add_pet' %}" class="btn-link">Add your first pet →</a>
+            <a href="{% url 'add_pet' %}" class="btn-link" aria-label="Add your first pet">Add your first pet →</a>
             {% endif %}
         </div>
     </div>

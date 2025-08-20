@@ -222,7 +222,8 @@
                                                 </button>
                                             </form>
                                             <a href="{% url 'delete_user' user_profile.id %}"
-                                                class="btn btn-sm btn-danger" title="Delete this user permanently">
+                                                class="btn btn-sm btn-danger" title="Delete this user permanently"
+                                                aria-label="Delete User">
                                                 🗑️ Delete User
                                             </a>
                                         </div>
@@ -245,7 +246,8 @@
 </div>
 
 <div class="back-link">
-    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary" aria-label="Back to Dashboard">⬅ Back to
+        Dashboard</a>
 </div>
 {% endblock %}
 

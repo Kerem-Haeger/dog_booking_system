@@ -19,7 +19,7 @@
     {% if user.is_authenticated %}
     <header class="header">
         <div class="header-container">
-            <a href="{% url 'redirect_by_role' %}" class="logo">
+            <a href="{% url 'redirect_by_role' %}" class="logo" aria-label="Go to Riverdog Studio Homepage">
                 Riverdog Studio
             </a>
             <div class="user-info">
@@ -27,7 +27,7 @@
                     Welcome, <strong>{{ user.get_full_name|default:user.username }}</strong>
                     <span class="role-badge">{{ user.userprofile.role|default:"User" }}</span>
                 </div>
-                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                <a href="{% url 'logout' %}" class="logout-btn" aria-label="Log out of your account">Logout</a>
             </div>
         </div>
     </header>
@@ -42,13 +42,13 @@
                             <i class="fas fa-paw"></i> My Pet Care <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="dropdown-content" id="client-menu">
-                            <a href="{% url 'client_dashboard' %}">
+                            <a href="{% url 'client_dashboard' %}" aria-label="Go to My Dashboard">
                                 <i class="fas fa-home"></i> My Dashboard
                             </a>
-                            <a href="{% url 'add_pet' %}">
+                            <a href="{% url 'add_pet' %}" aria-label="Go to Add My Pet">
                                 <i class="fas fa-plus"></i> Add My Pet
                             </a>
-                            <a href="{% url 'book_appointment' %}">
+                            <a href="{% url 'book_appointment' %}" aria-label="Go to Book Grooming">
                                 <i class="fas fa-calendar-plus"></i> Book Grooming
                             </a>
                         </div>
@@ -61,7 +61,7 @@
                             <i class="fas fa-user-tie"></i> Staff Tools <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="dropdown-content" id="employee-menu">
-                            <a href="{% url 'employee_dashboard' %}">
+                            <a href="{% url 'employee_dashboard' %}" aria-label="Go to Employee Dashboard">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </div>
@@ -74,31 +74,31 @@
                             <i class="fas fa-user-cog"></i> Admin Center <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="dropdown-content" id="manager-menu">
-                            <a href="{% url 'manager_dashboard' %}">
+                            <a href="{% url 'manager_dashboard' %}" aria-label="Go to Manager Dashboard">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
-                            <a href="{% url 'approve_appointments' %}">
+                            <a href="{% url 'approve_appointments' %}" aria-label="Go to Manage Appointments">
                                 <i class="fas fa-calendar-check"></i> Manage Appointments
                                 {% if pending_appointments_count > 0 %}
                                 <span class="notification-badge">{{ pending_appointments_count }}</span>
                                 {% endif %}
                             </a>
-                            <a href="{% url 'approve_pets' %}">
+                            <a href="{% url 'approve_pets' %}" aria-label="Go to Manage Pets">
                                 <i class="fas fa-paw"></i> Manage Pets
                                 {% if pending_pets_count > 0 %}
                                 <span class="notification-badge">{{ pending_pets_count }}</span>
                                 {% endif %}
                             </a>
-                            <a href="{% url 'approve_users' %}">
+                            <a href="{% url 'approve_users' %}" aria-label="Go to Manage Users">
                                 <i class="fas fa-users"></i> Manage Users
                                 {% if pending_users_count > 0 %}
                                 <span class="notification-badge">{{ pending_users_count }}</span>
                                 {% endif %}
                             </a>
-                            <a href="{% url 'manage_services' %}">
+                            <a href="{% url 'manage_services' %}" aria-label="Go to Manage Services">
                                 <i class="fas fa-cogs"></i> Manage Services
                             </a>
-                            <a href="{% url 'create_service' %}">
+                            <a href="{% url 'create_service' %}" aria-label="Go to Create Service">
                                 <i class="fas fa-plus"></i> Create Service
                             </a>
                         </div>
@@ -136,12 +136,12 @@
                 </div>
                 <div class="footer-center">
                     <div class="footer-social">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"
-                            class="social-link">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="social-link"
+                            aria-label="Go to Facebook">
                             <i class="fa-brands fa-square-facebook"></i>
                         </a>
                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"
-                            class="social-link">
+                            class="social-link" aria-label="Go to Instagram">
                             <i class="fa-brands fa-instagram"></i>
                         </a>
                     </div>

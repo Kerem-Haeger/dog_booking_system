@@ -20,7 +20,7 @@
                 <h4>{{ price.get_size_display }}</h4>
                 <div class="price-amount">£{{ price.price }}</div>
                 <div class="price-actions">
-                    <a href="?price_id={{ price.id }}" class="btn btn-sm btn-edit">Edit</a>
+                    <a href="?price_id={{ price.id }}" class="btn btn-sm btn-edit" aria-label="Edit Pricing">Edit</a>
                 </div>
             </div>
             {% endfor %}
@@ -65,8 +65,10 @@
                 <button type="submit" class="btn btn-primary">
                     {% if request.GET.price_id %}Update{% else %}Add{% endif %} Pricing
                 </button>
-                <a href="{% url 'edit_service' service.id %}" class="btn btn-secondary">Back to Service</a>
-                <a href="{% url 'manage_services' %}" class="btn btn-secondary">Back to Services</a>
+                <a href="{% url 'edit_service' service.id %}" class="btn btn-secondary"
+                    aria-label="Back to Service">Back to Service</a>
+                <a href="{% url 'manage_services' %}" class="btn btn-secondary" aria-label="Back to Services">Back to
+                    Services</a>
             </div>
         </form>
     </div>
