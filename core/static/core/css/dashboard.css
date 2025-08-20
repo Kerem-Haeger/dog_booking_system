@@ -146,7 +146,7 @@
 /* Client Dashboard Styles */
 .client-dashboard {
     display: grid;
-    grid-template-columns: 2fr 3fr;
+    grid-template-columns: 3fr 3fr;
     gap: 1.5rem;
     margin-top: 1rem;
 }
