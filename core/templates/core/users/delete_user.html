@@ -105,7 +105,7 @@
                         aria-label="Cancel User Deletion">
                         Cancel
                     </a>
-                    <form method="post" style="display: inline;">
+                    <form method="post" class="inline-form">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-large"
                             onclick="return confirm('Are you absolutely sure you want to delete {{ target_user.username }}? This cannot be undone!')">

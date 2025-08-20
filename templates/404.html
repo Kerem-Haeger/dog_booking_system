@@ -57,8 +57,9 @@
         </a>
         {% endif %}
 
-        <a href="javascript:history.back()" class="btn-action btn-secondary">
-            <i class="fas fa-arrow-left"></i>
+        <a href="#" class="btn-action btn-secondary" onclick="history.back(); return false;"
+            aria-label="Go back to the previous page">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
             Go Back
         </a>
     </div>

@@ -382,6 +382,10 @@
     display: inline-block;
 }
 
+.inline-form {
+    display: inline;
+}
+
 .btn {
     padding: 12px 24px;
     border: none;
