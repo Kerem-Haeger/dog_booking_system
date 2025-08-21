@@ -517,6 +517,16 @@ body {
     flex: 1;
 }
 
+.creator-link {
+    color: #dee2e6;
+    text-decoration: none;
+}
+
+.creator-link:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+
 /* Responsive Footer */
 @media (max-width: 768px) {
     .footer-content {

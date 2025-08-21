@@ -4,6 +4,7 @@
  */
 
 class AppointmentBooking {
+    // For appointment booking and editing
     constructor(urls, options = {}) {
         this.urls = urls;
         this.options = {

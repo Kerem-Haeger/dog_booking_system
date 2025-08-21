@@ -3,6 +3,7 @@
  * Reusable UI interaction components
  */
 
+// Tab manager class
 class TabManager {
     constructor(options = {}) {
         this.options = {
@@ -36,6 +37,7 @@ class TabManager {
     }
 }
 
+// Collapsible manager class
 class CollapsibleManager {
     constructor(options = {}) {
         this.options = {
@@ -67,6 +69,7 @@ class CollapsibleManager {
     }
 }
 
+// Confirmation dialogs class
 class ConfirmationDialogs {
     constructor(options = {}) {
         this.options = {
@@ -97,6 +100,7 @@ class ConfirmationDialogs {
     }
 }
 
+// Alert manager class
 class AlertManager {
     constructor(options = {}) {
         this.options = {
@@ -161,6 +165,7 @@ class AlertManager {
     }
 }
 
+// Search manager class
 class SearchManager {
     constructor(options = {}) {
         this.options = {
@@ -194,6 +199,7 @@ class SearchManager {
     }
 }
 
+// Role update manager class
 class RoleUpdateManager {
     constructor(options = {}) {
         this.options = {
@@ -226,6 +232,7 @@ class RoleUpdateManager {
     }
 }
 
+// Approval form manager class
 class ApprovalFormManager {
     constructor(options = {}) {
         this.options = {
@@ -254,6 +261,7 @@ class ApprovalFormManager {
     }
 }
 
+// Cancel appointment manager class
 class CancelAppointmentManager {
     constructor() {
         this.init();

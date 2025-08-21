@@ -4,6 +4,7 @@
  */
 
 class AppointmentsDashboard {
+    // Appointments dashboard constructor
     constructor(calendarElement, urls) {
         this.calendarEl = calendarElement;
         this.urls = urls;

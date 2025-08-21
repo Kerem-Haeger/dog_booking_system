@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeDropdowns();
 });
 
-// Auto-dismiss alerts after 5 seconds
 function initializeAlerts() {
+    // Auto-dismiss alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         // Add close button if it doesn't exist

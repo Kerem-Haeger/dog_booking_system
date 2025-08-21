@@ -4,6 +4,7 @@
  */
 
 class AppointmentSlider {
+    // Appointment slider constructor
     constructor(options = {}) {
         this.options = {
             cardSelector: '.appointment-card.compact',
@@ -128,6 +129,7 @@ class AppointmentSlider {
 }
 
 class AppointmentToggleManager {
+    // Appointment toggle manager constructor
     constructor() {
         this.init();
     }

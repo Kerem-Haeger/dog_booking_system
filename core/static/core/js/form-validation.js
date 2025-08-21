@@ -3,6 +3,7 @@
  * Reusable form validation utilities
  */
 
+// Form validation class
 class FormValidator {
     constructor(formElement) {
         this.form = formElement;
@@ -34,6 +35,7 @@ class FormValidator {
     }
 }
 
+// Date validator class
 class DateValidator {
     constructor(inputElement, options = {}) {
         this.input = inputElement;
@@ -125,6 +127,7 @@ class DateValidator {
     }
 }
 
+// Confirmation validator class
 class ConfirmationValidator {
     constructor(options = {}) {
         this.options = {

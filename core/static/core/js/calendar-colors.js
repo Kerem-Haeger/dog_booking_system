@@ -8,7 +8,7 @@ class CalendarColorManager {
         this.colors = {
             // Status-based colors
             approved: '#28a745', // Green
-            pending: '#ffc107', // Yellow  
+            pending: '#ffc107', // Yellow
             completed: '#6c757d', // Gray
             rejected: '#dc3545', // Red
             default: '#6c757d' // Default gray
