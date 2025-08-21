@@ -107,6 +107,50 @@ This web application is a booking and management system for a pet grooming busin
 
 #### Client Actions
 
+Below are screenshots of actions a client can take:
+
+![Appointment Info](documentation/screenshots/appointment_info.png)
+
+Showing the user upcoming appointments, with the option to edit or cancel (more than 24hrs in advance).
+
+![Feedback](documentation/screenshots/book_appointment_feedback.png)
+
+The client is shown a confirmation they have selected the slot.
+
+![Less than 24 hours](documentation/screenshots/24hrs.png)
+
+![Pending](documentation/screenshots/appointment_pending.png)
+
+The user is notified that the appointment is being reviewed.
+
+![Edit Appointment](documentation/screenshots/edit_appointment.png)
+
+The client can edit their appointment. Previous info will still be shown.
+
+![Cancel Appointment](documentation/screenshots/cancel_appointment.png)
+
+The client can cancel an appointment (more than 24hrs in advance).
+
+![Add Pet](documentation/screenshots/add_pet.png)
+
+The client can add their pet.
+
+![Edit Pet](documentation/screenshots/edit_pet.png)
+
+The client can edit their pet. The profile will be "Pending" again.
+
+![Delete Pet](documentation/screenshots/delete_pet.png)
+
+The user can remove a pet from their account.
+
+
+#### Manager Actions
+
+The comprehensive manager dashboard shows "Pending Requests" with icons, should there be any requests, that need attention. Otherwise they are greyed out.
+All actions can be accessed from the "Quick Actions" sidebar.
+
+
+
 
 
 #### Profile & Edit Profile
