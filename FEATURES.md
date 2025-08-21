@@ -32,11 +32,9 @@ This web application is a booking and management system for a pet grooming busin
 |-----------------------------|--------|----------|---------|---------------|
 | Home                        | Y      | Y        | Y       | Y             |
 | Login/Logout                | Y      | Y        | Y       | Y             |
-| Registration                | Y      | N        | N       | N             |
+| Registration                | Y      | Y        | Y       | N             |
 | Dashboard                   | Y      | Y        | Y       | N             |
-| Profile/Edit Profile        | Y      | Y        | Y       | N             |
-| Change Password             | Y      | Y        | Y       | N             |
-| Delete Account (self)       | Y      | N        | Y       | N             |
+| Delete Account              | N      | N        | Y       | N             |
 | Pet Management              | Y      | N        | Y       | N             |
 | Booking Management          | Y      | N        | Y       | N             |
 | Appointment Detail          | Y      | Y        | Y       | N             |
@@ -57,14 +55,15 @@ This web application is a booking and management system for a pet grooming busin
 
 **Navbar**
 
-- [Placeholder: Navbar image]
+![Navbar](documentation/screenshots/navbar.png)
 - The navbar is implemented in `base.html` and adapts to the user's role, providing links to relevant sections (Dashboard, Pets, Bookings, Schedule, Profile, Logout, etc.).
 - No logo is used.
 
 **Footer**
 
-- [Placeholder: Footer image]
+![Footer](documentation/screenshots/footer.png)
 - The footer contains business contact information and copyright.
+- All links are working and include my personal GitHub and LinkedIn account.
 
 ---
 
@@ -72,26 +71,43 @@ This web application is a booking and management system for a pet grooming busin
 
 #### Home Page
 
-- [Placeholder: Home page image]
+![Home](documentation/screenshots/home.png)
 - Welcome message and call-to-action for registration or login.
 
 #### Registration Page
 
-- [Placeholder: Registration page image]
-- Form for new clients to sign up.
+![Register](documentation/screenshots/registration.png)
+- Form for new users to sign up.
 
-#### Login Page
+#### New User Notification
 
-- [Placeholder: Login page image]
-- Form for all users to log in.
+![New User Notification](documentation/screenshots/new_user.png)
+- After registration, managers must approve users before logging in.
+- Clear feedback is given to the users.
+
+#### Wrong Credentials
+
+![Wrong Credentials](documentation/screenshots/wrong_credentials.png)
+- Comprehensive feedback is given throughout
 
 #### Dashboard
 
-- [Placeholder: Dashboard image]
 - Role-based dashboard:
   - **Client:** Upcoming appointments, pets, quick actions.
+  ![Client Dashboard](documentation/screenshots/client_dashboard.png)
+  - The client dashboard features an overview of upcoming appointments (as well as past, or rejected ones if applicable), and a sidebar for user actions.
+
   - **Employee:** Today's and week's schedule.
+  ![Employee Dashboard](documentation/screenshots/employee_dashboard.png)
+  - The employee dashboard is kept minimalistic for now. See further documentation.
+
   - **Manager:** Pending appointments, staff assignments, user/pet management.
+  ![Manager Dashboard](documentation/screenshots/manager_dashboard.png)
+  - The manager dashboard shows a comprehensive list of tasks and options (scaled down for the screenshot). This includes "Pending Requests" that require attention, and general functionality, like editing services or managing users and pets.
+
+#### Client Actions
+
+
 
 #### Profile & Edit Profile
 
@@ -147,11 +163,10 @@ This web application is a booking and management system for a pet grooming busin
 
 #### Error Pages
 
-- [Placeholder: 400 error page image]
-- [Placeholder: 403 error page image]
-- [Placeholder: 404 error page image]
-- [Placeholder: 500 error page image]
 - Friendly error messages for bad requests, forbidden access, not found, and server errors.
+![Example 404](documentation/screenshots/404.png)
+
+These exist for **400, 403, 404, 500** errors
 
 ---
 
