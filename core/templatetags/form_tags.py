@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 from django import template
 from django.forms import BoundField
 from django.forms.widgets import Widget

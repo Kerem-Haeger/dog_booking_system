@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 from datetime import datetime
 from django.utils.timezone import make_aware
 from .models import UserProfile, EmployeeCalendar, TimeOffRequest

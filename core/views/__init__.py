@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 # Import all views for backward compatibility
 from .client_views import (
     client_dashboard, add_pet, edit_pet, delete_pet, book_appointment,

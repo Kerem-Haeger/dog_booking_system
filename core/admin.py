@@ -17,7 +17,6 @@ admin.site.register(EmployeeCalendar)
 admin.site.register(ServicePrice)
 
 
-# Customizing the PetProfile admin interface
 class PetProfileAdmin(admin.ModelAdmin):
     """ Define which fields should appear in the list view in the admin """
     list_display = (
@@ -39,7 +38,6 @@ class PetProfileAdmin(admin.ModelAdmin):
 admin.site.register(PetProfile, PetProfileAdmin)
 
 
-# Customizing the Appointment admin interface
 class AppointmentAdmin(admin.ModelAdmin):
     """ Define which fields should appear in the list view in the admin """
     list_display = (
@@ -67,7 +65,6 @@ class TimeOffRequestAdmin(admin.ModelAdmin):
 admin.site.register(TimeOffRequest, TimeOffRequestAdmin)
 
 
-# Customizing the Voucher admin interface
 class VoucherAdmin(admin.ModelAdmin):
     """ Define which fields should appear in the list view in the admin """
     list_display = (
@@ -88,5 +85,6 @@ admin.site.register(Voucher, VoucherAdmin)  # Register Voucher with the customiz
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
+    """ Define which fields should appear in the list view in the admin """
     list_display = ('name', 'duration', 'slot_interval')
     list_filter = ('slot_interval',)

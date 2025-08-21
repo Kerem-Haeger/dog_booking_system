@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404

@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_http_methods
 from django.contrib.auth.decorators import user_passes_test

@@ -1,3 +1,8 @@
+"""
+Dog Booking System
+Author: Kerem Haeger
+Created: August 2025
+"""
 from django.urls import path
 from . import views
 from .views import fetch_available_slots
