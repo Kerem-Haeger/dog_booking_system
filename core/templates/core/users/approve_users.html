@@ -35,8 +35,6 @@
     </div>
 
     <div class="users-grid">
-        <p class="dashboard-subtitle">To change a user's role, approve them as client first, then change the role in
-            "All Users" tab.</p>
         {% for user_profile, form in user_forms %}
         <div class="user-card">
             <div class="user-info">
@@ -63,10 +61,10 @@
                     <select name="id_{{ user_profile.id }}-role" id="role_{{ user_profile.id }}" class="form-control">
                         <option value="client" selected>Client</option>
                         <option value="employee" {% if user_profile.role == "employee" %}selected{% endif %}>
-                            Employee – approve as client first
+                            Employee
                         </option>
                         <option value="manager" {% if user_profile.role == "manager" %}selected{% endif %}>
-                            Manager – approve as client first
+                            Manager
                         </option>
                     </select>
                 </div>
