@@ -103,6 +103,10 @@ This web application is a booking and management system for a pet grooming busin
 
 Below are screenshots of actions a client can take:
 
+![Book Appointment](documentation/screenshots/book_appointment.png)
+
+The client can book an appointment, provided they have added a pet.
+
 ![Appointment Info](documentation/screenshots/appointment_info.png)
 
 Showing the user upcoming appointments, with the option to edit or cancel (more than 24hrs in advance).
