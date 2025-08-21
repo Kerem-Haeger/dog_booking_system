@@ -149,68 +149,52 @@ The user can remove a pet from their account.
 The comprehensive manager dashboard shows "Pending Requests" with icons, should there be any requests, that need attention. Otherwise they are greyed out.
 All actions can be accessed from the "Quick Actions" sidebar.
 
+![Pending Appointments](documentation/screenshots/pending_appointments.png)
 
+Managers can approve appointments quickly, after assigning to an available employee.
 
+![Calendar](documentation/screenshots/calendar.png)
 
+Managers have an overview of all calendars. Calendars can be shown by single employees and appointments can be reassigned directly via a modal.
 
-#### Profile & Edit Profile
+![Rejected](documentation/screenshots/rejected.png)
 
-- [Placeholder: Profile page image]
-- View and edit personal information.
+For tracking purposes, managers can see rejected appointments.
 
-#### Change Password
+![Pet Approval](documentation/screenshots/pending_pets.png)
 
-- [Placeholder: Change password page image]
-- Update account password.
+Managers can quickly approve or reject pets, after selecting an appropriate size.
 
-#### Delete Account
+![All Pets](documentation/screenshots/all_pets.png)
 
-- [Placeholder: Delete account page image]
-- Clients and managers can delete their own accounts. Managers can delete any user.
+Managers have access to a list of all pets, and can delete and edit.
 
-#### Pet Management
+![Pending Users](documentation/screenshots/pending_users.png)
 
-- [Placeholder: Pet management page image]
-- Clients and managers can add, edit, or delete pet profiles.
+The same logic goes for Users. Managers can assign a role and then approve.
 
-#### Booking Management
+![All Users](documentation/screenshots/all_users.png)
 
-- [Placeholder: Booking management page image]
-- Clients can create, edit, or delete their own appointments (if 24+ hours in advance).
-- Managers can manage all appointments.
+Managers can see, edit, delete, and serach all users.
 
-#### Appointment Detail
+![Services](documentation/screenshots/services.png)
 
-- [Placeholder: Appointment detail page image]
-- View details of a specific appointment.
+Managers can see all services, as well as add, edit, delete, and deactivate them.
 
-#### Employee Schedule
+![Pricing](documentation/screenshots/edit_pricing.png)
 
-- [Placeholder: Employee schedule page image]
-- Employees can view their own schedule (day/week).
-- Managers can view all schedules.
+Managers can change prices for existing services.
 
-#### Manager Time Management
+![Deactivate](documentation/screenshots/deactivate.png)
 
-- [Placeholder: Manager time management page image]
-- Managers can assign pending appointments to employees.
-
-#### User Management (Manager Only)
-
-- [Placeholder: User management page image]
-- Managers can view, approve, edit, or delete users.
-
-#### Service Management (Manager Only)
-
-- [Placeholder: Service management page image]
-- Managers can add, edit, delete, activate/deactivate services and manage pricing.
+For business purposes, managers can deactivate a service, rather than delete it, which makes it temporarily unavailable to clients.
 
 #### Error Pages
 
 - Friendly error messages for bad requests, forbidden access, not found, and server errors.
 ![Example 404](documentation/screenshots/404.png)
 
-These exist for **400, 403, 404, 500** errors
+These exist for **400, 403, 404, 500** errors, with cute, customised messages, to engage the user and distract from the site not working...
 
 ---
 
@@ -218,12 +202,13 @@ These exist for **400, 403, 404, 500** errors
 
 - All pages are responsive and adapt to mobile devices.
 - Navigation and actions are accessible on all screen sizes.
+- See [TESTING.md](TESTING.md) for details.
 
 ---
 
 ### Favicon
 
-- [Placeholder: Favicon image]
+- ![Favicon](documentation/screenshots/favicon.png)
 - A small icon for browser tabs.
 
 ---
