@@ -3,8 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
-# UserProfile model (used for roles)
 class UserProfile(models.Model):
+    """ User profile model for managing user roles and information """
     USER_ROLES = [
         ('pending', 'Pending Approval'),
         ('client', 'Client'),
@@ -24,13 +24,13 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        # Return full name if available, otherwise username
+        """ Return full name if available, otherwise username """
         full_name = self.user.get_full_name()
         return full_name if full_name.strip() else self.user.username
 
 
-# Pet Profile model (linked to client)
 class PetProfile(models.Model):
+    """ Pet profile model for managing pet information """
     SIZE_CHOICES = [
         ('small', 'Small'),
         ('medium', 'Medium'),
@@ -69,8 +69,8 @@ class PetProfile(models.Model):
         return self.name
 
 
-# Service model (simplified grooming services)
 class Service(models.Model):
+    """ Service model for managing grooming services """
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     duration = models.DurationField()
@@ -100,8 +100,8 @@ class Service(models.Model):
         return self.prices.get(size=size).price
 
 
-# Model for pricing
 class ServicePrice(models.Model):
+    """ Service price model for managing service pricing based on pet size """
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="prices")
     size = models.CharField(
         choices=[
@@ -117,8 +117,10 @@ class ServicePrice(models.Model):
         unique_together = ('service', 'size')
 
 
-# Appointment model (for booking)
 class Appointment(models.Model):
+    """
+    Appointment model for managing pet grooming appointments
+    """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
@@ -160,7 +162,7 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # Prevent double-booking
+        """ Prevent double-booking"""
         unique_together = ('pet_profile', 'appointment_time')
 
     def __str__(self):
@@ -211,8 +213,10 @@ class Appointment(models.Model):
         return True
 
 
-# Employee calendar (for tracking appointments per employee)
 class EmployeeCalendar(models.Model):
+    """
+    Employee calendar model for managing scheduled appointments
+    """
     user_profile = models.ForeignKey(
         UserProfile,
         on_delete=models.CASCADE,
@@ -236,8 +240,8 @@ class EmployeeCalendar(models.Model):
         )
 
 
-# Employee Time-Off Requests (pending approval for more than 1 hour)
 class TimeOffRequest(models.Model):
+    """ Time off request model for employees """
     user_profile = models.ForeignKey(
         UserProfile,
         on_delete=models.CASCADE,
@@ -261,6 +265,7 @@ class TimeOffRequest(models.Model):
 
 
 class Voucher(models.Model):
+    """ Voucher model for managing discount vouchers """
     code = models.CharField(max_length=10, unique=True)  # Unique voucher code
     discount_percentage = models.DecimalField(
         max_digits=5,

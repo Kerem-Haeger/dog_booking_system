@@ -15,6 +15,7 @@ from .models import (
 
 
 class PetProfileForm(forms.ModelForm):
+    """ Form for creating and editing pet profiles """
     class Meta:
         model = PetProfile
         fields = ['name', 'breed', 'date_of_birth']
@@ -71,7 +72,7 @@ class PetProfileForm(forms.ModelForm):
 
 
 class PetProfileManagerForm(forms.ModelForm):
-    """Manager/Employee form for editing pet profiles including grooming preferences"""
+    """ Manager/Employee form for editing pet profiles including grooming preferences """
     class Meta:
         model = PetProfile
         fields = [
@@ -100,6 +101,7 @@ class PetProfileManagerForm(forms.ModelForm):
 
 
 class PetApprovalForm(forms.Form):
+    """ Form for approving or rejecting pet profiles """
     size = forms.ChoiceField(
         choices=[('', '--- Select Size ---')] + PetProfile.SIZE_CHOICES,
         required=True,  # Changed to True for proper validation
@@ -113,6 +115,7 @@ class PetApprovalForm(forms.Form):
 
 
 class AppointmentForm(forms.ModelForm):
+    """ Form for creating and editing appointments """
     voucher_code = forms.CharField(
         max_length=20, required=False,
         label="Voucher Code (Optional)"
@@ -216,6 +219,7 @@ class AppointmentForm(forms.ModelForm):
 
 
 class AppointmentApprovalForm(forms.Form):
+    """ Form for approving or rejecting appointments """
     employee = forms.ModelChoiceField(
         queryset=UserProfile.objects.filter(role='employee'),
         label="Assign to Employee",
@@ -240,7 +244,7 @@ class UserApprovalForm(forms.Form):
 
 
 class ServiceForm(forms.ModelForm):
-    """Form for creating and editing services"""
+    """ Form for creating and editing services """
 
     class Meta:
         model = Service
@@ -307,7 +311,7 @@ class ServiceForm(forms.ModelForm):
 
 
 class ServicePriceForm(forms.ModelForm):
-    """Form for managing service pricing"""
+    """ Form for managing service pricing """
 
     class Meta:
         model = ServicePrice
@@ -334,7 +338,7 @@ class ServicePriceForm(forms.ModelForm):
 
 
 class CustomUserRegistrationForm(UserCreationForm):
-    """Extended registration form with additional user information"""
+    """ Extended registration form with additional user information """
 
     first_name = forms.CharField(
         max_length=30,

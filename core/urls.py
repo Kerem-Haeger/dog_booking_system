@@ -16,36 +16,66 @@ from .views.manager_views import (
 )
 
 urlpatterns = [
-     path('redirect-by-role/', views.redirect_by_role,
-          name='redirect_by_role'),
+     path(
+          'redirect-by-role/',
+          views.redirect_by_role,
+          name='redirect_by_role'
+          ),
      path('client/', views.client_dashboard, name='client_dashboard'),
      path('client/pets/add/', views.add_pet, name='add_pet'),
      path('client/pets/<int:pet_id>/edit/', views.edit_pet, name='edit_pet'),
      path('client/pets/<int:pet_id>/delete/', views.delete_pet, name='delete_pet'),
-     path('client/appointments/book/', views.book_appointment,
-          name='book_appointment'),
-     path('client/appointments/<int:appointment_id>/edit/',
-          views.edit_appointment, name='edit_appointment'),
-     path('client/appointments/cancel/<int:appointment_id>/',
-          views.cancel_appointment, name='cancel_appointment'),
-     path('ajax/available-slots/', fetch_available_slots,
-          name='fetch_available_slots'),
+     path(
+          'client/appointments/book/',
+          views.book_appointment,
+          name='book_appointment'
+          ),
+     path(
+          'client/appointments/<int:appointment_id>/edit/',
+          views.edit_appointment,
+          name='edit_appointment'
+          ),
+     path(
+          'client/appointments/cancel/<int:appointment_id>/',
+          views.cancel_appointment,
+          name='cancel_appointment'
+          ),
+     path(
+          'ajax/available-slots/',
+          fetch_available_slots,
+          name='fetch_available_slots'
+          ),
      path('employee/', views.employee_dashboard, name='employee_dashboard'),
      path('manager/', views.manager_dashboard, name='manager_dashboard'),
-     path('manager/approve-appointments/', views.approve_appointments,
-          name='approve_appointments'),
+     path(
+          'manager/approve-appointments/',
+          views.approve_appointments,
+          name='approve_appointments'
+          ),
      path('manager/pets/pending/', views.approve_pets, name='approve_pets'),
      path('manager/pets/<int:pet_id>/edit/', manager_edit_pet,
           name='manager_edit_pet'),
-     path('manager/pets/<int:pet_id>/delete/', manager_delete_pet,
-          name='manager_delete_pet'),
-     path('manager/pets/<int:pet_id>/update-status/', update_pet_status,
-          name='update_pet_status'),
+     path(
+          'manager/pets/<int:pet_id>/delete/',
+          manager_delete_pet,
+          name='manager_delete_pet'
+          ),
+     path(
+          'manager/pets/<int:pet_id>/update-status/',
+          update_pet_status,
+          name='update_pet_status'
+          ),
      path('manager/users/pending/', views.approve_users, name='approve_users'),
-     path('manager/users/<int:user_id>/update-role/', update_user_role,
-          name='update_user_role'),
-     path('manager/users/<int:user_id>/delete/', delete_user,
-          name='delete_user'),
+     path(
+          'manager/users/<int:user_id>/update-role/',
+          update_user_role,
+          name='update_user_role'
+          ),
+     path(
+          'manager/users/<int:user_id>/delete/',
+          delete_user,
+          name='delete_user'
+          ),
      path('manager/services/', views.manage_services, name='manage_services'),
      path('manager/services/create/', views.create_service, name='create_service'),
      path('manager/services/<int:service_id>/edit/', views.edit_service, name='edit_service'),
@@ -53,27 +83,27 @@ urlpatterns = [
           'manager/services/<int:service_id>/pricing/',
           views.edit_service_pricing,
           name='edit_service_pricing',
-     ),
+          ),
      path(
           'manager/services/<int:service_id>/toggle/',
           views.toggle_service_status,
           name='toggle_service_status',
-     ),
-     path('manager/services/<int:service_id>/delete/', views.delete_service,
-          name='delete_service'),
-     path('ajax/get-service-price/', get_service_price,
-          name='get_service_price'),
-     path('ajax/calendar-events/', get_calendar_events,
-          name='get_calendar_events'),
-     path('ajax/debug-appointments/', debug_appointments,
-          name='debug_appointments'),
-     path('ajax/approve-appointment/', approve_appointment_ajax,
-          name='approve_appointment_ajax'),
-     path('ajax/reject-appointment/', reject_appointment_ajax,
-          name='reject_appointment_ajax'),
-     path('ajax/get-available-employees/', get_available_employees,
-          name='get_available_employees'),
-     path('ajax/reassign-appointment/', reassign_appointment_ajax,
-          name='reassign_appointment_ajax'),
+          ),
+     path(
+          'manager/services/<int:service_id>/delete/',
+          views.delete_service,
+          name='delete_service'
+          ),
+     path('ajax/get-service-price/', get_service_price, name='get_service_price'),
+     path('ajax/calendar-events/', get_calendar_events, name='get_calendar_events'),
+     path('ajax/debug-appointments/', debug_appointments, name='debug_appointments'),
+     path('ajax/approve-appointment/', approve_appointment_ajax, name='approve_appointment_ajax'),
+     path('ajax/reject-appointment/', reject_appointment_ajax, name='reject_appointment_ajax'),
+     path('ajax/get-available-employees/', get_available_employees, name='get_available_employees'),
+     path(
+          'ajax/reassign-appointment/',
+          reassign_appointment_ajax,
+          name='reassign_appointment_ajax'
+          ),
      path('register/', register_view, name='register'),
 ]

@@ -49,6 +49,9 @@ def get_overlapping_appointments(target_appointment):
 
 
 def get_available_slots(service, date_obj):
+    """
+    Get available time slots for a specific service on a given date.
+    """
     service_length = service.duration
     slots = []
 
