@@ -50,7 +50,7 @@ def approve_pets(request):
     # Get all pets for the comprehensive view, with related data for efficiency
     all_pets = PetProfile.objects.select_related('user').prefetch_related(
         'appointment_set'
-    ).exclude(profile_status='pending').order_by('-verified_at', 'name')
+    ).filter(profile_status='verified').order_by('-verified_at', 'name')
 
     # Calculate age for each pet
     for pet in all_pets:
