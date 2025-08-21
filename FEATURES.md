@@ -228,6 +228,7 @@ The current version of the Dog Booking System serves as a robust foundation, but
   - Request time off (with approval workflows)
   - View their full grooming schedule
   - Access pet profiles for upcoming appointments
+- **Advanced User Settings**: While not necessary for this stage of the process, more advanced user profile functionality (self) can be implemented, such as editing details, recovering passwords (linked to email notifications), etc 
 - **Voucher System**: Introduce a system for special offers (e.g., birthday vouchers) with optional discount codes that can be tracked and managed by managers.
 - **Website Implementation**: In future iterations, the login process could be redesigned as an "on-site" feature, for example by integrating a modal-style login or an overlay directly within the main website layout, allowing a smoother, more seamless user experience.
 
