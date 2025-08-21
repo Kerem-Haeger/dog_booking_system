@@ -6,15 +6,9 @@ This web application is a booking and management system for a pet grooming busin
 
 ### Main Pages and Features
 
-- Home page
 - Login page
-- Registration page (for clients)
-- Logout page
+- Registration page
 - Dashboard (role-based: client, employee, manager)
-- Profile page
-- Edit profile page
-- Change password page
-- Delete account page (self-delete for clients; managers can delete any user)
 - Pet management (add, edit, delete pets)
 - Booking management (create, edit, delete appointments)
 - Appointment detail page
