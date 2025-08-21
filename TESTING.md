@@ -143,8 +143,8 @@ Key pages were audited using Lighthouse in Chrome DevTools.
 
 | Page | Screenshot |
 |------|------------|
-| Manager Dashboard | ![Lighthouse Manager Dashboard](documentation/lighthouse_manager.png) |
-| Client Dashboard | ![Lighthouse Client Dashboard](documentation/lighthouse_client.png) |
+| Manager | ![Lighthouse Manager Dashboard](documentation/lighthouse_manager.png) |
+| Client | ![Lighthouse Client Dashboard](documentation/lighthouse_client.png) |
 
 ## Browser Compatibility
 
@@ -162,4 +162,4 @@ Tested on the following browsers:
 
 Responsiveness was tested manually and with the [Responsive Viewer Chrome Extension](https://chrome.google.com/webstore/detail/responsive-viewer/inmopeiepgfljkpkidclfgbgbmfcennb/related).
 
-[Responsiveness Report](documentation/responsiveness/responsiveness.pdf)
+![Responsiveness Report](documentation/responsiveness.png)
