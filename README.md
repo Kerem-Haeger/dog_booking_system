@@ -412,8 +412,6 @@ Although I implemented an issue tracker to follow Agile principles, I acknowledg
 
 ## Credits
 
-## Credits
-
 - [GitHub](https://github.com/) for hosting the project repository.
 - [Django](https://www.djangoproject.com/) for the comprehensive web framework.
 - [Neon](https://neon.tech/) for the cloud PostgreSQL database hosting.
