@@ -28,6 +28,11 @@
     margin-right: 5px;
 }
 
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
 .pricing-info {
     margin-top: 10px;
     padding: 10px;

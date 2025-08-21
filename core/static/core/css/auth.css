@@ -187,18 +187,6 @@
     padding: 1rem 0;
 }
 
-/* Responsive design */
-@media (max-width: 640px) {
-    .auth-register .auth-container {
-        margin: 2rem auto;
-        padding: 1.5rem;
-    }
-
-    .auth-title {
-        font-size: 1.5rem;
-    }
-}
-
 /* Pending Approval Page Styles */
 .pending-container {
     max-width: 600px;
@@ -323,5 +311,14 @@
 
     .pending-actions {
         flex-direction: column;
+    }
+
+    .auth-register .auth-container {
+        margin: 2rem auto;
+        padding: 1.5rem;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
     }
 }

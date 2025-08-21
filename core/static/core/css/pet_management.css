@@ -385,51 +385,6 @@
     color: #047857;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    .pet-basic-info {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .appointment-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .appointment-date {
-        min-width: auto;
-    }
-
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .list-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .search-container {
-        max-width: none;
-    }
-
-    .status-form {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-    }
-
-    .crud-buttons {
-        gap: 12px;
-    }
-}
-
 /* Manager Edit Pet Form Styles */
 .edit-pet-form .form-container {
     max-width: 1200px;
@@ -582,5 +537,47 @@
 
     .edit-pet-form .form-actions {
         flex-direction: column;
+    }
+
+    .pet-basic-info {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .appointment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .appointment-date {
+        min-width: auto;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .list-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        max-width: none;
+    }
+
+    .status-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .crud-buttons {
+        gap: 12px;
     }
 }
