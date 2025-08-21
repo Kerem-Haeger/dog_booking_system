@@ -2,116 +2,180 @@
 
 /* Service Cards */
 .service-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 5px;
+    border: 1px solid #e5e7eb;
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
 }
 
 .service-card.inactive {
-    background-color: #f5f5f5;
+    background-color: #f9fafb;
     opacity: 0.7;
 }
 
-.status-inactive {
-    color: #666;
-    font-size: 0.8em;
-}
-
 .service-actions {
-    margin-top: 10px;
-}
-
-.btn-small {
-    padding: 5px 10px;
-    font-size: 0.9em;
-    margin-right: 5px;
-}
-
-.btn-warning {
-    background: #ffc107;
-    color: #212529;
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .pricing-info {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 3px;
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Button Styles */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.btn-warning {
+    background-color: #facc15;
+    color: #1f2937;
+}
+
+.btn-warning:hover {
+    background-color: #eab308;
+}
+
+/* Status Badges */
+.status-active {
+    background-color: #d1fae5;
+    color: #047857;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-inactive {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* Service Forms */
 .form-group {
     margin-bottom: 20px;
+    max-width: 500px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #374151;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
     width: 100%;
-    max-width: 400px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
 }
 
 .form-group small {
     display: block;
-    color: #666;
-    margin-top: 3px;
+    color: #6b7280;
+    margin-top: 4px;
+    font-size: 12px;
+    font-style: italic;
 }
 
 .form-errors {
-    color: red;
-    margin-top: 5px;
+    color: #dc2626;
+    margin-top: 6px;
+    font-size: 13px;
 }
 
 .form-actions {
-    margin-top: 30px;
-}
-
-.btn {
-    padding: 10px 20px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 3px;
-    text-decoration: none;
-    display: inline-block;
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* Service Information Display */
 .service-info {
     margin-bottom: 20px;
     padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .service-info h3 {
     margin-top: 0;
+    color: #111827;
 }
 
 .service-info p {
-    margin-bottom: 10px;
-}
-
-.status-active {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.status-inactive {
-    color: #dc3545;
-    font-weight: bold;
+    margin-bottom: 8px;
+    color: #374151;
 }
 
 /* Inline Form */
 .inline-form {
     display: inline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .service-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }

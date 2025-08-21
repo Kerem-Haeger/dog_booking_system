@@ -13,62 +13,46 @@
 .dashboard-title {
     font-size: 2rem;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text);
     margin: 0 0 0.5rem 0;
 }
 
 .dashboard-subtitle {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 1.1rem;
     margin: 0;
 }
 
 .section-title {
     margin: 0 0 1rem 0;
-    color: #333;
+    color: var(--color-text);
     font-size: 1.3rem;
     font-weight: 600;
-    border-bottom: 2px solid #f8f9fa;
+    border-bottom: 2px solid var(--color-bg);
     padding-bottom: 0.5rem;
 }
 
 /* Unified Card System */
 .dashboard-card {
-    background: white;
-    border-radius: 8px;
+    background: #ffffff;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e9ecef;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
 }
 
 .dashboard-header-card {
-    background: white;
-    border: 1px solid #e9ecef;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
     text-align: center;
     padding: 2rem;
     margin-bottom: 2rem;
 }
 
-/* Unified Button System */
-.btn {
-    display: inline-block;
-    padding: 0.375rem 0.75rem;
-    margin-bottom: 0;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-    transition: all 0.15s ease-in-out;
-}
-
+/* Button helpers (no global .btn override to avoid conflicts) */
 .btn-sm {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
@@ -110,7 +94,7 @@
 .empty-state {
     text-align: center;
     padding: 2rem;
-    color: #6c757d;
+    color: var(--color-muted);
     font-style: italic;
 }
 
@@ -118,7 +102,7 @@
     margin: 0;
 }
 
-/* Utility Classes */
+/* Utilities */
 .mt-2 {
     margin-top: 0.5rem;
 }
@@ -133,17 +117,16 @@
 
 /* ==== END UNIFIED DESIGN SYSTEM ==== */
 
-/* Hidden Content */
+/* Visibility toggles */
 .hidden-content {
     display: none;
 }
 
-/* Visible Content */
 .visible-content {
     display: block !important;
 }
 
-/* Client Dashboard Styles */
+/* Client Dashboard */
 .client-dashboard {
     display: grid;
     grid-template-columns: 3fr 3fr;
@@ -157,26 +140,26 @@
     gap: 1.5rem;
 }
 
-/* Appointment Slider - using unified card system */
+/* Appointment Slider */
 .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid #f8f9fa;
+    border-bottom: 2px solid var(--color-bg);
 }
 
 .section-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--color-text);
     font-size: 1.3rem;
     font-weight: 600;
 }
 
 .appointment-count {
-    background: #007bff;
-    color: white;
+    background: var(--color-primary);
+    color: #ffffff;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -194,11 +177,11 @@
 
 .appointment-card.compact {
     display: none;
-    /* Hide all by default */
-    background: #f8f9fa;
-    border-radius: 8px;
+    /* hidden by default */
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--color-success);
     transition: all 0.3s ease;
     position: relative;
     width: 100%;
@@ -206,24 +189,24 @@
 
 .appointment-card.compact.active {
     display: flex;
-    /* Show only active */
+    /* show only active */
     align-items: center;
     gap: 1.5rem;
 }
 
 .appointment-time {
     text-align: center;
-    background: white;
-    border-radius: 8px;
+    background: #ffffff;
+    border-radius: var(--radius-md);
     padding: 1rem;
     min-width: 80px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
 }
 
 .appointment-time .date {
     font-weight: bold;
     font-size: 1.1rem;
-    color: #007bff;
+    color: var(--color-primary);
 }
 
 .appointment-time .time {
@@ -235,7 +218,7 @@
 
 .appointment-time .day {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: var(--color-muted);
     text-transform: uppercase;
 }
 
@@ -265,75 +248,31 @@
     margin-bottom: 0.5rem;
 }
 
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
+/* Fine-grained status (aligns with other files) */
 .status-badge.pending {
-    background: #fff3cd;
-    color: #856404;
+    background: var(--alert-warning-bg);
+    color: var(--alert-warning-text);
 }
 
 .status-badge.approved,
 .status-badge.verified {
-    background: #d4edda;
-    color: #155724;
+    background: var(--alert-success-bg);
+    color: var(--alert-success-text);
 }
 
 .status-badge.rejected {
-    background: #f8d7da;
-    color: #721c24;
+    background: var(--alert-error-bg);
+    color: var(--alert-error-text);
 }
 
 .status-badge.cancelled {
     background: #e2e3e5;
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
 .employee {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
-}
-
-.appointment-actions {
-    margin-top: 0.5rem;
-}
-
-.btn-cancel-small {
-    background: #dc3545;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-    margin-left: 0.5rem;
-}
-
-.btn-cancel-small:hover {
-    background: #c82333;
-    text-decoration: none;
-    color: white;
-}
-
-.btn-edit-small {
-    background: #007bff;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-}
-
-.btn-edit-small:hover {
-    background: #0056b3;
-    text-decoration: none;
-    color: white;
 }
 
 .appointment-actions {
@@ -343,9 +282,42 @@
     margin-top: 0.5rem;
 }
 
+.btn-cancel-small {
+    background: var(--color-danger);
+    color: #ffffff;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    margin-left: 0.5rem;
+}
+
+.btn-cancel-small:hover {
+    background: var(--color-danger-dark);
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.btn-edit-small {
+    background: var(--color-primary);
+    color: #ffffff;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+}
+
+.btn-edit-small:hover {
+    background: var(--color-primary-dark);
+    text-decoration: none;
+    color: #ffffff;
+}
+
 .cancel-warning-text,
 .edit-limit-text {
-    color: #856404;
+    color: var(--alert-warning-text);
     font-size: 0.8rem;
     font-style: italic;
 }
@@ -360,8 +332,8 @@
 
 .slider-prev,
 .slider-next {
-    background: #007bff;
-    color: white;
+    background: var(--color-primary);
+    color: #ffffff;
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -373,7 +345,7 @@
 
 .slider-prev:hover,
 .slider-next:hover {
-    background: #0056b3;
+    background: var(--color-primary-dark);
 }
 
 .slider-dots {
@@ -385,19 +357,19 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #dee2e6;
+    background: var(--color-border);
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .dot.active {
-    background: #007bff;
+    background: var(--color-primary);
 }
 
 .empty-appointments {
     text-align: center;
     padding: 3rem 2rem;
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
 .empty-appointments p {
@@ -405,23 +377,23 @@
     margin-bottom: 1rem;
 }
 
-/* Past Appointments */
+/* Past / Rejected Sections */
 .past-appointments-section,
 .rejected-appointments-section {
     margin-top: 2rem;
-    background: white;
+    background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
 }
 
 .rejected-appointments-section {
-    border-left: 4px solid #dc3545;
+    border-left: 4px solid var(--color-danger);
 }
 
 .section-toggle {
     width: 100%;
-    background: #f8f9fa;
+    background: var(--color-bg);
     border: none;
     padding: 1rem 1.5rem;
     text-align: left;
@@ -441,7 +413,7 @@
 .toggle-icon,
 .toggle-icon-rejected {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
 .past-appointments-content,
@@ -455,9 +427,14 @@
     gap: 1rem;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
-    background: #f8f9fa;
+    background: var(--color-bg);
     border-radius: 6px;
     opacity: 0.8;
+}
+
+.appointment-time.rejected {
+    background: var(--color-danger);
+    color: #ffffff;
 }
 
 .appointment-card.rejected {
@@ -466,14 +443,9 @@
     gap: 1rem;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
-    background: #f8d7da;
+    background: var(--alert-error-bg);
     border-radius: 6px;
-    border-left: 3px solid #dc3545;
-}
-
-.appointment-time.rejected {
-    background: #dc3545;
-    color: white;
+    border-left: 3px solid var(--color-danger);
 }
 
 .rejection-note {
@@ -483,12 +455,12 @@
 }
 
 .requested-time {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.8rem;
 }
 
 .completed-message {
-    color: #28a745;
+    color: var(--color-success);
     font-style: italic;
     font-weight: 500;
 }
@@ -500,15 +472,15 @@
 
 /* Sidebar */
 .sidebar-card {
-    background: white;
+    background: #ffffff;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
     border: 1px solid #e3e6ea;
 }
 
 .sidebar-card.priority {
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--color-primary);
 }
 
 .sidebar-card h3 {
@@ -536,20 +508,20 @@
 }
 
 .action-button.primary {
-    background: #007bff;
-    color: white;
+    background: var(--color-primary);
+    color: #ffffff;
 }
 
 .action-button.primary:hover {
-    background: #0056b3;
-    color: white;
+    background: var(--color-primary-dark);
+    color: #ffffff;
     text-decoration: none;
 }
 
 .action-button.secondary {
-    background: #f8f9fa;
+    background: var(--color-bg);
     color: #495057;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--color-border);
 }
 
 .action-button.secondary:hover {
@@ -564,14 +536,14 @@
 
 .action-button.disabled {
     background: #e9ecef;
-    color: #6c757d;
+    color: var(--color-muted);
     cursor: not-allowed;
     opacity: 0.6;
 }
 
 .action-button.disabled:hover {
     background: #e9ecef;
-    color: #6c757d;
+    color: var(--color-muted);
     text-decoration: none;
 }
 
@@ -586,7 +558,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem;
-    background: #f8f9fa;
+    background: var(--color-bg);
     border-radius: 6px;
 }
 
@@ -603,7 +575,7 @@
 
 .pet-info .pet-breed {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
 .pet-actions {
@@ -624,13 +596,13 @@
 }
 
 .pet-action-btn.edit:hover {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--color-primary);
+    color: #ffffff;
 }
 
 .pet-action-btn.delete:hover {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--color-danger);
+    color: #ffffff;
 }
 
 .pet-status-badge {
@@ -643,28 +615,28 @@
 
 .pet-status-badge.approved,
 .pet-status-badge.verified {
-    background: #d4edda;
-    color: #155724;
+    background: var(--alert-success-bg);
+    color: var(--alert-success-text);
 }
 
 .pet-status-badge.pending {
-    background: #fff3cd;
-    color: #856404;
+    background: var(--alert-warning-bg);
+    color: var(--alert-warning-text);
 }
 
 .pet-status-badge.rejected {
-    background: #f8d7da;
-    color: #721c24;
+    background: var(--alert-error-bg);
+    color: var(--alert-error-text);
 }
 
 .empty-text {
-    color: #6c757d;
+    color: var(--color-muted);
     text-align: center;
     margin-bottom: 0.5rem;
 }
 
 .btn-link {
-    color: #007bff;
+    color: var(--color-primary);
     text-decoration: none;
     font-size: 0.9rem;
     text-align: center;
@@ -673,20 +645,20 @@
 
 .btn-link:hover {
     text-decoration: underline;
-    color: #0056b3;
+    color: var(--color-primary-dark);
 }
 
 /* Pet List Styles */
 .pet-list {
-    background: #f8f9fa;
+    background: var(--color-bg);
     padding: 1rem;
-    border-radius: 8px;
-    border-left: 4px solid #28a745;
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-success);
 }
 
 .pet-item {
     padding: 0.5rem 0;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .pet-item:last-child {
@@ -699,7 +671,7 @@
 }
 
 .pet-details {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
 }
 
@@ -709,7 +681,7 @@
 
 .pet-status.approved,
 .pet-status.verified {
-    color: #28a745;
+    color: var(--color-success);
 }
 
 .pet-status.pending {
@@ -717,10 +689,10 @@
 }
 
 .pet-status.rejected {
-    color: #dc3545;
+    color: var(--color-danger);
 }
 
-/* Quick Actions */
+/* Quick Actions (list) */
 .quick-actions {
     padding: 0;
     margin-top: 1rem;
@@ -729,20 +701,20 @@
 .action-link {
     display: block;
     padding: 1rem;
-    background: white;
+    background: #ffffff;
     margin-bottom: 0.5rem;
     text-decoration: none;
-    color: #333;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: var(--color-text);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
     transition: all 0.3s;
 }
 
 .action-link:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
     text-decoration: none;
-    color: #333;
+    color: var(--color-text);
 }
 
 .action-icon {
@@ -756,12 +728,12 @@
 }
 
 .action-description {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
     margin-top: 0.25rem;
 }
 
-/* Manager Dashboard Specific */
+/* Manager Dashboard */
 .manager-dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -769,13 +741,13 @@
     margin-top: 2rem;
 }
 
-/* Manager-specific accent colors */
+/* Section accents */
 .requests-section {
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--color-primary);
 }
 
 .actions-section {
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--color-success);
 }
 
 /* Request Cards */
@@ -786,15 +758,15 @@
 }
 
 .request-card {
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
     padding: 1rem;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--color-border);
     transition: all 0.3s ease;
 }
 
 .request-card.has-requests {
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--color-primary);
     background: #e7f3ff;
 }
 
@@ -820,8 +792,8 @@
 }
 
 .request-count {
-    background: #007bff;
-    color: white;
+    background: var(--color-primary);
+    color: #ffffff;
     border-radius: 50%;
     width: 24px;
     height: 24px;
@@ -833,7 +805,7 @@
 }
 
 .request-description {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
     margin-bottom: 1rem;
     line-height: 1.4;
@@ -843,7 +815,7 @@
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     display: inline-block;
     transition: all 0.2s;
 }
@@ -853,16 +825,7 @@
     transform: translateY(-1px);
 }
 
-/* Button Styles */
-.btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-}
-
+/* Contextual buttons (scoped) */
 .btn-warning {
     background: #ffc107;
     color: #212529;
@@ -875,19 +838,19 @@
 
 .btn-info {
     background: #17a2b8;
-    color: white;
+    color: #ffffff;
 }
 
 .btn-info:hover {
     background: #138496;
-    color: white;
+    color: #ffffff;
 }
 
 /* Employee Dashboard */
 .employee-preview {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     padding: 2rem;
     margin-top: 2rem;
     text-align: center;
@@ -901,18 +864,18 @@
 }
 
 .feature-card {
-    background: white;
+    background: #ffffff;
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border-left: 4px solid;
 }
 
 .feature-card.primary {
-    border-left-color: #007bff;
+    border-left-color: var(--color-primary);
 }
 
 .feature-card.success {
-    border-left-color: #28a745;
+    border-left-color: var(--color-success);
 }
 
 .feature-card.warning {
@@ -926,11 +889,11 @@
 }
 
 .feature-title.primary {
-    color: #007bff;
+    color: var(--color-primary);
 }
 
 .feature-title.success {
-    color: #28a745;
+    color: var(--color-success);
 }
 
 .feature-title.warning {
@@ -938,13 +901,12 @@
 }
 
 .feature-description {
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
     line-height: 1.4;
 }
 
-/* Employee Dashboard Specific Styles */
-/* Today's Schedule Styles */
+/* Employee: Today's Schedule */
 .appointment-list {
     display: flex;
     flex-direction: column;
@@ -957,9 +919,9 @@
     gap: 1rem;
     align-items: center;
     padding: 1rem;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    background: #f8f9fa;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
 }
 
 .appointment-time {
@@ -970,13 +932,13 @@
 
 .appointment-details h4 {
     margin: 0 0 0.25rem 0;
-    color: #333;
+    color: var(--color-text);
     font-size: 1rem;
 }
 
 .appointment-details p {
     margin: 0;
-    color: #6c757d;
+    color: var(--color-muted);
     font-size: 0.9rem;
 }
 
@@ -984,14 +946,7 @@
     font-style: italic;
 }
 
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: capitalize;
-}
-
+/* Status chips (employee view) */
 .status-scheduled {
     background: #e3f2fd;
     color: #1976d2;
@@ -1027,7 +982,7 @@
     color: #d32f2f;
 }
 
-/* Upcoming Appointments Styles */
+/* Upcoming Appointments */
 .upcoming-list {
     display: flex;
     flex-direction: column;
@@ -1040,22 +995,22 @@
     gap: 1rem;
     align-items: center;
     padding: 0.75rem;
-    border-left: 3px solid #007bff;
-    background: #f8f9fa;
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-bg);
     border-radius: 0 6px 6px 0;
 }
 
 .upcoming-date {
     text-align: center;
     font-weight: bold;
-    color: #007bff;
+    color: var(--color-primary);
 }
 
 .upcoming-date small {
     display: block;
     font-weight: normal;
     font-size: 0.7rem;
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
 .upcoming-details {
@@ -1064,45 +1019,10 @@
 }
 
 .upcoming-details small {
-    color: #6c757d;
+    color: var(--color-muted);
 }
 
-/* Time Off Requests Styles */
-.time-off-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.time-off-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 1rem;
-    align-items: center;
-    padding: 0.75rem;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    background: #f8f9fa;
-}
-
-.time-off-dates {
-    font-weight: 500;
-    color: #495057;
-}
-
-/* Empty State Styles */
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #6c757d;
-    font-style: italic;
-}
-
-.empty-state p {
-    margin: 0;
-}
-
-/* Responsive Design for All Dashboards */
+/* Responsive */
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 0.5rem;
@@ -1125,16 +1045,8 @@
         order: -1;
     }
 
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .manager-alerts {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
+    .dashboard-grid,
+    .manager-alerts,
     .manager-dashboard {
         grid-template-columns: 1fr;
         gap: 1rem;

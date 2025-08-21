@@ -1,20 +1,25 @@
-/* Deletion Pages CSS - Riverdog Studio */
+/* Deletion Pages CSS - Dog Booking System */
 
+/* Container */
 .delete-container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* ========= WARNINGS & CALLOUTS ========= */
+
+/* Primary warning card (generic) */
 .warning-card {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
+    background: var(--alert-error-bg);
+    border: 1px solid var(--alert-error-border);
+    border-radius: var(--radius-md);
     padding: 20px;
     margin-bottom: 20px;
     display: flex;
     align-items: flex-start;
     gap: 16px;
+    box-shadow: var(--shadow-sm);
 }
 
 .warning-icon {
@@ -23,322 +28,23 @@
 }
 
 .warning-content h2 {
-    color: #dc2626;
+    color: var(--alert-error-text);
     margin: 0 0 8px 0;
     font-size: 18px;
 }
 
 .warning-content p {
     color: #991b1b;
+    /* slightly darker for emphasis */
     margin: 0;
     line-height: 1.5;
 }
 
-/* Header fix due to conflicting CSS */
-.header .user-details {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Info cards - generic styles for pet, user, and service info */
-.pet-info-card,
-.user-info-card,
-.service-info-card,
-.pricing-info-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.pet-info-card h3,
-.user-info-card h3,
-.service-info-card h3,
-.pricing-info-card h3 {
-    margin: 0 0 16px 0;
-    color: #374151;
-    font-size: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px;
-}
-
-.pet-details,
-.user-details,
-.service-details {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-}
-
-.detail-row label {
-    font-weight: 600;
-    color: #374151;
-    min-width: 120px;
-}
-
-.detail-row span {
-    color: #6b7280;
-    text-align: right;
-    flex: 1;
-}
-
-/* Status badges */
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.status-badge.verified {
-    background: #d1fae5;
-    color: #047857;
-}
-
-.status-badge.pending {
-    background: #fef3c7;
-    color: #d97706;
-}
-
-.status-badge.rejected {
-    background: #fecaca;
-    color: #dc2626;
-}
-
-.status-badge.active {
-    background: #d1fae5;
-    color: #047857;
-}
-
-.status-badge.inactive {
-    background: #fecaca;
-    color: #dc2626;
-}
-
-/* Service pricing styles */
-.pricing-details {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.price-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #f9fafb;
-    border-radius: 6px;
-}
-
-.size-label {
-    font-weight: 500;
-    color: #374151;
-}
-
-.price-value {
-    font-weight: 600;
-    color: #059669;
-    font-size: 16px;
-}
-
-/* Role badges for users */
-.role-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.role-badge.manager {
-    background: #fef3c7;
-    color: #d97706;
-}
-
-.role-badge.employee {
-    background: #dbeafe;
-    color: #2563eb;
-}
-
-.role-badge.client {
-    background: #d1fae5;
-    color: #047857;
-}
-
-/* Impact warning section */
+/* Impact warning (neutral/amber) */
 .impact-warning {
     background: #fffbeb;
     border: 1px solid #fed7aa;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-/* User deletion specific styles */
-.warning-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background: var(--card-background);
-    border: 2px solid #dc3545;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-}
-
-.warning-header {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-    color: white;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.warning-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.warning-text {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-.user-summary {
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.user-summary h3 {
-    margin: 0 0 1rem 0;
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-}
-
-.user-summary ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.user-summary li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.user-summary li:last-child {
-    border-bottom: none;
-}
-
-.impact-section {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.impact-section.critical {
-    background: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-.impact-section h3 {
-    margin: 0 0 1rem 0;
-    color: #856404;
-    font-size: 1.1rem;
-}
-
-.impact-section.critical h3 {
-    color: #721c24;
-}
-
-.critical-warning {
-    color: #721c24;
-    font-weight: 500;
-    margin-bottom: 1rem;
-}
-
-.impact-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.impact-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.impact-list li:last-child {
-    border-bottom: none;
-}
-
-.pet-name,
-.appointment-info {
-    color: var(--text-primary);
-    font-weight: 500;
-}
-
-.consequence-warning {
-    background: #f8d7da;
-    border: 2px solid #dc3545;
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.consequence-warning h3 {
-    color: #721c24;
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
-}
-
-.consequence-warning p {
-    color: #721c24;
-    margin-bottom: 1rem;
-}
-
-.consequence-warning ul {
-    color: #721c24;
-    margin: 0;
-}
-
-.consequence-warning li {
-    margin-bottom: 0.5rem;
-}
-
-.btn-large {
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-/* Impact warning section */
-.impact-warning {
-    background: #fffbeb;
-    border: 1px solid #fed7aa;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 20px;
     margin-bottom: 20px;
     display: flex;
@@ -378,7 +84,283 @@
     margin-bottom: 4px;
 }
 
-/* Action buttons */
+/* ========= HEADER TWEAK (SCOPED) ========= */
+/* Keep to avoid clashes with other pages that stack user details */
+.header .user-details {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ========= INFO CARDS ========= */
+/* Generic info cards used for pet, user, service, pricing */
+.pet-info-card,
+.user-info-card,
+.service-info-card,
+.pricing-info-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.pet-info-card h3,
+.user-info-card h3,
+.service-info-card h3,
+.pricing-info-card h3 {
+    margin: 0 0 16px 0;
+    color: #374151;
+    font-size: 16px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+}
+
+.pet-details,
+.user-details,
+.service-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.detail-row label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.detail-row span {
+    color: #6b7280;
+    text-align: right;
+    flex: 1;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.verified,
+.status-badge.active {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-badge.rejected,
+.status-badge.inactive {
+    background: #fecaca;
+    color: var(--alert-error-text);
+}
+
+/* Service pricing */
+.pricing-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+.size-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.price-value {
+    font-weight: 600;
+    color: #059669;
+    font-size: 16px;
+}
+
+/* Role badges */
+.role-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.role-badge.manager {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.role-badge.employee {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.role-badge.client {
+    background: #d1fae5;
+    color: #047857;
+}
+
+/* ========= USER DELETION: EMPHASIZED BLOCKS ========= */
+
+/* Elevated warning card variant for user deletion summary */
+.warning-card.user-delete {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.warning-header {
+    background: linear-gradient(135deg, var(--color-danger), var(--color-danger-dark));
+    color: #ffffff;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.warning-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.warning-text {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.user-summary {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-summary h3 {
+    margin: 0 0 1rem 0;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+}
+
+.user-summary ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-summary li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.user-summary li:last-child {
+    border-bottom: none;
+}
+
+.impact-section {
+    background: var(--alert-warning-bg);
+    border: 1px solid var(--alert-warning-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.impact-section.critical {
+    background: var(--alert-error-bg);
+    border-color: var(--alert-error-border);
+}
+
+.impact-section h3 {
+    margin: 0 0 1rem 0;
+    color: var(--alert-warning-text);
+    font-size: 1.1rem;
+}
+
+.impact-section.critical h3 {
+    color: var(--alert-error-text);
+}
+
+.critical-warning {
+    color: var(--alert-error-text);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.impact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.impact-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.impact-list li:last-child {
+    border-bottom: none;
+}
+
+.pet-name,
+.appointment-info {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.consequence-warning {
+    background: var(--alert-error-bg);
+    border: 2px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.consequence-warning h3 {
+    color: var(--alert-error-text);
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.consequence-warning p,
+.consequence-warning ul,
+.consequence-warning li {
+    color: var(--alert-error-text);
+}
+
+.consequence-warning li {
+    margin-bottom: 0.5rem;
+}
+
+/* ========= ACTIONS ========= */
+
 .action-buttons {
     display: flex;
     gap: 12px;
@@ -394,20 +376,14 @@
     display: inline;
 }
 
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* Size helper; relies on global .btn styles from base.css */
+.btn-large {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
-/* Responsive design */
+/* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
     .delete-container {
         margin: 0 16px;

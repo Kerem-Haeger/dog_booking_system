@@ -5,9 +5,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 2rem;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto 2rem;
 }
 
 /* All pets list layout */
@@ -19,7 +18,7 @@
 /* Tabs styling */
 .tabs-container {
     margin-bottom: 30px;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid var(--color-border);
 }
 
 .tabs {
@@ -39,12 +38,12 @@
 }
 
 .tab-button.active {
-    color: #059669;
-    border-bottom-color: #059669;
+    color: var(--color-success);
+    border-bottom-color: var(--color-success);
 }
 
 .tab-button:hover {
-    color: #047857;
+    color: var(--color-success-dark);
     background: #f0fdf4;
 }
 
@@ -77,13 +76,15 @@
 
 /* Collapsible list styling */
 .collapsible-list {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     overflow: hidden;
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
 }
 
 .collapsible-item {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .collapsible-item:last-child {
@@ -92,7 +93,7 @@
 
 .collapsible-header {
     padding: 16px 20px;
-    background: #f9fafb;
+    background: var(--color-bg);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -143,7 +144,7 @@
     color: #6b7280;
     cursor: pointer;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     transition: all 0.2s ease;
 }
 
@@ -203,7 +204,7 @@
 .grooming-preferences {
     margin-bottom: 20px;
     padding: 16px;
-    background: #f9fafb;
+    background: var(--color-bg);
     border-radius: 6px;
 }
 
@@ -227,7 +228,7 @@
 }
 
 .appointments-list {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     overflow: hidden;
 }
@@ -246,7 +247,7 @@
 }
 
 .appointment-item.more-appointments {
-    background: #f9fafb;
+    background: var(--color-bg);
     font-style: italic;
     color: #6b7280;
     justify-content: center;
@@ -268,14 +269,15 @@
     text-align: center;
     color: #9ca3af;
     font-style: italic;
-    background: #f9fafb;
+    background: var(--color-bg);
     border-radius: 6px;
 }
 
+/* Actions */
 .pet-actions-detailed {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--color-border);
 }
 
 .action-group h5 {
@@ -298,9 +300,9 @@
     align-items: center;
     gap: 8px;
     padding: 12px;
-    background: #f9fafb;
+    background: var(--color-bg);
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
 }
 
 .status-form label {
@@ -313,7 +315,7 @@
 .form-control-sm {
     padding: 6px 8px;
     border: 1px solid #d1d5db;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 13px;
     min-width: 100px;
 }
@@ -324,10 +326,11 @@
     flex-wrap: wrap;
 }
 
+/* Button helpers (scoped) */
 .btn-sm {
     padding: 6px 12px;
     font-size: 13px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -339,13 +342,13 @@
 }
 
 .btn-outline {
-    background: white;
+    background: #ffffff;
     color: #374151;
     border: 1px solid #d1d5db;
 }
 
 .btn-outline:hover {
-    background: #f9fafb;
+    background: var(--color-bg);
     color: #374151;
     text-decoration: none;
 }
@@ -366,37 +369,42 @@
 
 /* Status badges */
 .status-badge.verified {
-    background: #d1fae5;
-    color: #047857;
+    background: var(--alert-success-bg);
+    color: var(--alert-success-text);
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
+    border: 1px solid var(--alert-success-border);
 }
 
 .status-badge.pending {
-    background: #fef3c7;
-    color: #d97706;
+    background: var(--alert-warning-bg);
+    color: var(--alert-warning-text);
+    border: 1px solid var(--alert-warning-border);
 }
 
 .status-badge.confirmed {
     background: #dbeafe;
     color: #1d4ed8;
+    border: 1px solid #bfdbfe;
 }
 
 .status-badge.completed {
-    background: #d1fae5;
-    color: #047857;
+    background: var(--alert-success-bg);
+    color: var(--alert-success-text);
+    border: 1px solid var(--alert-success-border);
 }
 
 /* Manager Edit Pet Form Styles */
 .edit-pet-form .form-container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
+    background: #ffffff;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
 }
 
 .edit-pet-form .form-grid {
@@ -432,7 +440,7 @@
 
 .edit-pet-form .form-control:focus {
     outline: none;
-    border-color: #059669;
+    border-color: var(--color-success);
     box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
 }
 
@@ -442,7 +450,7 @@
 }
 
 .edit-pet-form .error-message {
-    color: #dc2626;
+    color: var(--color-danger);
     font-size: 12px;
     margin-top: 4px;
 }
@@ -454,7 +462,7 @@
 }
 
 .edit-pet-form .pet-info-summary {
-    background: #f9fafb;
+    background: var(--color-bg);
     padding: 20px;
     border-radius: 6px;
     margin: 20px 0;
@@ -497,13 +505,13 @@
     justify-content: flex-end;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--color-border);
 }
 
 .edit-pet-form .btn {
     padding: 12px 24px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-weight: 500;
     text-decoration: none;
     display: inline-flex;
@@ -515,16 +523,20 @@
 
 .edit-pet-form .btn-secondary {
     background: #6b7280;
-    color: white;
+    color: #ffffff;
 }
 
 .edit-pet-form .btn-secondary:hover {
     background: #4b5563;
-    color: white;
+    color: #ffffff;
     text-decoration: none;
 }
 
-/* Edit Pet Form Responsive Design */
+.review-info {
+    padding: 1rem 0;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .edit-pet-form .form-container {
         margin: 0 16px;
