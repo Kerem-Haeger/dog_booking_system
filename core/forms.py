@@ -142,6 +142,7 @@ class AppointmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        self.fields['voucher_code'].disabled = True
 
         # Filter to show only verified pets owned by this user
         self.fields['pet_profile'].queryset = PetProfile.objects.filter(
