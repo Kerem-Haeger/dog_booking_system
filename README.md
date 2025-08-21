@@ -1,7 +1,7 @@
 
 # Dog Booking System
 
-**Live Version:** [Dog Booking System](https://your-deployment-url.com)  
+**Live Version:** [Dog Booking System](https://dog-booking-system-1eebcb797de9.herokuapp.com/)  
 **Repository:** [GitHub Repo](https://github.com/Kerem-Haeger/dog_booking_system)  
 **Author:** [Kerem Haeger](https://github.com/Kerem-Haeger)
 
@@ -210,12 +210,34 @@ The application adheres to modern UI/UX design principles with an emphasis on:
 - Accessibility and responsiveness
 - Role-specific user flows
 
+The visual design of the Dog Booking System prioritizes usability and clarity. The layout follows a clean, modern aesthetic that supports intuitive navigation for all user roles — clients, employees, and managers.
+
+### Layout and Interface
+
+The interface uses clearly defined sections, such as dashboards and quick-access panels, to highlight important tasks like appointment approvals and user management. Icons and color-coded cards improve at-a-glance recognition and reduce cognitive load.
+
+### Color Scheme
+
+The system adopts a bold but functional color palette, using soft backgrounds with distinct color highlights for different actions (e.g., blue for appointments, green for confirmations, orange for actions). This ensures consistency while guiding user attention effectively.
+
+### Typography
+
+A clean, sans-serif font is used across the application to ensure readability on both desktop and mobile devices. Font sizes and weights are varied to emphasize key information such as headings and action buttons.
+
 ### Visual Design
 
 - **Color Palette**: Blues and grays to promote professionalism and calm
 - **Typography**: System font stack for speed and consistency
 - **Buttons**: Semantic coloring for UX clarity
 - **Imagery**: Minimal, icon-driven design via Font Awesome
+
+### Responsiveness
+
+The UI adapts to various screen sizes to ensure accessibility on desktops, tablets, and mobile devices. Core features remain accessible regardless of screen width. See [TESTING.md](TESTING.md) for responsiveness tests.
+
+### Icons and Visuals
+
+Icons from [Font Awesome](https://fontawesome.com/) are used throughout the platform to support key actions and improve visual recognition. These icons help distinguish between sections such as appointments, pet profiles, and user registration.
 
 ### Wireframes
 
