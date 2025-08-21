@@ -168,3 +168,18 @@ This web application is a booking and management system for a pet grooming busin
 - A small icon for browser tabs.
 
 ---
+
+## Future Improvements
+
+The current version of the Dog Booking System serves as a robust foundation, but several planned enhancements could significantly improve functionality, usability, and business value:
+
+- **Grooming Logs for Staff**: Implement a private logging system where employees and managers can leave internal comments or notes after each grooming session. These logs would be accessible only to staff and linked to pet profiles for future reference.
+- **Image Uploads**: Allow users to upload profile pictures for pets and include image attachments in staff logs (e.g., for before/after grooming shots or special instructions).
+- **Email Notifications**: Integrate automated email functionality for booking confirmations, appointment reminders, cancellations, and other system alerts.
+- **Expanded Employee Dashboard**: Enable employees to:
+  - Request time off (with approval workflows)
+  - View their full grooming schedule
+  - Access pet profiles for upcoming appointments
+- **Voucher System**: Introduce a system for special offers (e.g., birthday vouchers) with optional discount codes that can be tracked and managed by managers.
+
+These features are intentionally modular and designed for future scalability.
