@@ -169,7 +169,7 @@ Managers have access to a list of all pets, and can delete and edit.
 
 ![Pending Users](documentation/screenshots/pending_users.png)
 
-The same logic goes for Users. Managers can assign a role and then approve.
+The same logic is used for Users. Managers can assign a role and then approve. By default, the role is set to "Client".
 
 ![All Users](documentation/screenshots/all_users.png)
 
