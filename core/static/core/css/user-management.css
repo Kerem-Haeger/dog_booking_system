@@ -104,6 +104,10 @@
     align-items: center;
 }
 
+.dashboard-subtitle {
+    margin: 0.5rem 0;
+}
+
 /* User grid layout - shared styles */
 .users-grid {
     display: grid;

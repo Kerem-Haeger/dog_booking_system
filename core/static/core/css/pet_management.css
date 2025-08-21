@@ -56,6 +56,10 @@
     display: block;
 }
 
+.dashboard-subtitle {
+    margin: 0.5rem 0;
+}
+
 /* Search styling */
 .list-header {
     display: flex;
