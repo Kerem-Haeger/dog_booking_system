@@ -57,8 +57,10 @@ body {
 .user-info {
     display: flex;
     align-items: center;
+    white-space: nowrap;
     flex-wrap: nowrap;
     gap: 1rem;
+    min-width: none;
 }
 
 .user-details {

@@ -34,6 +34,14 @@
     line-height: 1.5;
 }
 
+/* Header fix due to conflicting CSS */
+.header .user-details {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 /* Info cards - generic styles for pet, user, and service info */
 .pet-info-card,
 .user-info-card,
