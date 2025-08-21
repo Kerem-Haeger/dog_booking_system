@@ -45,6 +45,12 @@ This web application is a booking and management system for a pet grooming busin
 
 ---
 
+### Login Page Design Decision
+
+The login page is intentionally kept simple and standalone. Since this system is designed to be part of a business website, users will typically access the login page via direct links from the main site rather than navigating internally.
+
+For now, no header or navigation bar is displayed to keep the focus on authentication.
+
 ### Navigation
 
 **Navbar**
@@ -223,5 +229,6 @@ The current version of the Dog Booking System serves as a robust foundation, but
   - View their full grooming schedule
   - Access pet profiles for upcoming appointments
 - **Voucher System**: Introduce a system for special offers (e.g., birthday vouchers) with optional discount codes that can be tracked and managed by managers.
+- **Website Implementation**: In future iterations, the login process could be redesigned as an "on-site" feature, for example by integrating a modal-style login or an overlay directly within the main website layout, allowing a smoother, more seamless user experience.
 
 These features are intentionally modular and designed for future scalability.
